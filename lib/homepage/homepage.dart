@@ -66,15 +66,16 @@ class HomePageState extends State<HomePage> {
           if (notification is UserScrollNotification) {
             _direction = notification.direction;
           } else if (notification is ScrollEndNotification) {
-            if (notification.metrics.axis != Axis.vertical) {
+            if (notification.metrics.axis != Axis.vertical ||
+                notification.dragDetails == null) {
               return false;
             }
+
             _onScrollEnded(notification);
           } else if (notification is ScrollUpdateNotification) {
             if (notification.metrics.axis != Axis.vertical) {
               return false;
             }
-
             _onScrollUpdate(notification);
           }
           return false;
@@ -202,35 +203,36 @@ class HomePageState extends State<HomePage> {
 
   /// When a scroll is finished, animate the content to the correct position
   void _onScrollEnded(ScrollEndNotification notification) {
-    final double height = cameraHeight;
+    final double cameraViewHeight = cameraHeight;
     final double scrollPosition = notification.metrics.pixels;
 
-    if ([0.0, cameraPeak, height].contains(scrollPosition) ||
-        scrollPosition.roundToDouble() >= height ||
+    if ([0.0, cameraPeak, cameraViewHeight].contains(scrollPosition) ||
+        scrollPosition.roundToDouble() >= cameraViewHeight ||
+        _direction == ScrollDirection.idle ||
         _ignoreNextEvent) {
       _ignoreNextEvent = false;
       return;
     }
 
     final double position;
-    _cameraPeakHeight ??= height * (1 - CAMERA_PEAK);
+    _cameraPeakHeight ??= cameraViewHeight * (1 - CAMERA_PEAK);
 
     if (scrollPosition < (_cameraPeakHeight!)) {
       if (_direction == ScrollDirection.reverse) {
-        position = _initialOffset;
-      } else {
         position = 0.0;
-      }
-    } else if (scrollPosition < height) {
-      if (_direction == ScrollDirection.reverse) {
-        position = height;
       } else {
+        position = _initialOffset;
+      }
+    } else if (scrollPosition < cameraViewHeight) {
+      if (_direction == ScrollDirection.reverse) {
         position = _cameraPeakHeight!;
+      } else {
+        position = cameraViewHeight;
       }
     } else if (_direction == ScrollDirection.reverse) {
-      position = height + _appBarHeight;
+      position = cameraViewHeight + _appBarHeight;
     } else {
-      position = height;
+      position = cameraViewHeight;
     }
 
     Future.delayed(Duration.zero, () {

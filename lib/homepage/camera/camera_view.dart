@@ -142,7 +142,7 @@ class CustomScannerController {
     try {
       await _controller.start();
       _isStarted = true;
-    } catch (ignored) {}
+    } catch (_) {}
   }
 
   bool get isStarting => _controller.isStarting;
@@ -164,6 +164,6 @@ class CustomScannerController {
       await _controller.stop();
       _isClosing = false;
       _isClosed = true;
-    } catch (ignored) {}
+    } catch (_) {}
   }
 }

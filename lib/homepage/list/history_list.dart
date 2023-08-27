@@ -64,7 +64,6 @@ class _HistoryItem extends StatelessWidget {
   const _HistoryItem({
     required this.position,
     required this.onTap,
-    super.key,
   });
 
   final int position;
@@ -138,7 +137,6 @@ class _HistoryItem extends StatelessWidget {
 class _LastHistoryItem extends StatelessWidget {
   const _LastHistoryItem({
     required this.onTap,
-    super.key,
   });
 
   final VoidCallback onTap;
