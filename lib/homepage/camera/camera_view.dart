@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:smoothapp_poc/main.dart';
+import 'package:smoothapp_poc/homepage/homepage.dart';
+import 'package:smoothapp_poc/navigation.dart';
 
 class CameraView extends StatefulWidget {
   const CameraView({
@@ -46,7 +47,7 @@ class _CameraViewState extends State<CameraView> {
           left: 0.0,
           right: 0.0,
           child: Offstage(
-            offstage: widget.progress > 0.0,
+            offstage: widget.progress > 0.02,
             child: AppBar(
               forceMaterialTransparency: true,
               backgroundColor: Colors.transparent,
@@ -138,8 +139,10 @@ class CustomScannerController {
     }
 
     _isClosed = false;
-    await _controller.start();
-    _isStarted = true;
+    try {
+      await _controller.start();
+      _isStarted = true;
+    } catch (ignored) {}
   }
 
   bool get isStarting => _controller.isStarting;
@@ -157,8 +160,10 @@ class CustomScannerController {
 
     _isClosing = true;
     _isStarted = false;
-    await _controller.stop();
-    _isClosing = false;
-    _isClosed = true;
+    try {
+      await _controller.stop();
+      _isClosing = false;
+      _isClosed = true;
+    } catch (ignored) {}
   }
 }

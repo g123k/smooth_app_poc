@@ -29,7 +29,8 @@ class SettingsIcon extends StatelessWidget {
                 tooltip: 'Settings',
                 icon: Icon(
                   Icons.settings,
-                  color: type == SettingsIconType.floating ? Colors.white : null,
+                  color:
+                      type == SettingsIconType.floating ? Colors.white : null,
                   size: 24.0,
                   shadows: type == SettingsIconType.floating
                       ? [

@@ -3,10 +3,10 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import 'package:smoothapp_poc/main.dart';
+import 'package:smoothapp_poc/homepage/homepage.dart';
 
 class ExpandableAppBar extends StatelessWidget {
-  static const double HEIGHT = 145.0;
+  static const double HEIGHT = Logo.MAX_HEIGHT + SearchBar.SEARCH_BAR_HEIGHT;
   static const EdgeInsetsDirectional CONTENT_PADDING =
       EdgeInsetsDirectional.only(
     start: 20.0,
@@ -61,24 +61,34 @@ class SliverSearchAppBar extends SliverPersistentHeaderDelegate {
       },
       builder: (BuildContext context, double progress, _) {
         return Container(
-          decoration: const BoxDecoration(
-            color: Color(0xffffc589),
-            borderRadius: BorderRadius.vertical(
-              bottom: Radius.circular(HomePageState.BORDER_RADIUS),
-            ),
-          ),
+          decoration: BoxDecoration(
+              color: const Color(0xffffc589),
+              borderRadius: const BorderRadius.vertical(
+                bottom: Radius.circular(HomePageState.BORDER_RADIUS),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? const Color(0x44FFFFFF)
+                      : const Color(0x44000000),
+                  blurRadius: progress * 10.0,
+                ),
+              ]),
           padding: ExpandableAppBar.CONTENT_PADDING,
           child: SafeArea(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Logo(
-                  progress: progress,
-                ),
-                SearchBar(
-                  scannerButtonVisibility: progress,
-                ),
-              ],
+            bottom: false,
+            child: SizedBox(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Logo(
+                    progress: progress,
+                  ),
+                  SearchBar(
+                    scannerButtonVisibility: progress,
+                  ),
+                ],
+              ),
             ),
           ),
         );
@@ -91,10 +101,10 @@ class SliverSearchAppBar extends SliverPersistentHeaderDelegate {
   }
 
   @override
-  double get maxExtent => ExpandableAppBar.HEIGHT + topPadding;
+  double get maxExtent => ExpandableAppBar.HEIGHT + topPadding * 1.5;
 
   @override
-  double get minExtent => ExpandableAppBar.HEIGHT + topPadding;
+  double get minExtent => maxExtent;
 
   @override
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
@@ -104,14 +114,16 @@ class SliverSearchAppBar extends SliverPersistentHeaderDelegate {
 class Logo extends StatelessWidget {
   const Logo({required this.progress, super.key});
 
-  static final double FULL_WIDTH = 345.0;
-  static final double MIN_HEIGHT = 35.0;
+  static const double FULL_WIDTH = 345.0;
+  static const double MIN_HEIGHT = 35.0;
+  static const double MAX_HEIGHT = 60.0;
   final double progress;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
+      height: 60.0,
       child: LayoutBuilder(builder: (
         BuildContext context,
         BoxConstraints constraints,
@@ -125,17 +137,18 @@ class Logo extends StatelessWidget {
 
         return Container(
           width: imageWidth,
-          height: math.max(60.0 * (1 - progress), MIN_HEIGHT),
+          height: math.max(MAX_HEIGHT * (1 - progress), MIN_HEIGHT),
           margin: EdgeInsetsDirectional.only(
             start: math.max((1 - progress) * ((width - imageWidth) / 2), 10.0),
+            bottom: 5.0,
           ),
           alignment: AlignmentDirectional.centerStart,
           child: SizedBox(
             width: imageWidth,
             child: SvgPicture.asset(
               'assets/images/logo.svg',
-              width: imageWidth,
-              height: 60.0,
+              width: 346.0,
+              height: 61.0,
               alignment: AlignmentDirectional.centerStart,
             ),
           ),
@@ -151,6 +164,7 @@ class SearchBar extends StatefulWidget {
     super.key,
   });
 
+  static const SEARCH_BAR_HEIGHT = 55.0;
   final double scannerButtonVisibility;
 
   @override
@@ -178,7 +192,7 @@ class _SearchBarState extends State<SearchBar> {
     }
 
     return SizedBox(
-      height: 55.0,
+      height: SearchBar.SEARCH_BAR_HEIGHT,
       child: Row(
         children: [
           Expanded(

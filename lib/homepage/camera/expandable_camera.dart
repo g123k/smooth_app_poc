@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:smoothapp_poc/camera/camera_view.dart';
-import 'package:smoothapp_poc/camera/peak_view.dart';
-import 'package:smoothapp_poc/main.dart';
+import 'package:smoothapp_poc/homepage/camera/camera_view.dart';
+import 'package:smoothapp_poc/homepage/camera/peak_view.dart';
+import 'package:smoothapp_poc/homepage/homepage.dart';
 
 class ExpandableCamera extends StatelessWidget {
   const ExpandableCamera({
