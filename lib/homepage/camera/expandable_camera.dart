@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:smoothapp_poc/homepage/camera/camera_view.dart';
 import 'package:smoothapp_poc/homepage/camera/peak_view.dart';
 import 'package:smoothapp_poc/homepage/homepage.dart';
+import 'package:smoothapp_poc/utils/num_utils.dart';
 
 class ExpandableCamera extends StatelessWidget {
   const ExpandableCamera({
@@ -89,28 +90,27 @@ class _Delegate extends SliverPersistentHeaderDelegate {
   }
 
   BorderRadius _computeBorderRadius(double progress) {
-    if (progress >= 1 - HomePageState.CAMERA_PEAK) {
+    if (progress >= 1 - HomePage.CAMERA_PEAK) {
       return const BorderRadius.vertical(
-          bottom: Radius.circular(HomePageState.BORDER_RADIUS));
+          bottom: Radius.circular(HomePage.BORDER_RADIUS));
     } else if (progress <= MIN_PEAK) {
       return BorderRadius.zero;
     } else {
-      var value =
-          (progress - MIN_PEAK) / ((1 - HomePageState.CAMERA_PEAK) - MIN_PEAK);
+      double value = progress.progress(MIN_PEAK, (1 - HomePage.CAMERA_PEAK));
 
       return BorderRadius.vertical(
-          bottom: Radius.circular(HomePageState.BORDER_RADIUS * value));
+        bottom: Radius.circular(HomePage.BORDER_RADIUS * value),
+      );
     }
   }
 
   double _computePeakOpacity(double progress) {
-    if (progress >= 1 - HomePageState.CAMERA_PEAK) {
+    if (progress >= 1 - HomePage.CAMERA_PEAK) {
       return 1.0;
     } else if (progress <= MIN_PEAK) {
       return 0.0;
     } else {
-      return (progress - MIN_PEAK) /
-          ((1 - HomePageState.CAMERA_PEAK) - MIN_PEAK);
+      return progress.progress(MIN_PEAK, 1 - HomePage.CAMERA_PEAK);
     }
   }
 

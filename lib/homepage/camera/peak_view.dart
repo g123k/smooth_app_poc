@@ -19,7 +19,7 @@ class PeakView extends StatelessWidget {
       child: InkWell(
         onTap: opacity > 0.0 ? onTap : null,
         child: SizedBox(
-          height: size.height * HomePageState.CAMERA_PEAK,
+          height: size.height * HomePage.CAMERA_PEAK,
           child: SafeArea(
             bottom: false,
             child: Column(

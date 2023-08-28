@@ -14,6 +14,11 @@ import 'package:smoothapp_poc/homepage/list/history_list.dart';
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
+  static const double CAMERA_PEAK = 0.4;
+  static const double BORDER_RADIUS = 30.0;
+  static const double APP_BAR_HEIGHT = 160.0;
+  static const double HORIZONTAL_PADDING = 24.0;
+
   @override
   State<HomePage> createState() => HomePageState();
 
@@ -23,10 +28,6 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  static const double CAMERA_PEAK = 0.4;
-  static const double BORDER_RADIUS = 30.0;
-  static const double APP_BAR_HEIGHT = 160.0;
-
   // Lazy values (used to minimize the time required on each frame)
   double? _screenPaddingTop;
   double? _cameraPeakHeight;
@@ -38,7 +39,7 @@ class HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    _controller = ScrollController(initialScrollOffset: _initialOffset);
+    _controller = ScrollController();
     _cameraController = CustomScannerController(
       controller: MobileScannerController(),
     );
@@ -137,7 +138,7 @@ class HomePageState extends State<HomePage> {
   double get _appBarHeight =>
       ExpandableAppBar.HEIGHT + MediaQuery.paddingOf(context).top;
 
-  double get _initialOffset => cameraHeight * (1 - CAMERA_PEAK);
+  double get _initialOffset => cameraHeight * (1 - HomePage.CAMERA_PEAK);
 
   bool get isCameraVisible => _controller.offset == 0.0;
 
@@ -221,7 +222,7 @@ class HomePageState extends State<HomePage> {
     }
 
     final double position;
-    _cameraPeakHeight ??= cameraViewHeight * (1 - CAMERA_PEAK);
+    _cameraPeakHeight ??= cameraViewHeight * (1 - HomePage.CAMERA_PEAK);
 
     if (scrollPosition < (_cameraPeakHeight!)) {
       if (_direction == ScrollDirection.reverse) {

@@ -64,7 +64,7 @@ class SliverSearchAppBar extends SliverPersistentHeaderDelegate {
           decoration: BoxDecoration(
               color: const Color(0xffffc589),
               borderRadius: const BorderRadius.vertical(
-                bottom: Radius.circular(HomePageState.BORDER_RADIUS),
+                bottom: Radius.circular(HomePage.BORDER_RADIUS),
               ),
               boxShadow: [
                 BoxShadow(
