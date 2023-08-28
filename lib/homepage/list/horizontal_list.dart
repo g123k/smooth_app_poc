@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smoothapp_poc/homepage/homepage.dart';
 
 class HorizontalList extends StatefulWidget {
   const HorizontalList({
@@ -6,8 +7,8 @@ class HorizontalList extends StatefulWidget {
     required this.itemWidth,
     required this.itemHeight,
     required this.itemBuilder,
-    this.startPadding = 24.0,
-    this.endPadding = 24.0,
+    this.startPadding = HomePage.HORIZONTAL_PADDING,
+    this.endPadding = HomePage.HORIZONTAL_PADDING,
     this.lastItemBuilder,
     super.key,
   })  : assert(itemCount > 0),

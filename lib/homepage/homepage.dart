@@ -184,7 +184,7 @@ class HomePageState extends State<HomePage> {
   void _onScrollUpdate(ScrollUpdateNotification notification) {
     SettingsIconType newValue;
 
-    if (_controller.offset < cameraHeight) {
+    if (_controller.offset.ceilToDouble() < cameraHeight) {
       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
       if (!_cameraController.isStarting) {
         _cameraController.start();

@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:smoothapp_poc/homepage/homepage.dart';
+import 'package:smoothapp_poc/utils/num_utils.dart';
 
 class ExpandableAppBar extends StatelessWidget {
   static const double HEIGHT = Logo.MAX_HEIGHT + SearchBar.SEARCH_BAR_HEIGHT;
   static const EdgeInsetsDirectional CONTENT_PADDING =
-      EdgeInsetsDirectional.only(
-    start: 20.0,
-    end: 20.0,
+      EdgeInsetsDirectional.symmetric(
+    horizontal: HomePage.HORIZONTAL_PADDING - 4.0,
   );
 
   const ExpandableAppBar({
@@ -60,7 +60,7 @@ class SliverSearchAppBar extends SliverPersistentHeaderDelegate {
         return previous != next;
       },
       builder: (BuildContext context, double progress, _) {
-        return Container(
+        return DecoratedBox(
           decoration: BoxDecoration(
               color: const Color(0xffffc589),
               borderRadius: const BorderRadius.vertical(
@@ -74,7 +74,6 @@ class SliverSearchAppBar extends SliverPersistentHeaderDelegate {
                   blurRadius: progress * 10.0,
                 ),
               ]),
-          padding: ExpandableAppBar.CONTENT_PADDING,
           child: SafeArea(
             bottom: false,
             child: SizedBox(
@@ -85,7 +84,7 @@ class SliverSearchAppBar extends SliverPersistentHeaderDelegate {
                     progress: progress,
                   ),
                   SearchBar(
-                    scannerButtonVisibility: progress,
+                    progress: progress,
                   ),
                 ],
               ),
@@ -121,9 +120,10 @@ class Logo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Container(
       width: double.infinity,
       height: 60.0,
+      padding: ExpandableAppBar.CONTENT_PADDING,
       child: LayoutBuilder(builder: (
         BuildContext context,
         BoxConstraints constraints,
@@ -160,12 +160,12 @@ class Logo extends StatelessWidget {
 
 class SearchBar extends StatefulWidget {
   const SearchBar({
-    required this.scannerButtonVisibility,
+    required this.progress,
     super.key,
   });
 
   static const SEARCH_BAR_HEIGHT = 55.0;
-  final double scannerButtonVisibility;
+  final double progress;
 
   @override
   State<SearchBar> createState() => _SearchBarState();
@@ -184,70 +184,78 @@ class _SearchBarState extends State<SearchBar> {
   Widget build(BuildContext context) {
     /// When we go up and the keyboard is visible, we move the focus to the
     /// barcode button, just to hide the keyboard.
-    if (widget.scannerButtonVisibility < 1.0 &&
+    if (widget.progress < 1.0 &&
         _searchFocusNode.hasFocus &&
         _ignoreFocusChange != null &&
         DateTime.now().isAfter(_ignoreFocusChange!)) {
       _buttonFocusNode.requestFocus();
     }
 
-    return SizedBox(
-      height: SearchBar.SEARCH_BAR_HEIGHT,
-      child: Row(
-        children: [
-          Expanded(
-            child: TextFormField(
-              textAlignVertical: TextAlignVertical.center,
-              onTap: () {
-                _ignoreFocusChange = DateTime.now().add(
-                  const Duration(milliseconds: 500),
-                );
-                HomePage.of(context).showAppBar();
-                _searchFocusNode.requestFocus();
-              },
-              focusNode: _searchFocusNode,
-              decoration: InputDecoration(
-                hintText: 'Rechercher un produit ou un code-barres',
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30.0),
-                  borderSide: const BorderSide(color: Color(0xFFFF8714)),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30.0),
-                  borderSide: const BorderSide(color: Color(0xFFFF8714)),
+    return Padding(
+      padding: EdgeInsetsDirectional.symmetric(
+        horizontal: (1 - widget.progress).progress2(
+          10.0,
+          ExpandableAppBar.CONTENT_PADDING.start,
+        ),
+      ),
+      child: SizedBox(
+        height: SearchBar.SEARCH_BAR_HEIGHT,
+        child: Row(
+          children: [
+            Expanded(
+              child: TextFormField(
+                textAlignVertical: TextAlignVertical.center,
+                onTap: () {
+                  _ignoreFocusChange = DateTime.now().add(
+                    const Duration(milliseconds: 500),
+                  );
+                  HomePage.of(context).showAppBar();
+                  _searchFocusNode.requestFocus();
+                },
+                focusNode: _searchFocusNode,
+                decoration: InputDecoration(
+                  hintText: 'Rechercher un produit ou un code-barres',
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                    borderSide: const BorderSide(color: Color(0xFFFF8714)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                    borderSide: const BorderSide(color: Color(0xFFFF8714)),
+                  ),
                 ),
               ),
             ),
-          ),
-          SizedBox.square(
-            dimension: (55.0 + 8.0) * widget.scannerButtonVisibility,
-            child: Focus(
-              focusNode: _buttonFocusNode,
-              child: Padding(
-                padding: const EdgeInsetsDirectional.only(start: 8.0),
-                child: IconButton(
-                  onPressed: () {
-                    HomePage.of(context).expandCamera(
-                      duration: const Duration(milliseconds: 1500),
-                    );
-                  },
-                  icon: SvgPicture.asset('assets/images/barcode.svg'),
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(Colors.white),
-                    side: MaterialStateProperty.all(
-                      const BorderSide(color: Color(0xFFFF8714)),
-                    ),
-                    shape: MaterialStateProperty.all(
-                      const CircleBorder(),
+            SizedBox.square(
+              dimension: (55.0 + 8.0) * widget.progress,
+              child: Focus(
+                focusNode: _buttonFocusNode,
+                child: Padding(
+                  padding: const EdgeInsetsDirectional.only(start: 8.0),
+                  child: IconButton(
+                    onPressed: () {
+                      HomePage.of(context).expandCamera(
+                        duration: const Duration(milliseconds: 1500),
+                      );
+                    },
+                    icon: SvgPicture.asset('assets/images/barcode.svg'),
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(Colors.white),
+                      side: MaterialStateProperty.all(
+                        const BorderSide(color: Color(0xFFFF8714)),
+                      ),
+                      shape: MaterialStateProperty.all(
+                        const CircleBorder(),
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
