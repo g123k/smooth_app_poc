@@ -38,17 +38,27 @@ class HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    _controller = ScrollController();
+    _controller = ScrollController(initialScrollOffset: _initialOffset);
     _cameraController = CustomScannerController(
       controller: MobileScannerController(),
     );
 
+    _setInitialScroll();
+  }
+
+  void _setInitialScroll() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _controller.jumpTo(_initialOffset);
+      final double offset = _initialOffset;
+
+      if (offset == 0) {
+        // The MediaQuery is not yet ready (reproducible in production)
+        _setInitialScroll();
+      } else {
+        _controller.jumpTo(_initialOffset);
+      }
     });
   }
 
-  bool _ignoreNextEvent = false;
   bool _ignoreAllEvents = false;
   SettingsIconType _floatingSettingsType = SettingsIconType.floating;
   ScrollDirection _direction = ScrollDirection.forward;
@@ -159,8 +169,6 @@ class HomePageState extends State<HomePage> {
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeOutCubic,
     );
-
-    _ignoreNextEvent = true;
   }
 
   onDispose() {
@@ -208,9 +216,7 @@ class HomePageState extends State<HomePage> {
 
     if ([0.0, cameraPeak, cameraViewHeight].contains(scrollPosition) ||
         scrollPosition.roundToDouble() >= cameraViewHeight ||
-        _direction == ScrollDirection.idle ||
-        _ignoreNextEvent) {
-      _ignoreNextEvent = false;
+        _direction == ScrollDirection.idle) {
       return;
     }
 
@@ -241,7 +247,6 @@ class HomePageState extends State<HomePage> {
         curve: Curves.easeOutCubic,
         duration: const Duration(milliseconds: 500),
       );
-      _ignoreNextEvent = true;
     });
   }
 }
