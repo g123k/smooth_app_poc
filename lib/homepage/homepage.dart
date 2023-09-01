@@ -10,6 +10,8 @@ import 'package:smoothapp_poc/homepage/appbar/settings_icon.dart';
 import 'package:smoothapp_poc/homepage/camera/camera_view.dart';
 import 'package:smoothapp_poc/homepage/camera/expandable_camera.dart';
 import 'package:smoothapp_poc/homepage/list/history_list.dart';
+import 'package:smoothapp_poc/navigation.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -28,12 +30,21 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
+  final Key _screenKey = UniqueKey();
+
   // Lazy values (used to minimize the time required on each frame)
   double? _screenPaddingTop;
   double? _cameraPeakHeight;
+  double? _scrollPositionBeforePause;
 
   late ScrollController _controller;
   late CustomScannerController _cameraController;
+  late final AppLifecycleListener _lifecycleListener;
+
+  bool _ignoreAllEvents = false;
+  SettingsIconType _floatingSettingsType = SettingsIconType.floating;
+  ScrollDirection _direction = ScrollDirection.forward;
+  bool _screenVisible = false;
 
   @override
   void initState() {
@@ -41,10 +52,32 @@ class HomePageState extends State<HomePage> {
 
     _controller = ScrollController();
     _cameraController = CustomScannerController(
-      controller: MobileScannerController(),
+      controller: MobileScannerController(
+        autoStart: false,
+      ),
+    );
+    _lifecycleListener = AppLifecycleListener(
+      onPause: _onPause,
+      onResume: _onResume,
     );
 
     _setInitialScroll();
+  }
+
+  void _onPause() {
+    if (_controller.hasClients) {
+      _scrollPositionBeforePause = _controller.offset;
+      _cameraController.onPause();
+    }
+  }
+
+  void _onResume() {
+    if (_scrollPositionBeforePause != null &&
+        isCameraVisible(
+          offset: _scrollPositionBeforePause!,
+        )) {
+      _cameraController.start();
+    }
   }
 
   void _setInitialScroll() {
@@ -60,71 +93,74 @@ class HomePageState extends State<HomePage> {
     });
   }
 
-  bool _ignoreAllEvents = false;
-  SettingsIconType _floatingSettingsType = SettingsIconType.floating;
-  ScrollDirection _direction = ScrollDirection.forward;
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: NotificationListener(
-        onNotification: (Object? notification) {
-          if (_ignoreAllEvents) {
+    return VisibilityDetector(
+      key: _screenKey,
+      onVisibilityChanged: (VisibilityInfo visibility) {
+        _screenVisible = visibility.visibleFraction > 0;
+        _onScreenVisibilityChanged(_screenVisible);
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: NotificationListener(
+          onNotification: (Object? notification) {
+            if (_ignoreAllEvents) {
+              return false;
+            }
+
+            if (notification is UserScrollNotification) {
+              _direction = notification.direction;
+            } else if (notification is ScrollEndNotification) {
+              if (notification.metrics.axis != Axis.vertical ||
+                  notification.dragDetails == null) {
+                return false;
+              }
+
+              _onScrollEnded(notification);
+            } else if (notification is ScrollUpdateNotification) {
+              if (notification.metrics.axis != Axis.vertical) {
+                return false;
+              }
+              _onScrollUpdate(notification);
+            }
             return false;
-          }
-
-          if (notification is UserScrollNotification) {
-            _direction = notification.direction;
-          } else if (notification is ScrollEndNotification) {
-            if (notification.metrics.axis != Axis.vertical ||
-                notification.dragDetails == null) {
-              return false;
-            }
-
-            _onScrollEnded(notification);
-          } else if (notification is ScrollUpdateNotification) {
-            if (notification.metrics.axis != Axis.vertical) {
-              return false;
-            }
-            _onScrollUpdate(notification);
-          }
-          return false;
-        },
-        child: Provider.value(
-          value: this,
-          child: Stack(
-            children: [
-              ChangeNotifierProvider(
-                create: (_) => _controller,
-                child: CustomScrollView(
-                  physics: _ignoreAllEvents
-                      ? const NeverScrollableScrollPhysics()
-                      : _CustomPhysics(steps: [
-                          0.0,
-                          cameraPeak,
-                          cameraHeight,
-                        ]),
-                  controller: _controller,
-                  slivers: [
-                    ExpandableCamera(
-                      controller: _cameraController,
-                      height: MediaQuery.of(context).size.height,
-                    ),
-                    const ExpandableAppBar(),
-                    const ProductHistoryList(),
-                    const ProductHistoryList(),
-                    const ProductHistoryList(),
-                    const ProductHistoryList(),
-                    const ProductHistoryList(),
-                    const SliverListBldr(),
-                  ],
+          },
+          child: Provider.value(
+            value: this,
+            child: Stack(
+              children: [
+                ChangeNotifierProvider(
+                  create: (_) => _controller,
+                  child: CustomScrollView(
+                    physics: _ignoreAllEvents
+                        ? const NeverScrollableScrollPhysics()
+                        : _CustomPhysics(steps: [
+                            0.0,
+                            cameraPeak,
+                            cameraHeight,
+                          ]),
+                    controller: _controller,
+                    slivers: [
+                      ExpandableCamera(
+                        controller: _cameraController,
+                        height: MediaQuery.of(context).size.height,
+                      ),
+                      const ExpandableAppBar(),
+                      const ProductHistoryList(),
+                      const ProductHistoryList(),
+                      const ProductHistoryList(),
+                      const ProductHistoryList(),
+                      const ProductHistoryList(),
+                      const SliverListBldr(),
+                    ],
+                  ),
                 ),
-              ),
-              SettingsIcon(
-                type: _floatingSettingsType,
-              ),
-            ],
+                SettingsIcon(
+                  type: _floatingSettingsType,
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -140,7 +176,15 @@ class HomePageState extends State<HomePage> {
 
   double get _initialOffset => cameraHeight * (1 - HomePage.CAMERA_PEAK);
 
-  bool get isCameraVisible => _controller.offset == 0.0;
+  bool get isCameraFullyVisible => _controller.offset == 0.0;
+
+  bool isCameraVisible({double? offset}) {
+    if (_screenVisible && !NavApp.of(context).isSheetFullyVisible) {
+      double position = (offset ?? _controller.offset);
+      return position >= 0.0 && position <= cameraHeight;
+    }
+    return false;
+  }
 
   bool get isExpanded => _controller.offset < _initialOffset;
 
@@ -174,6 +218,7 @@ class HomePageState extends State<HomePage> {
 
   onDispose() {
     _controller.dispose();
+    _lifecycleListener.dispose();
     super.dispose();
   }
 
@@ -249,6 +294,14 @@ class HomePageState extends State<HomePage> {
         duration: const Duration(milliseconds: 500),
       );
     });
+  }
+
+  void _onScreenVisibilityChanged(bool visible) {
+    if (visible) {
+      _cameraController.start();
+    } else {
+      _cameraController.stop();
+    }
   }
 }
 

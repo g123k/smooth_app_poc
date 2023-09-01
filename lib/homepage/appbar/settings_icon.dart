@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smoothapp_poc/settings/settings_page.dart';
 
 class SettingsIcon extends StatelessWidget {
   const SettingsIcon({
@@ -25,12 +26,20 @@ class SettingsIcon extends StatelessWidget {
                 vertical: kToolbarHeight - kMinInteractiveDimension,
               ),
               child: IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SettingsPage(),
+                    ),
+                  );
+                },
                 tooltip: 'Settings',
                 icon: Icon(
                   Icons.settings,
-                  color:
-                      type == SettingsIconType.floating ? Colors.white : null,
+                  color: type == SettingsIconType.floating
+                      ? Colors.white
+                      : Colors.black,
                   size: 24.0,
                   shadows: type == SettingsIconType.floating
                       ? [

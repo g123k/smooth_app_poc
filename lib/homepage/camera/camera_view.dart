@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:provider/provider.dart';
 import 'package:smoothapp_poc/homepage/homepage.dart';
 import 'package:smoothapp_poc/navigation.dart';
 
@@ -25,65 +26,77 @@ class _CameraViewState extends State<CameraView> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Positioned.fill(
-          child: MobileScanner(
-            controller: widget.controller._controller,
-            placeholderBuilder: (_, __) =>
-                const SizedBox.expand(child: ColoredBox(color: Colors.black)),
-            onDetect: (BarcodeCapture capture) {
-              if (HomePage.of(context).isCameraVisible) {
-                if (capture.barcodes.first.rawValue != _currentBarcode) {
-                  _currentBarcode = capture.barcodes.first.rawValue;
-                  showProduct(_currentBarcode!);
-                }
-              }
-            },
-          ),
-        ),
-        Positioned(
-          top: 0.0,
-          left: 0.0,
-          right: 0.0,
-          child: Offstage(
-            offstage: widget.progress > 0.02,
-            child: AppBar(
-              forceMaterialTransparency: true,
-              backgroundColor: Colors.transparent,
-              iconTheme: const IconThemeData(color: Colors.white, shadows: [
-                Shadow(
-                  color: Colors.black,
-                  blurRadius: 10.0,
-                ),
-              ]),
-              leading: CloseButton(
-                onPressed: () {
-                  if (NavApp.of(context).hasSheet) {
-                    NavApp.of(context).hideSheet();
-                    HomePage.of(context).ignoreAllEvents(false);
-                    _currentBarcode = null;
-                  } else {
-                    widget.onClosed.call();
+    return Consumer<SheetVisibilityNotifier>(
+      builder: (
+        BuildContext context,
+        SheetVisibilityNotifier notifier,
+        Widget? child,
+      ) {
+        return Offstage(
+          offstage: notifier.isFullyVisible,
+          child: child!,
+        );
+      },
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: MobileScanner(
+              controller: widget.controller._controller,
+              placeholderBuilder: (_, __) =>
+                  const SizedBox.expand(child: ColoredBox(color: Colors.black)),
+              onDetect: (BarcodeCapture capture) {
+                if (HomePage.of(context).isCameraFullyVisible) {
+                  if (capture.barcodes.first.rawValue != _currentBarcode) {
+                    _currentBarcode = capture.barcodes.first.rawValue;
+                    showProduct(_currentBarcode!);
                   }
-                },
-              ),
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.camera_rear),
-                  onPressed: () {},
-                ),
-                IconButton(
-                  icon: const Icon(Icons.flash_on_outlined),
-                  onPressed: () {
-                    showProduct('12365465');
-                  },
-                ),
-              ],
+                }
+              },
             ),
           ),
-        ),
-      ],
+          Positioned(
+            top: 0.0,
+            left: 0.0,
+            right: 0.0,
+            child: Offstage(
+              offstage: widget.progress > 0.02,
+              child: AppBar(
+                forceMaterialTransparency: true,
+                backgroundColor: Colors.transparent,
+                iconTheme: const IconThemeData(color: Colors.white, shadows: [
+                  Shadow(
+                    color: Colors.black,
+                    blurRadius: 10.0,
+                  ),
+                ]),
+                leading: CloseButton(
+                  onPressed: () {
+                    if (NavApp.of(context).hasSheet) {
+                      NavApp.of(context).hideSheet();
+                      HomePage.of(context).ignoreAllEvents(false);
+                      _currentBarcode = null;
+                    } else {
+                      widget.onClosed.call();
+                    }
+                  },
+                ),
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.camera_rear),
+                    onPressed: () {},
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.flash_on_outlined),
+                    onPressed: () {
+                      showProduct('12365465');
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -143,6 +156,12 @@ class CustomScannerController {
       await _controller.start();
       _isStarted = true;
     } catch (_) {}
+  }
+
+  void onPause() {
+    _isStarted = false;
+    _isClosing = false;
+    _isClosed = false;
   }
 
   bool get isStarting => _controller.isStarting;

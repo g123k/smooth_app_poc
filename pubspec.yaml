@@ -14,7 +14,7 @@ dependencies:
   flutter_svg: any
   bottom_sheet: any
   mobile_scanner: any
-  snap_scroll_physics: any
+  visibility_detector: any
 
 dev_dependencies:
   flutter_test:
