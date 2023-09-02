@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:smoothapp_poc/homepage/camera/camera_view.dart';
-import 'package:smoothapp_poc/homepage/camera/peak_view.dart';
-import 'package:smoothapp_poc/homepage/homepage.dart';
+import 'package:smoothapp_poc/pages/homepage/camera/camera_view.dart';
+import 'package:smoothapp_poc/pages/homepage/camera/peak_view.dart';
+import 'package:smoothapp_poc/pages/homepage/homepage.dart';
 import 'package:smoothapp_poc/utils/num_utils.dart';
 
 class ExpandableCamera extends StatelessWidget {
@@ -76,7 +76,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
               bottom: 0.0,
               left: 0.0,
               right: 0.0,
-              child: PeakView(
+              child: CameraPeakView(
                 opacity: _computePeakOpacity(progress),
                 onTap: () {
                   HomePage.of(context).expandCamera();

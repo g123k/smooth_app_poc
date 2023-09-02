@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:smoothapp_poc/homepage/list/horizontal_list.dart';
+import 'package:smoothapp_poc/pages/homepage/list/horizontal_list.dart';
 
 class ProductHistoryList extends StatelessWidget {
   const ProductHistoryList({super.key});

@@ -5,13 +5,13 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
-import 'package:smoothapp_poc/homepage/appbar/search_bar.dart';
-import 'package:smoothapp_poc/homepage/appbar/settings_icon.dart';
-import 'package:smoothapp_poc/homepage/camera/camera_view.dart';
-import 'package:smoothapp_poc/homepage/camera/expandable_camera.dart';
-import 'package:smoothapp_poc/homepage/list/history_list.dart';
 import 'package:smoothapp_poc/navigation.dart';
-import 'package:smoothapp_poc/search_page/search_page.dart';
+import 'package:smoothapp_poc/pages/homepage/camera/camera_view.dart';
+import 'package:smoothapp_poc/pages/homepage/camera/expandable_camera.dart';
+import 'package:smoothapp_poc/pages/homepage/list/history_list.dart';
+import 'package:smoothapp_poc/pages/homepage/settings_icon.dart';
+import 'package:smoothapp_poc/pages/search_page/search_page.dart';
+import 'package:smoothapp_poc/utils/widgets/search_bar.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 class HomePage extends StatefulWidget {

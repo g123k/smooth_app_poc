@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:smoothapp_poc/homepage/appbar/search_bar.dart';
+import 'package:smoothapp_poc/pages/settings/settings_page.dart';
 import 'package:smoothapp_poc/resources/app_icons.dart' as icons;
-import 'package:smoothapp_poc/settings/settings_page.dart';
 import 'package:smoothapp_poc/utils/widgets/circled_icon.dart';
+import 'package:smoothapp_poc/utils/widgets/search_bar.dart';
 
-import '../homepage.dart';
+import 'homepage.dart';
 
 class HomePageSettingsIcon extends StatelessWidget {
   const HomePageSettingsIcon({

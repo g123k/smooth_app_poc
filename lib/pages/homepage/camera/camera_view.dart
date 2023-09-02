@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
-import 'package:smoothapp_poc/homepage/homepage.dart';
 import 'package:smoothapp_poc/navigation.dart';
+import 'package:smoothapp_poc/pages/homepage/homepage.dart';
 import 'package:smoothapp_poc/resources/app_icons.dart' as icons;
 
 class CameraView extends StatefulWidget {

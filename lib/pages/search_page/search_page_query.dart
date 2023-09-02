@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:smoothapp_poc/search_page/search_page.dart';
-import 'package:smoothapp_poc/search_page/search_page_utils.dart';
+import 'package:smoothapp_poc/pages/search_page/search_page.dart';
+import 'package:smoothapp_poc/pages/search_page/search_page_utils.dart';
 
 class SearchBodyWithSearch extends StatelessWidget {
   const SearchBodyWithSearch({super.key});

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:smoothapp_poc/homepage/homepage.dart';
+import 'package:smoothapp_poc/pages/homepage/homepage.dart';
 import 'package:smoothapp_poc/resources/app_icons.dart' as icons;
 
-class PeakView extends StatelessWidget {
-  const PeakView({
+class CameraPeakView extends StatelessWidget {
+  const CameraPeakView({
     required this.opacity,
     required this.onTap,
     super.key,

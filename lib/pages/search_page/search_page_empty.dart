@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sliver_tools/sliver_tools.dart';
-import 'package:smoothapp_poc/search_page/search_page.dart';
-import 'package:smoothapp_poc/search_page/search_page_utils.dart';
+import 'package:smoothapp_poc/pages/search_page/search_page.dart';
+import 'package:smoothapp_poc/pages/search_page/search_page_utils.dart';
 
 // TODO: Load search history
 class SearchBodyEmpty extends StatelessWidget {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:smoothapp_poc/homepage/homepage.dart';
+import 'package:smoothapp_poc/pages/homepage/homepage.dart';
 
 class NavApp extends StatefulWidget {
   const NavApp({super.key});

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:smoothapp_poc/homepage/homepage.dart';
+import 'package:smoothapp_poc/pages/homepage/homepage.dart';
 
 class HorizontalList extends StatefulWidget {
   const HorizontalList({

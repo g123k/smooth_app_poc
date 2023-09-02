@@ -4,10 +4,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:provider/provider.dart';
-import 'package:smoothapp_poc/homepage/appbar/search_bar.dart';
-import 'package:smoothapp_poc/search_page/search_page_empty.dart';
-import 'package:smoothapp_poc/search_page/search_page_query.dart';
+import 'package:smoothapp_poc/pages/search_page/search_page_empty.dart';
+import 'package:smoothapp_poc/pages/search_page/search_page_query.dart';
 import 'package:smoothapp_poc/utils/widgets/circled_icon.dart';
+import 'package:smoothapp_poc/utils/widgets/search_bar.dart';
 
 class SearchPage extends StatelessWidget {
   const SearchPage({
@@ -122,7 +122,6 @@ class _SearchPageBodyState extends State<_SearchPageBody> {
             search: value,
             onExitSearch: () {
               _lastKeyboardVisibleEvent = false;
-              print('pop');
               Navigator.of(context).pop();
             },
           );
