@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:smoothapp_poc/homepage/appbar/search_bar.dart';
 import 'package:smoothapp_poc/resources/app_icons.dart' as icons;
 import 'package:smoothapp_poc/settings/settings_page.dart';
+import 'package:smoothapp_poc/utils/widgets/circled_icon.dart';
 
-class SettingsIcon extends StatelessWidget {
-  const SettingsIcon({
+import '../homepage.dart';
+
+class HomePageSettingsIcon extends StatelessWidget {
+  const HomePageSettingsIcon({
     required this.type,
     super.key,
   });
@@ -14,41 +18,33 @@ class SettingsIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     return Positioned.directional(
       textDirection: Directionality.of(context),
-      top: 0.0,
-      end: 0.0,
+      top: HomePage.TOP_ICON_PADDING,
+      end: ExpandableSearchAppBar.MIN_CONTENT_PADDING.start,
       child: Offstage(
         offstage: type == SettingsIconType.invisible,
         child: AnimatedOpacity(
           opacity: type == SettingsIconType.invisible ? 0.0 : 1.0,
           duration: const Duration(milliseconds: 200),
           child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: kToolbarHeight - kMinInteractiveDimension,
+            child: CircledIcon(
+              icon: icons.Settings(
+                size: 21.0,
+                shadow: type == SettingsIconType.floating
+                    ? Shadow(
+                        color: Colors.black.withOpacity(0.2),
+                        blurRadius: 10,
+                      )
+                    : null,
               ),
-              child: IconButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const SettingsPage(),
-                    ),
-                  );
-                },
-                tooltip: 'Settings',
-                icon: icons.Settings(
-                  size: 24.0,
-                  color: type == SettingsIconType.floating
-                      ? Colors.white
-                      : Colors.black,
-                  shadow: type == SettingsIconType.floating
-                      ? Shadow(
-                          color: Colors.black.withOpacity(0.5),
-                          blurRadius: 10,
-                        )
-                      : null,
-                ),
-              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SettingsPage(),
+                  ),
+                );
+              },
+              tooltip: 'Settings',
             ),
           ),
         ),

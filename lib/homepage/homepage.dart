@@ -11,6 +11,7 @@ import 'package:smoothapp_poc/homepage/camera/camera_view.dart';
 import 'package:smoothapp_poc/homepage/camera/expandable_camera.dart';
 import 'package:smoothapp_poc/homepage/list/history_list.dart';
 import 'package:smoothapp_poc/navigation.dart';
+import 'package:smoothapp_poc/search_page/search_page.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 class HomePage extends StatefulWidget {
@@ -20,6 +21,8 @@ class HomePage extends StatefulWidget {
   static const double BORDER_RADIUS = 30.0;
   static const double APP_BAR_HEIGHT = 160.0;
   static const double HORIZONTAL_PADDING = 24.0;
+  static const double TOP_ICON_PADDING =
+      kToolbarHeight - kMinInteractiveDimension;
 
   @override
   State<HomePage> createState() => HomePageState();
@@ -132,31 +135,53 @@ class HomePageState extends State<HomePage> {
               children: [
                 ChangeNotifierProvider(
                   create: (_) => _controller,
-                  child: CustomScrollView(
-                    physics: _ignoreAllEvents
-                        ? const NeverScrollableScrollPhysics()
-                        : _CustomPhysics(steps: [
-                            0.0,
-                            cameraPeak,
-                            cameraHeight,
-                          ]),
-                    controller: _controller,
-                    slivers: [
-                      ExpandableCamera(
-                        controller: _cameraController,
-                        height: MediaQuery.of(context).size.height,
-                      ),
-                      const ExpandableAppBar(),
-                      const ProductHistoryList(),
-                      const ProductHistoryList(),
-                      const ProductHistoryList(),
-                      const ProductHistoryList(),
-                      const ProductHistoryList(),
-                      const SliverListBldr(),
-                    ],
-                  ),
+                  child: Builder(builder: (BuildContext context) {
+                    return CustomScrollView(
+                      physics: _ignoreAllEvents
+                          ? const NeverScrollableScrollPhysics()
+                          : _CustomPhysics(steps: [
+                              0.0,
+                              cameraPeak,
+                              cameraHeight,
+                            ]),
+                      controller: _controller,
+                      slivers: [
+                        ExpandableCamera(
+                          controller: _cameraController,
+                          height: MediaQuery.of(context).size.height,
+                        ),
+                        ExpandableSearchAppBar(
+                          onFieldTapped: () {
+                            HomePage.of(context).showAppBar(
+                                onAppBarVisible: () async {
+                              SearchPageResult? res =
+                                  await SearchPage.open(context);
+
+                              if (res == SearchPageResult.openCamera &&
+                                  mounted) {
+                                HomePage.of(context).expandCamera(
+                                  duration: const Duration(milliseconds: 1500),
+                                );
+                              }
+                            });
+                          },
+                          onCameraTapped: () {
+                            HomePage.of(context).expandCamera(
+                              duration: const Duration(milliseconds: 1500),
+                            );
+                          },
+                        ),
+                        const ProductHistoryList(),
+                        const ProductHistoryList(),
+                        const ProductHistoryList(),
+                        const ProductHistoryList(),
+                        const ProductHistoryList(),
+                        const SliverListBldr(),
+                      ],
+                    );
+                  }),
                 ),
-                SettingsIcon(
+                HomePageSettingsIcon(
                   type: _floatingSettingsType,
                 ),
               ],
@@ -172,7 +197,7 @@ class HomePageState extends State<HomePage> {
   double get cameraPeak => _initialOffset;
 
   double get _appBarHeight =>
-      ExpandableAppBar.HEIGHT + MediaQuery.paddingOf(context).top;
+      ExpandableSearchAppBar.HEIGHT + MediaQuery.paddingOf(context).top;
 
   double get _initialOffset => cameraHeight * (1 - HomePage.CAMERA_PEAK);
 
@@ -208,12 +233,17 @@ class HomePageState extends State<HomePage> {
     );
   }
 
-  void showAppBar() {
+  void showAppBar({VoidCallback? onAppBarVisible}) {
+    const Duration duration = Duration(milliseconds: 200);
     _controller.animateTo(
       MediaQuery.sizeOf(context).height,
-      duration: const Duration(milliseconds: 200),
+      duration: duration,
       curve: Curves.easeOutCubic,
     );
+
+    if (onAppBarVisible != null) {
+      Future.delayed(duration, () => onAppBarVisible.call());
+    }
   }
 
   onDispose() {

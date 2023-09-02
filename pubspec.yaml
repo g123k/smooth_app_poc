@@ -15,7 +15,9 @@ dependencies:
   bottom_sheet: any
   mobile_scanner: any
   visibility_detector: any
-  shadow: any
+  sliver_tools: any
+  flutter_keyboard_visibility: any
+  diacritic: any
 
 
 dev_dependencies:

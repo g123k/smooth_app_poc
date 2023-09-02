@@ -61,7 +61,6 @@ class NavAppState extends State<NavApp> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    print(_bottomSheetAnimation.value);
     return WillPopScope(
       onWillPop: () async {
         if (_sheet != null) {
@@ -192,6 +191,7 @@ class NavAppState extends State<NavApp> with TickerProviderStateMixin {
 }
 
 class SheetVisibilityNotifier extends ValueNotifier<_SheetVisibility> {
+  // ignore: library_private_types_in_public_api
   SheetVisibilityNotifier(super.value);
 
   bool get isFullyVisible => value == _SheetVisibility.fullyVisible;

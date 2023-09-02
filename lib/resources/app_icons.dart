@@ -1,336 +1,459 @@
 import 'package:flutter/material.dart';
-import 'package:smoothapp_poc/utils/ui_utils.dart';
 
 part 'app_icons_font.dart';
 
-class AddToList extends IconType {
+class AddToList extends AppIcon {
   const AddToList({
     super.color,
     super.size,
     super.shadow,
     super.key,
-  }) : super(_IconsFont.add_to_list);
+  }) : super._(_IconsFont.add_to_list);
 }
 
-class ArrowHorizontal extends IconType {
-  const ArrowHorizontal({
-    this.direction = HorizontalDirection.end,
+class Arrow extends AppIcon {
+  const Arrow.right({
     super.color,
     super.size,
     super.shadow,
     super.key,
-  }) : super(_IconsFont.arrow_down);
+  })  : turns = 0,
+        super._(_IconsFont.arrow_right);
 
-  final HorizontalDirection direction;
+  const Arrow.left({
+    super.color,
+    super.size,
+    super.shadow,
+    super.key,
+  })  : turns = 2,
+        super._(_IconsFont.arrow_right);
+
+  const Arrow.down({
+    super.color,
+    super.size,
+    super.shadow,
+    super.key,
+  })  : turns = 1,
+        super._(_IconsFont.arrow_right);
+
+  const Arrow.up({
+    super.color,
+    super.size,
+    super.shadow,
+    super.key,
+  })  : turns = 3,
+        super._(_IconsFont.arrow_right);
+
+  final int turns;
 
   @override
   Widget build(BuildContext context) {
     return RotatedBox(
-      quarterTurns: switch (direction) {
-        HorizontalDirection.start => 0,
-        HorizontalDirection.end => 2,
-      },
+      quarterTurns: turns,
       child: super.build(context),
     );
   }
 }
 
-class ArrowVertical extends IconType {
-  const ArrowVertical({
-    this.direction = VerticalDirection.down,
-    super.color,
-    super.size,
-    super.shadow,
-    super.key,
-  }) : super(_IconsFont.arrow_right);
-
-  final VerticalDirection direction;
-
-  @override
-  Widget build(BuildContext context) {
-    return RotatedBox(
-      quarterTurns: switch (direction) {
-        VerticalDirection.up => 1,
-        VerticalDirection.down => 3,
-      },
-      child: super.build(context),
-    );
-  }
-}
-
-class Check extends IconType {
-  const Check({
-    super.color,
-    super.size,
-    super.shadow,
-    super.key,
-  }) : super(_IconsFont.check);
-}
-
-class ChevronVertical extends IconType {
-  const ChevronVertical({
-    super.color,
-    super.size,
-    super.shadow,
-    this.direction = VerticalDirection.up,
-    super.key,
-  }) : super(_IconsFont.warning);
-
-  final VerticalDirection direction;
-
-  @override
-  Widget build(BuildContext context) {
-    return RotatedBox(
-      quarterTurns: switch (direction) {
-        VerticalDirection.up => 0,
-        VerticalDirection.down => 2,
-      },
-      child: super.build(context),
-    );
-  }
-}
-
-class CircledArrow extends IconType {
-  const CircledArrow({
-    super.color,
-    super.size,
-    super.shadow,
-    super.key,
-  }) : super(_IconsFont.arrow_circled);
-}
-
-class Close extends IconType {
-  const Close({
-    super.color,
-    super.size,
-    super.shadow,
-    super.key,
-  }) : super(_IconsFont.close);
-}
-
-class Barcode extends IconType {
+class Barcode extends AppIcon {
   const Barcode({
     super.color,
     super.size,
     super.shadow,
     super.key,
-  }) : super(_IconsFont.barcode);
+  }) : super._(_IconsFont.barcode);
 }
 
-class Camera extends IconType {
+class Camera extends AppIcon {
   const Camera.filled({
     super.color,
     super.size,
     super.shadow,
     super.key,
-  }) : super(_IconsFont.camera_filled);
+  }) : super._(_IconsFont.camera_filled);
 
   const Camera.outlined({
     super.color,
     super.size,
     super.shadow,
     super.key,
-  }) : super(_IconsFont.camera_outlined);
+  }) : super._(_IconsFont.camera_outlined);
 }
 
-class Categories extends IconType {
+class Categories extends AppIcon {
   const Categories({
     super.color,
     super.size,
     super.shadow,
     super.key,
-  }) : super(_IconsFont.categories);
+  }) : super._(_IconsFont.categories);
 }
 
-class Compare extends IconType {
+class Check extends AppIcon {
+  const Check({
+    super.color,
+    super.size,
+    super.shadow,
+    super.key,
+  }) : super._(_IconsFont.check);
+}
+
+class Chevron extends AppIcon {
+  const Chevron.left({
+    super.color,
+    super.size,
+    super.shadow,
+    super.key,
+  })  : turns = 2,
+        super._(_IconsFont.chevron_right);
+
+  const Chevron.right({
+    super.color,
+    super.size,
+    super.shadow,
+    super.key,
+  })  : turns = 0,
+        super._(_IconsFont.chevron_right);
+
+  const Chevron.up({
+    super.color,
+    super.size,
+    super.shadow,
+    super.key,
+  })  : turns = 2,
+        super._(_IconsFont.chevron_down);
+
+  const Chevron.down({
+    super.color,
+    super.size,
+    super.shadow,
+    super.key,
+  })  : turns = 0,
+        super._(_IconsFont.chevron_down);
+
+  final int turns;
+
+  @override
+  Widget build(BuildContext context) {
+    return RotatedBox(
+      quarterTurns: turns,
+      child: super.build(context),
+    );
+  }
+}
+
+class ClearText extends AppIcon {
+  const ClearText({
+    super.color,
+    super.size,
+    super.shadow,
+    super.key,
+  }) : super._(_IconsFont.clear_text);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      // Fake it's centered
+      padding: const EdgeInsetsDirectional.only(end: 1.0),
+      child: super.build(context),
+    );
+  }
+}
+
+class DoubleChevron extends AppIcon {
+  const DoubleChevron.left({
+    super.color,
+    super.size,
+    super.shadow,
+    super.key,
+  })  : turns = 3,
+        super._(_IconsFont.double_chevron);
+
+  const DoubleChevron.right({
+    super.color,
+    super.size,
+    super.shadow,
+    super.key,
+  })  : turns = 1,
+        super._(_IconsFont.double_chevron);
+
+  const DoubleChevron.up({
+    super.color,
+    super.size,
+    super.shadow,
+    super.key,
+  })  : turns = 0,
+        super._(_IconsFont.double_chevron);
+
+  const DoubleChevron.down({
+    super.color,
+    super.size,
+    super.shadow,
+    super.key,
+  })  : turns = 2,
+        super._(_IconsFont.double_chevron);
+
+  final int turns;
+
+  @override
+  Widget build(BuildContext context) {
+    return RotatedBox(
+      quarterTurns: turns,
+      child: super.build(context),
+    );
+  }
+}
+
+class CircledArrow extends AppIcon {
+  const CircledArrow({
+    super.color,
+    super.size,
+    super.shadow,
+    super.key,
+  }) : super._(_IconsFont.circled_arrow);
+}
+
+class Close extends AppIcon {
+  const Close({
+    super.color,
+    super.size,
+    super.shadow,
+    super.key,
+  }) : super._(_IconsFont.close);
+}
+
+class Compare extends AppIcon {
   const Compare({
     super.color,
     super.size,
     super.shadow,
     super.key,
-  }) : super(_IconsFont.compare);
+  }) : super._(_IconsFont.compare);
 }
 
-class Countries extends IconType {
+class Countries extends AppIcon {
   const Countries({
     super.color,
     super.size,
     super.shadow,
     super.key,
-  }) : super(_IconsFont.countries);
+  }) : super._(_IconsFont.countries);
 }
 
-class Cupcake extends IconType {
+class Cupcake extends AppIcon {
   const Cupcake({
     super.color,
     super.size,
     super.shadow,
     super.key,
-  }) : super(_IconsFont.cupcake);
+  }) : super._(_IconsFont.cupcake);
 }
 
-class Edit extends IconType {
+class Edit extends AppIcon {
   const Edit({
     super.color,
     super.size,
     super.shadow,
     super.key,
-  }) : super(_IconsFont.edit);
+  }) : super._(_IconsFont.edit);
 }
 
-class Environment extends IconType {
+class Environment extends AppIcon {
   const Environment({
     super.color,
     super.size,
     super.shadow,
     super.key,
-  }) : super(_IconsFont.environment);
+  }) : super._(_IconsFont.environment);
 }
 
-class Expand extends IconType {
+class ExternalLink extends AppIcon {
+  const ExternalLink({
+    super.color,
+    super.size,
+    super.shadow,
+    super.key,
+  }) : super._(_IconsFont.external_link);
+}
+
+class Expand extends AppIcon {
   const Expand({
     super.color,
     super.size,
     super.shadow,
     super.key,
-  }) : super(_IconsFont.expand);
+  }) : super._(_IconsFont.expand);
 }
 
-class CameraFlash extends IconType {
+class CameraFlash extends AppIcon {
   const CameraFlash({
     super.color,
     super.size,
     super.shadow,
     super.key,
-  }) : super(_IconsFont.flash_on);
+  }) : super._(_IconsFont.flash_on);
 }
 
-class Fruit extends IconType {
+class Fruit extends AppIcon {
   const Fruit({
     super.color,
     super.size,
     super.shadow,
     super.key,
-  }) : super(_IconsFont.fruit);
+  }) : super._(_IconsFont.fruit);
 }
 
-class Info extends IconType {
+class Info extends AppIcon {
   const Info({
     super.color,
     super.size,
     super.shadow,
     super.key,
-  }) : super(_IconsFont.info);
+  }) : super._(_IconsFont.info);
 }
 
-class Ingredients extends IconType {
+class History extends AppIcon {
+  const History({
+    super.color,
+    super.size,
+    super.shadow,
+    super.key,
+  }) : super._(_IconsFont.history);
+}
+
+class Ingredients extends AppIcon {
   const Ingredients({
     super.color,
     super.size,
     super.shadow,
     super.key,
-  }) : super(_IconsFont.ingredients);
+  }) : super._(_IconsFont.ingredients);
 }
 
-class Labels extends IconType {
+class Labels extends AppIcon {
   const Labels({
     super.color,
     super.size,
     super.shadow,
     super.key,
-  }) : super(_IconsFont.labels);
+  }) : super._(_IconsFont.labels);
 }
 
-class Lifebuoy extends IconType {
+class Lifebuoy extends AppIcon {
   const Lifebuoy({
     super.color,
     super.size,
     super.shadow,
     super.key,
-  }) : super(_IconsFont.lifebuoy);
+  }) : super._(_IconsFont.lifebuoy);
 }
 
-class Outdated extends IconType {
+class Outdated extends AppIcon {
   const Outdated({
     super.color,
     super.size,
     super.shadow,
     super.key,
-  }) : super(_IconsFont.outdated);
+  }) : super._(_IconsFont.outdated);
 }
 
-class NutritionFacts extends IconType {
+class NutritionFacts extends AppIcon {
   const NutritionFacts({
     super.color,
     super.size,
     super.shadow,
     super.key,
-  }) : super(_IconsFont.nutrition_facts);
+  }) : super._(_IconsFont.nutrition_facts);
 }
 
-class Packaging extends IconType {
+class Packaging extends AppIcon {
   const Packaging({
     super.color,
     super.size,
     super.shadow,
     super.key,
-  }) : super(_IconsFont.packaging);
+  }) : super._(_IconsFont.packaging);
 }
 
-class Question extends IconType {
+class Question extends AppIcon {
   const Question({
     super.color,
     super.size,
     super.shadow,
     super.key,
-  }) : super(_IconsFont.question);
+  }) : super._(_IconsFont.question);
 
   const Question.circled({
     super.color,
     super.size,
     super.shadow,
     super.key,
-  }) : super(_IconsFont.question_circled);
+  }) : super._(_IconsFont.question_circled);
 }
 
-class Settings extends IconType {
+class Search extends AppIcon {
+  const Search({
+    super.color,
+    super.size,
+    super.shadow,
+    super.key,
+  }) : super._(_IconsFont.search);
+
+  const Search.advanced({
+    super.color,
+    super.size,
+    super.shadow,
+    super.key,
+  }) : super._(_IconsFont.advanced_search);
+}
+
+class Settings extends AppIcon {
   const Settings({
     super.color,
     super.size,
     super.shadow,
     super.key,
-  }) : super(_IconsFont.settings);
+  }) : super._(_IconsFont.settings);
 }
 
-class Stores extends IconType {
+class Stores extends AppIcon {
   const Stores({
     super.color,
     super.size,
     super.shadow,
     super.key,
-  }) : super(_IconsFont.stores);
+  }) : super._(_IconsFont.store);
 }
 
-class ToggleCamera extends IconType {
+class Suggestion extends AppIcon {
+  const Suggestion({
+    super.color,
+    super.size,
+    super.shadow,
+    super.key,
+  }) : super._(_IconsFont.suggestion);
+}
+
+class ToggleCamera extends AppIcon {
   const ToggleCamera({
     super.color,
     super.size,
     super.shadow,
     super.key,
-  }) : super(_IconsFont.toggle_camera);
+  }) : super._(_IconsFont.toggle_camera);
 }
 
-class Warning extends IconType {
+class Warning extends AppIcon {
   const Warning({
     super.color,
     super.size,
     super.shadow,
     super.key,
-  }) : super(_IconsFont.warning);
+  }) : super._(_IconsFont.warning);
 }
 
-abstract class IconType extends StatelessWidget {
-  const IconType(
+abstract class AppIcon extends StatelessWidget {
+  const AppIcon._(
     this.icon, {
     this.color,
     this.shadow,
