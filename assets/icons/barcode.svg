@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="31px" height="23px" viewBox="0 0 31 23" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <title>Shape</title>
-    <g id="Homepage-V2" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="Homepage-V2-scrolled" transform="translate(-365, -141)" fill="#000000" fill-rule="nonzero">
-            <g id="Recherche">
-                <path d="M365,141 L365,164 L366,164 L366,141 L365,141 Z M368,141 L368,164 L370,164 L370,141 L368,141 Z M371,141 L371,164 L377,164 L377,141 L371,141 Z M379,141 L379,164 L380,164 L380,141 L379,141 Z M382,141 L382,164 L384,164 L384,141 L382,141 Z M385,141 L385,164 L386,164 L386,141 L385,141 Z M388,141 L388,164 L391,164 L391,141 L388,141 Z M393,141 L393,164 L394,164 L394,141 L393,141 Z M395,141 L395,164 L396,164 L396,141 L395,141 Z" id="Shape"></path>
-            </g>
+<svg width="31px" height="31px" viewBox="0 0 31 31" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Barcode</title>
+    <g id="Barcode" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="barcode" transform="translate(0, 4.0774)" fill="#000000" fill-rule="nonzero">
+            <path d="M0,0 L0,23 L1,23 L1,0 L0,0 Z M3,0 L3,23 L5,23 L5,0 L3,0 Z M6,0 L6,23 L12,23 L12,0 L6,0 Z M14,0 L14,23 L15,23 L15,0 L14,0 Z M17,0 L17,23 L19,23 L19,0 L17,0 Z M20,0 L20,23 L21,23 L21,0 L20,0 Z M23,0 L23,23 L26,23 L26,0 L23,0 Z M28,0 L28,23 L29,23 L29,0 L28,0 Z M30,0 L30,23 L31,23 L31,0 L30,0 Z" id="Shape"></path>
         </g>
     </g>
 </svg>

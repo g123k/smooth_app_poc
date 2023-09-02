@@ -4,6 +4,7 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
 import 'package:smoothapp_poc/homepage/homepage.dart';
 import 'package:smoothapp_poc/navigation.dart';
+import 'package:smoothapp_poc/resources/app_icons.dart' as icons;
 
 class CameraView extends StatefulWidget {
   const CameraView({
@@ -82,11 +83,11 @@ class _CameraViewState extends State<CameraView> {
                 ),
                 actions: [
                   IconButton(
-                    icon: const Icon(Icons.camera_rear),
+                    icon: const icons.ToggleCamera(),
                     onPressed: () {},
                   ),
                   IconButton(
-                    icon: const Icon(Icons.flash_on_outlined),
+                    icon: const icons.CameraFlash(),
                     onPressed: () {
                       showProduct('12365465');
                     },

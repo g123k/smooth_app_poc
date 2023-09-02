@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:smoothapp_poc/homepage/homepage.dart';
+import 'package:smoothapp_poc/resources/app_icons.dart' as icons;
 import 'package:smoothapp_poc/utils/num_utils.dart';
+import 'package:smoothapp_poc/utils/ui_utils.dart';
 
 class ExpandableAppBar extends StatelessWidget {
   static const double HEIGHT = Logo.MAX_HEIGHT + SearchBar.SEARCH_BAR_HEIGHT;
@@ -240,7 +242,14 @@ class _SearchBarState extends State<SearchBar> {
                         duration: const Duration(milliseconds: 1500),
                       );
                     },
-                    icon: SvgPicture.asset('assets/images/barcode.svg'),
+                    icon: LayoutBuilder(
+                      builder:
+                          (BuildContext context, BoxConstraints constraints) {
+                        return icons.Barcode(
+                          size: math.min(30.0, constraints.minSide),
+                        );
+                      },
+                    ),
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(Colors.white),
                       side: MaterialStateProperty.all(

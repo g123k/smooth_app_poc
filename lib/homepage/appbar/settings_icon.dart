@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smoothapp_poc/resources/app_icons.dart' as icons;
 import 'package:smoothapp_poc/settings/settings_page.dart';
 
 class SettingsIcon extends StatelessWidget {
@@ -35,19 +36,16 @@ class SettingsIcon extends StatelessWidget {
                   );
                 },
                 tooltip: 'Settings',
-                icon: Icon(
-                  Icons.settings,
+                icon: icons.Settings(
+                  size: 24.0,
                   color: type == SettingsIconType.floating
                       ? Colors.white
                       : Colors.black,
-                  size: 24.0,
-                  shadows: type == SettingsIconType.floating
-                      ? [
-                          Shadow(
-                            color: Colors.black.withOpacity(0.5),
-                            blurRadius: 10,
-                          ),
-                        ]
+                  shadow: type == SettingsIconType.floating
+                      ? Shadow(
+                          color: Colors.black.withOpacity(0.5),
+                          blurRadius: 10,
+                        )
                       : null,
                 ),
               ),

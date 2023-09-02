@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smoothapp_poc/homepage/homepage.dart';
+import 'package:smoothapp_poc/resources/app_icons.dart' as icons;
 
 class PeakView extends StatelessWidget {
   const PeakView({
@@ -31,16 +32,13 @@ class PeakView extends StatelessWidget {
                     color: Colors.white.withOpacity(0.5),
                   ),
                   padding: const EdgeInsets.all(25),
-                  child: const Icon(
-                    Icons.camera_alt,
+                  child: icons.Camera.outlined(
                     size: 25.0,
                     color: Colors.white,
-                    shadows: [
-                      Shadow(
-                        color: Colors.black,
-                        blurRadius: 10.0,
-                      ),
-                    ],
+                    shadow: Shadow(
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 10.0,
+                    ),
                   ),
                 ),
                 const SizedBox(

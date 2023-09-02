@@ -15,20 +15,25 @@ dependencies:
   bottom_sheet: any
   mobile_scanner: any
   visibility_detector: any
+  shadow: any
+
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_lints: ^2.0.2
+  flutter_lints: ^2.0.3
 
 flutter:
 
   uses-material-design: true
 
+# Don't use icons SVGs, but add them to them font
+# cf (assets/fonts/README.md)
   assets:
-    - assets/images/logo.svg
-    - assets/images/barcode.svg
+    - assets/images/
+
+
 
   fonts:
     - family: DroidSans
@@ -36,3 +41,7 @@ flutter:
         - asset: assets/fonts/DroidSans.ttf
         - asset: assets/fonts/DroidSans-Bold.ttf
           weight: 700
+
+    - family: SmoothIcons
+      fonts:
+        - asset: assets/fonts/SmoothIcons.ttf
