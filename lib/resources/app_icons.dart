@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smoothapp_poc/utils/widgets/useful_widgets.dart';
 
 part 'app_icons_font.dart';
 
@@ -285,15 +286,6 @@ class Expand extends AppIcon {
   }) : super._(_IconsFont.expand);
 }
 
-class CameraFlash extends AppIcon {
-  const CameraFlash({
-    super.color,
-    super.size,
-    super.shadow,
-    super.key,
-  }) : super._(_IconsFont.flash_on);
-}
-
 class Fruit extends AppIcon {
   const Fruit({
     super.color,
@@ -416,6 +408,22 @@ class Settings extends AppIcon {
   }) : super._(_IconsFont.settings);
 }
 
+class Sound extends AppIcon {
+  const Sound.on({
+    super.color,
+    super.size,
+    super.shadow,
+    super.key,
+  }) : super._(_IconsFont.sound_on);
+
+  const Sound.off({
+    super.color,
+    super.size,
+    super.shadow,
+    super.key,
+  }) : super._(_IconsFont.sound_off);
+}
+
 class Stores extends AppIcon {
   const Stores({
     super.color,
@@ -441,6 +449,22 @@ class ToggleCamera extends AppIcon {
     super.shadow,
     super.key,
   }) : super._(_IconsFont.toggle_camera);
+}
+
+class Torch extends AppIcon {
+  const Torch.on({
+    super.color,
+    super.size,
+    super.shadow,
+    super.key,
+  }) : super._(_IconsFont.torch_on);
+
+  const Torch.off({
+    super.color,
+    super.size,
+    super.shadow,
+    super.key,
+  }) : super._(_IconsFont.torch_off);
 }
 
 class Warning extends AppIcon {
@@ -470,7 +494,7 @@ abstract class AppIcon extends StatelessWidget {
   @mustCallSuper
   Widget build(BuildContext context) {
     if (size == 0.0) {
-      return const SizedBox.shrink();
+      return EMPTY_WIDGET;
     }
 
     final IconThemeData iconThemeData = IconTheme.of(context);

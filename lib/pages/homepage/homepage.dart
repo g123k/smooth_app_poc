@@ -6,8 +6,8 @@ import 'package:flutter/services.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
 import 'package:smoothapp_poc/navigation.dart';
-import 'package:smoothapp_poc/pages/homepage/camera/camera_view.dart';
-import 'package:smoothapp_poc/pages/homepage/camera/expandable_camera.dart';
+import 'package:smoothapp_poc/pages/homepage/camera/expandable_view/expandable_camera.dart';
+import 'package:smoothapp_poc/pages/homepage/camera/view/ui/camera_view.dart';
 import 'package:smoothapp_poc/pages/homepage/list/history_list.dart';
 import 'package:smoothapp_poc/pages/homepage/settings_icon.dart';
 import 'package:smoothapp_poc/pages/search_page/search_page.dart';
@@ -206,7 +206,7 @@ class HomePageState extends State<HomePage> {
   bool isCameraVisible({double? offset}) {
     if (_screenVisible && !NavApp.of(context).isSheetFullyVisible) {
       double position = (offset ?? _controller.offset);
-      return position >= 0.0 && position <= cameraHeight;
+      return position >= 0.0 && position < cameraHeight;
     }
     return false;
   }
@@ -327,7 +327,7 @@ class HomePageState extends State<HomePage> {
   }
 
   void _onScreenVisibilityChanged(bool visible) {
-    if (visible) {
+    if (visible && isCameraVisible()) {
       _cameraController.start();
     } else {
       _cameraController.stop();

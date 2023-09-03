@@ -10,8 +10,6 @@ class _IconsFont {
   static const _kFontFam = 'SmoothIcons';
   static const String? _kFontPkg = null;
 
-  static const IconData flash_on =
-      IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData add_to_list =
       IconData(0xe801, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData settings =
@@ -60,6 +58,14 @@ class _IconsFont {
       IconData(0xe81c, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData store =
       IconData(0xe81d, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData torch_off =
+      IconData(0xe825, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData sound_off =
+      IconData(0xe827, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData sound_on =
+      IconData(0xe828, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData torch_on =
+      IconData(0xe829, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData outdated =
       IconData(0xe836, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData question_circled =

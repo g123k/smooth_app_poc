@@ -89,22 +89,43 @@ class NavAppState extends State<NavApp> with TickerProviderStateMixin {
                     ),
                     Transform.translate(
                       offset: Offset(0.0, _navBarHeight - _navBarTranslation),
-                      child: BottomNavigationBar(
-                        currentIndex: 1,
-                        items: const [
-                          BottomNavigationBarItem(
-                            icon: Icon(Icons.home),
-                            label: 'Home',
+                      child: MediaQuery.removePadding(
+                        removeTop: true,
+                        removeBottom: true,
+                        context: context,
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 2.0,
+                              offset: const Offset(-2.0, -2.0),
+                            ),
+                          ]),
+                          child: SafeArea(
+                            bottom: true,
+                            child: NavigationBar(
+                              height: kBottomNavigationBarHeight +
+                                  MediaQuery.viewPaddingOf(context).bottom,
+                              selectedIndex: 1,
+                              labelBehavior:
+                                  NavigationDestinationLabelBehavior.alwaysShow,
+                              destinations: const <Widget>[
+                                NavigationDestination(
+                                  icon: Icon(Icons.account_circle),
+                                  label: 'My profile',
+                                ),
+                                NavigationDestination(
+                                  icon: Icon(Icons.camera_alt),
+                                  label: 'Scan',
+                                ),
+                                NavigationDestination(
+                                  icon: Icon(Icons.list),
+                                  label: 'My lists',
+                                ),
+                              ],
+                            ),
                           ),
-                          BottomNavigationBarItem(
-                            icon: Icon(Icons.camera_alt),
-                            label: 'Camera',
-                          ),
-                          BottomNavigationBarItem(
-                            icon: Icon(Icons.settings),
-                            label: 'Settings',
-                          ),
-                        ],
+                        ),
                       ),
                     ),
                   ],

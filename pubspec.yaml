@@ -18,6 +18,8 @@ dependencies:
   sliver_tools: any
   flutter_keyboard_visibility: any
   diacritic: any
+  openfoodfacts: any
+  circular_reveal_animation: any
 
 
 dev_dependencies:

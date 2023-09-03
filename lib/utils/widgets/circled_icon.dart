@@ -24,6 +24,9 @@ class CircledIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     return Tooltip(
       message: tooltip,
+      // 34 = Half the height (48 / 2) + 10
+      verticalOffset: 34.0,
+      preferBelow: true,
       enableFeedback: true,
       child: Material(
         type: MaterialType.transparency,

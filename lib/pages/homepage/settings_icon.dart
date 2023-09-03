@@ -26,26 +26,33 @@ class HomePageSettingsIcon extends StatelessWidget {
           opacity: type == SettingsIconType.invisible ? 0.0 : 1.0,
           duration: const Duration(milliseconds: 200),
           child: SafeArea(
-            child: CircledIcon(
-              icon: icons.Settings(
-                size: 21.0,
-                shadow: type == SettingsIconType.floating
-                    ? Shadow(
-                        color: Colors.black.withOpacity(0.2),
-                        blurRadius: 10,
-                      )
-                    : null,
-              ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const SettingsPage(),
-                  ),
-                );
-              },
-              tooltip: 'Settings',
-            ),
+            child: Builder(builder: (context) {
+              return CircledIcon(
+                icon: icons.Settings(
+                  size: 21.0,
+                  shadow: type == SettingsIconType.floating
+                      ? Shadow(
+                          color: Colors.black.withOpacity(0.2),
+                          blurRadius: 10,
+                        )
+                      : null,
+                ),
+                onPressed: () {
+                  final RenderBox renderbox =
+                      context.findRenderObject() as RenderBox;
+                  final Offset position = renderbox.localToGlobal(Offset.zero);
+
+                  Navigator.push(
+                    context,
+                    RevealRoute(
+                      pageBuilder: (_, __, ___) => const SettingsPage(),
+                      offset: position.translate(24.0, 24.0),
+                    ),
+                  );
+                },
+                tooltip: 'Settings',
+              );
+            }),
           ),
         ),
       ),

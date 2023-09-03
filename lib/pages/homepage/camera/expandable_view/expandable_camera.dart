@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:smoothapp_poc/pages/homepage/camera/camera_view.dart';
-import 'package:smoothapp_poc/pages/homepage/camera/peak_view.dart';
+import 'package:smoothapp_poc/pages/homepage/camera/peak_view/peak_view.dart';
+import 'package:smoothapp_poc/pages/homepage/camera/view/ui/camera_view.dart';
 import 'package:smoothapp_poc/pages/homepage/homepage.dart';
 import 'package:smoothapp_poc/utils/num_utils.dart';
 
