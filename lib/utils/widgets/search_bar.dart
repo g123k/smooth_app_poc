@@ -58,6 +58,7 @@ class FixedSearchAppBar extends StatelessWidget {
   const FixedSearchAppBar({
     required this.onCameraTapped,
     required this.onSearchEntered,
+    required this.onSearchChanged,
     required this.onFocusGained,
     required this.onFocusLost,
     this.actionWidget,
@@ -66,6 +67,7 @@ class FixedSearchAppBar extends StatelessWidget {
 
   final VoidCallback onCameraTapped;
   final Function(String)? onSearchEntered;
+  final Function(String)? onSearchChanged;
   final VoidCallback onFocusGained;
   final VoidCallback onFocusLost;
   final Widget? actionWidget;
@@ -78,6 +80,7 @@ class FixedSearchAppBar extends StatelessWidget {
         fixed: true,
         onCameraTapped: onCameraTapped,
         onSearchEntered: onSearchEntered,
+        onSearchChanged: onSearchChanged,
         onFocusGained: onFocusGained,
         onFocusLost: onFocusLost,
         actionWidget: actionWidget,
@@ -93,6 +96,7 @@ class _SliverSearchAppBar extends SliverPersistentHeaderDelegate {
     required this.fixed,
     required this.onCameraTapped,
     this.onSearchEntered,
+    this.onSearchChanged,
     this.onFieldTapped,
     this.onFocusGained,
     this.onFocusLost,
@@ -104,6 +108,7 @@ class _SliverSearchAppBar extends SliverPersistentHeaderDelegate {
 
   final VoidCallback onCameraTapped;
   final Function(String)? onSearchEntered;
+  final Function(String)? onSearchChanged;
   final VoidCallback? onFieldTapped;
   final VoidCallback? onFocusGained;
   final VoidCallback? onFocusLost;
@@ -164,6 +169,8 @@ class _SliverSearchAppBar extends SliverPersistentHeaderDelegate {
       onFocusGained: onFocusGained,
       onFocusLost: onFocusLost,
       actionWidget: actionWidget,
+      onSearchChanged: onSearchChanged,
+      onSearchEntered: onSearchEntered,
     );
   }
 
@@ -191,10 +198,13 @@ class _SearchAppBar extends StatelessWidget {
     required this.progress,
     required this.autofocus,
     this.actionWidget,
-  }) : onSearchEntered = null;
+    this.onSearchChanged,
+    this.onSearchEntered,
+  });
 
   final VoidCallback onCameraTapped;
   final Function(String)? onSearchEntered;
+  final Function(String)? onSearchChanged;
   final VoidCallback? onFieldTapped;
   final VoidCallback? onFocusGained;
   final VoidCallback? onFocusLost;
@@ -234,6 +244,7 @@ class _SearchAppBar extends StatelessWidget {
                 onFieldTapped: onFieldTapped,
                 onCameraTapped: onCameraTapped,
                 onSearchEntered: onSearchEntered,
+                onSearchChanged: onSearchChanged,
                 onFocusGained: onFocusGained,
                 onFocusLost: onFocusLost,
               ),
@@ -324,6 +335,7 @@ class _SearchBar extends StatefulWidget {
     required this.autofocus,
     required this.onCameraTapped,
     required this.onSearchEntered,
+    required this.onSearchChanged,
     required this.onFieldTapped,
     required this.onFocusGained,
     required this.onFocusLost,
@@ -334,6 +346,7 @@ class _SearchBar extends StatefulWidget {
   final bool autofocus;
   final VoidCallback onCameraTapped;
   final Function(String)? onSearchEntered;
+  final Function(String)? onSearchChanged;
   final VoidCallback? onFieldTapped;
   final VoidCallback? onFocusGained;
   final VoidCallback? onFocusLost;
@@ -403,6 +416,11 @@ class _SearchBarState extends State<_SearchBar> {
                 onTap: _manageOnTap ? () => widget.onFieldTapped?.call() : null,
                 focusNode: _searchFocusNode,
                 readOnly: _manageOnTap ? true : false,
+                onChanged: (String value) {
+                  widget.onSearchChanged?.call(
+                    value.trim(),
+                  );
+                },
                 onFieldSubmitted: (String value) {
                   widget.onSearchEntered?.call(
                     value.trim(),
@@ -436,6 +454,7 @@ class _SearchBarState extends State<_SearchBar> {
                       if (_hasText) {
                         _searchController.clear();
                         _searchFocusNode.requestFocus();
+                        widget.onSearchChanged?.call('');
                       } else {
                         widget.onCameraTapped.call();
                       }

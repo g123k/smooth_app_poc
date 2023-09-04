@@ -54,15 +54,21 @@ class CircledIcon extends StatelessWidget {
 }
 
 class CloseCircledIcon extends StatelessWidget {
-  const CloseCircledIcon({super.key});
+  const CloseCircledIcon({
+    this.onPressed,
+    super.key,
+  });
+
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
     return CircledIcon(
       icon: const Close(),
-      onPressed: () {
-        Navigator.of(context).maybePop();
-      },
+      onPressed: onPressed ??
+          () {
+            Navigator.of(context).maybePop();
+          },
       tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
     );
   }

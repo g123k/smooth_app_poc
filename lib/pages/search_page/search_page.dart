@@ -4,8 +4,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:provider/provider.dart';
-import 'package:smoothapp_poc/pages/search_page/search_page_empty.dart';
-import 'package:smoothapp_poc/pages/search_page/search_page_query.dart';
+import 'package:smoothapp_poc/pages/search_page/search_state_manager.dart';
+import 'package:smoothapp_poc/pages/search_page/search_suggestions_state_manager.dart';
+import 'package:smoothapp_poc/pages/search_page/ui/search_page_empty.dart';
+import 'package:smoothapp_poc/pages/search_page/ui/search_page_results.dart';
 import 'package:smoothapp_poc/utils/widgets/circled_icon.dart';
 import 'package:smoothapp_poc/utils/widgets/search_bar.dart';
 
@@ -16,24 +18,35 @@ class SearchPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: ListenableProvider.value(
-        value: TextEditingController(),
-        child: CustomScrollView(
-          slivers: [
-            FixedSearchAppBar(
-              onCameraTapped: () {
-                Navigator.of(context).pop(SearchPageResult.openCamera);
-              },
-              actionWidget: const CloseCircledIcon(),
-              onSearchEntered: (String query) {},
-              onFocusGained: () {},
-              onFocusLost: () {},
-            ),
-            const _SearchPageBody(),
-          ],
-        ),
-      ),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => SearchStateManager()),
+        ChangeNotifierProvider(create: (_) => SearchSuggestionsStateManager()),
+      ],
+      child: Builder(builder: (BuildContext context) {
+        return Scaffold(
+          body: CustomScrollView(
+            slivers: [
+              FixedSearchAppBar(
+                onCameraTapped: () {
+                  Navigator.of(context).pop(SearchPageResult.openCamera);
+                },
+                actionWidget: const CloseCircledIcon(),
+                onSearchChanged: (String query) {
+                  SearchSuggestionsStateManager.of(context)
+                      .onSearchModified(query);
+                },
+                onSearchEntered: (String query) {
+                  SearchStateManager.of(context).search(query);
+                },
+                onFocusGained: () {},
+                onFocusLost: () {},
+              ),
+              const _SearchPageBody(),
+            ],
+          ),
+        );
+      }),
     );
   }
 
@@ -80,6 +93,7 @@ class _SearchPageBody extends StatefulWidget {
 class _SearchPageBodyState extends State<_SearchPageBody> {
   StreamSubscription<bool>? _keyboardSubscription;
   bool? _lastKeyboardVisibleEvent;
+  _SearchBodyType _bodyType = _SearchBodyType.suggestions;
 
   @override
   void initState() {
@@ -104,32 +118,36 @@ class _SearchPageBodyState extends State<_SearchPageBody> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Selector<TextEditingController, String>(
-      selector: (BuildContext context, TextEditingController controller) {
-        return controller.text;
-      },
-      shouldRebuild: (String previous, String next) {
-        final int previousLength = previous.length;
-        final int nextLength = next.length;
+  void didChangeDependencies() {
+    super.didChangeDependencies();
 
-        return previousLength == 0 && nextLength > 0 ||
-            previousLength > 0 && nextLength == 0;
-      },
-      builder: (BuildContext context, String value, Widget? child) {
-        if (value.isEmpty) {
-          return SearchBodyEmpty(
-            search: value,
-            onExitSearch: () {
-              _lastKeyboardVisibleEvent = false;
-              Navigator.of(context).pop();
-            },
-          );
-        } else {
-          return const SearchBodyWithSearch();
-        }
-      },
-    );
+    context.read<SearchStateManager>().addListener(_onSearchChanged);
+    context
+        .read<SearchSuggestionsStateManager>()
+        .addListener(_onSuggestionsChanged);
+  }
+
+  void _onSearchChanged() {
+    setState(() => _bodyType = _SearchBodyType.search);
+  }
+
+  void _onSuggestionsChanged() {
+    setState(() => _bodyType = _SearchBodyType.suggestions);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    switch (_bodyType) {
+      case _SearchBodyType.suggestions:
+        return SearchBodySuggestions(
+          onExitSearch: () {
+            _lastKeyboardVisibleEvent = false;
+            Navigator.of(context).pop();
+          },
+        );
+      case _SearchBodyType.search:
+        return const SearchBodyResults();
+    }
   }
 
   @override
@@ -139,16 +157,7 @@ class _SearchPageBodyState extends State<_SearchPageBody> {
   }
 }
 
-// TODO
-final List<String> FAKE_HISTORY_DATA = [];
-const List<String> FAKE_SUGGESTIONS_DATA = [
-  'Nutella',
-  'Christaline',
-  'Pâtes à la bolognaise',
-];
-
-addToHistory(String search) {
-  if (!FAKE_HISTORY_DATA.contains(search.trim())) {
-    FAKE_HISTORY_DATA.add(search.trim());
-  }
+enum _SearchBodyType {
+  suggestions,
+  search,
 }
