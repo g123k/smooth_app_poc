@@ -13,10 +13,10 @@ class SearchStateManager extends ValueNotifier<SearchState> {
     _cancelableSearch = CancelableOperation.fromFuture(
       _search(search),
     );
-    value = SearchLoadingSearchState(search);
   }
 
   Future<void> _search(String search) async {
+    value = SearchLoadingSearchState(search);
     addToHistory(search);
 
     try {
@@ -41,14 +41,21 @@ class SearchStateManager extends ValueNotifier<SearchState> {
     _cancelableSearch = null;
   }
 
+  bool get hasASearch => value is! SearchInitialState;
+
   void cancelSearch() {
     _cancelableSearch?.cancel();
     _cancelableSearch = null;
   }
 
+  void forceReEmitEvent() {
+    notifyListeners();
+  }
+
   @override
   set value(SearchState newValue) {
-    if (_cancelableSearch != null || _cancelableSearch?.isCompleted == false) {
+    if (hasListeners &&
+        (_cancelableSearch == null || _cancelableSearch?.isCanceled == false)) {
       super.value = newValue;
     }
   }

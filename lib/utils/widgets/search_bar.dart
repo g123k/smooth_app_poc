@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:math' as math;
 
@@ -377,13 +378,27 @@ class _SearchBarState extends State<_SearchBar> {
   }
 
   TextEditingController _searchController = TextEditingController();
+  StreamSubscription<bool>? _keyboardEvents;
 
   @override
-  void didUpdateWidget(_SearchBar oldWidget) {
-    super.didUpdateWidget(oldWidget);
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     try {
-      _searchController = context.read<TextEditingController>();
+      SearchBarController controller = SearchBarController.of(context);
+      _searchController = controller.controller;
+      _keyboardEvents?.cancel();
+      _keyboardEvents =
+          controller.listenToKeyboardChanges(_updateKeyboardVisibility);
     } catch (_) {}
+  }
+
+  void _updateKeyboardVisibility(bool visible) {
+    if (visible) {
+      _searchFocusNode.requestFocus();
+    } else {
+      _buttonFocusNode.requestFocus();
+      _searchFocusNode.unfocus();
+    }
   }
 
   @override
@@ -499,8 +514,45 @@ class _SearchBarState extends State<_SearchBar> {
 
   @override
   void dispose() {
+    _keyboardEvents?.cancel();
     _searchFocusNode.dispose();
     _buttonFocusNode.dispose();
     super.dispose();
+  }
+}
+
+class SearchBarController extends InheritedWidget {
+  SearchBarController({
+    super.key,
+    required this.controller,
+    required super.child,
+  }) : _keyboardController = StreamController();
+
+  final TextEditingController controller;
+  final StreamController<bool> _keyboardController;
+
+  StreamSubscription<bool> listenToKeyboardChanges(
+      void Function(bool) onEvent) {
+    return _keyboardController.stream.listen(onEvent);
+  }
+
+  void showKeyboard() {
+    _keyboardController.add(true);
+  }
+
+  void hideKeyboard() {
+    _keyboardController.add(false);
+  }
+
+  static SearchBarController of(BuildContext context) {
+    final SearchBarController? result =
+        context.dependOnInheritedWidgetOfExactType<SearchBarController>();
+    assert(result != null, 'No SearchBarController found in context');
+    return result!;
+  }
+
+  @override
+  bool updateShouldNotify(SearchBarController oldWidget) {
+    return oldWidget.controller != controller;
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smoothapp_poc/navigation.dart';
+import 'package:smoothapp_poc/resources/app_colors.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,8 +17,13 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: 'DroidSans',
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xffffc589)),
+        colorScheme: ColorScheme.fromSeed(seedColor: AppColors.orangeLight),
         useMaterial3: true,
+        dividerColor: AppColors.grey,
+        dividerTheme: const DividerThemeData(
+          space: 1.0,
+          color: AppColors.grey,
+        ),
       ),
       home: const NavApp(),
     );

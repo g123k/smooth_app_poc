@@ -4,6 +4,7 @@ import 'package:sliver_tools/sliver_tools.dart';
 import 'package:smoothapp_poc/pages/search_page/search_state_manager.dart';
 import 'package:smoothapp_poc/pages/search_page/search_suggestions_state_manager.dart';
 import 'package:smoothapp_poc/pages/search_page/ui/search_page_utils.dart';
+import 'package:smoothapp_poc/utils/widgets/search_bar.dart';
 
 class SearchBodySuggestions extends StatelessWidget {
   const SearchBodySuggestions({
@@ -58,6 +59,7 @@ class SearchBodySuggestions extends StatelessWidget {
                       value: search!,
                       onTap: () {
                         SearchStateManager.of(context).search(search);
+                        SearchBarController.of(context).hideKeyboard();
                       },
                     );
                   } else if (index == count - 1) {

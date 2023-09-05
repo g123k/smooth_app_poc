@@ -17,48 +17,63 @@ class SearchPage extends StatelessWidget {
     super.key,
   });
 
-  final TextEditingController _controller = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+  final TextEditingController _searchBarController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ListenableProvider(create: (_) => _controller),
         ChangeNotifierProvider(create: (_) => SearchStateManager()),
         ChangeNotifierProvider(create: (_) => SearchSuggestionsStateManager()),
       ],
-      child: ValueListener<SearchStateManager, SearchState>(
-        onValueChanged: (SearchState searchState) {
-          final String? search = searchState.search;
-          if (_controller.text != search && search != null) {
-            _controller.text = search;
-          }
-        },
-        child: Builder(builder: (BuildContext context) {
-          return Scaffold(
-            body: CustomScrollView(
-              slivers: [
-                FixedSearchAppBar(
-                  onCameraTapped: () {
-                    Navigator.of(context).pop(SearchPageResult.openCamera);
-                  },
-                  actionWidget: const CloseCircledIcon(),
-                  onSearchChanged: (String query) {
-                    SearchStateManager.of(context).cancelSearch();
-                    SearchSuggestionsStateManager.of(context)
-                        .onSearchModified(query);
-                  },
-                  onSearchEntered: (String query) {
-                    SearchStateManager.of(context).search(query);
-                  },
-                  onFocusGained: () {},
-                  onFocusLost: () {},
+      child: PrimaryScrollController(
+        controller: _scrollController,
+        child: SearchBarController(
+          controller: _searchBarController,
+          child: Builder(builder: (context) {
+            return ValueListener<SearchStateManager, SearchState>(
+              onValueChanged: (SearchState searchState) {
+                // When we click on a suggestion, prefill the search bar +
+                // hide the keyboard
+                final String? search = searchState.search;
+                if (_searchBarController.text != search && search != null) {
+                  _searchBarController.text = search;
+                  _searchBarController.selection = TextSelection.fromPosition(
+                    TextPosition(offset: search.length),
+                  );
+
+                  SearchBarController.of(context).hideKeyboard();
+                }
+              },
+              child: Scaffold(
+                body: CustomScrollView(
+                  controller: _scrollController,
+                  slivers: [
+                    FixedSearchAppBar(
+                      onCameraTapped: () {
+                        Navigator.of(context).pop(SearchPageResult.openCamera);
+                      },
+                      actionWidget: const CloseCircledIcon(),
+                      onSearchChanged: (String query) {
+                        SearchStateManager.of(context).cancelSearch();
+                        SearchSuggestionsStateManager.of(context)
+                            .onSearchModified(query);
+                      },
+                      onSearchEntered: (String query) {
+                        SearchStateManager.of(context).search(query);
+                        SearchBarController.of(context).hideKeyboard();
+                      },
+                      onFocusGained: () {},
+                      onFocusLost: () {},
+                    ),
+                    const _SearchPageBody(),
+                  ],
                 ),
-                const _SearchPageBody(),
-              ],
-            ),
-          );
-        }),
+              ),
+            );
+          }),
+        ),
       ),
     );
   }
@@ -108,6 +123,10 @@ class _SearchPageBodyState extends State<_SearchPageBody> {
   bool? _lastKeyboardVisibleEvent;
   _SearchBodyType _bodyType = _SearchBodyType.suggestions;
 
+  // To save the last search position, we need to have two variables:
+  int? _previousSearchScrollState;
+  double? _previousSearchScrollPosition;
+
   @override
   void initState() {
     super.initState();
@@ -121,6 +140,14 @@ class _SearchPageBodyState extends State<_SearchPageBody> {
           // Prevent a double pop when during the fade transition
           _TransitionState state = context.read<_TransitionState>();
           if (state == _TransitionState.idle) {
+            if (_bodyType == _SearchBodyType.search) {
+              // Ignore the event when the search is visible
+              return;
+            } else if (_bodyType == _SearchBodyType.suggestions &&
+                SearchStateManager.of(context).hasASearch) {
+              return;
+            }
+
             Navigator.of(context).pop();
           }
         }
@@ -146,12 +173,27 @@ class _SearchPageBodyState extends State<_SearchPageBody> {
     if (search == null) {
       _onSuggestionsChanged();
     } else if (_bodyType != _SearchBodyType.search) {
+      /// When we reopen the search, if it was previously here
+      /// AND with the same state, we restore the scroll position
+      if (_previousSearchScrollPosition != null &&
+          context.read<SearchStateManager>().value.hashCode ==
+              _previousSearchScrollState) {
+        PrimaryScrollController.of(context)
+            .jumpTo(_previousSearchScrollPosition!);
+      }
       setState(() => _bodyType = _SearchBodyType.search);
     }
   }
 
   void _onSuggestionsChanged() {
     if (_bodyType != _SearchBodyType.suggestions) {
+      /// When we switch between suggestions and search, ensure to save
+      /// the search scroll position.
+      _previousSearchScrollState =
+          context.read<SearchStateManager>().value.hashCode;
+      _previousSearchScrollPosition =
+          PrimaryScrollController.of(context).offset;
+
       setState(() => _bodyType = _SearchBodyType.suggestions);
     }
   }
@@ -163,7 +205,15 @@ class _SearchPageBodyState extends State<_SearchPageBody> {
         return SearchBodySuggestions(
           onExitSearch: () {
             _lastKeyboardVisibleEvent = false;
-            Navigator.of(context).pop();
+
+            // When we click on the empty space below the suggestions…
+            if (SearchStateManager.of(context).hasASearch) {
+              // Go back to the search results
+              SearchStateManager.of(context).forceReEmitEvent();
+            } else {
+              // Close the screen
+              Navigator.of(context).pop();
+            }
           },
         );
       case _SearchBodyType.search:
