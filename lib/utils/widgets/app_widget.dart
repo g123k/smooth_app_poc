@@ -199,7 +199,7 @@ class FadeDismissible extends StatefulWidget {
 }
 
 class _FadeDismissibleState extends State<FadeDismissible> {
-  double _progress = 1.0;
+  double _progress = 0.0;
 
   @override
   Widget build(BuildContext context) {
