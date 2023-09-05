@@ -9,7 +9,7 @@ class SearchSuggestionsStateManager
     onSearchModified(null);
   }
 
-  Future<void> onSearchModified(String? search) async {
+  Future<void> onSearchModified(String? search, {bool force = false}) async {
     if (search?.isEmpty ?? true) {
       if (fakeSearchHistory.isEmpty) {
         value = SearchSuggestionsWithResultsState._(

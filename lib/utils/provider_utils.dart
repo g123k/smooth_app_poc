@@ -1,26 +1,44 @@
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
-class ValueListener<T> extends StatelessWidget {
+class ValueListener<Y extends ValueNotifier<X>, X> extends StatefulWidget {
   const ValueListener({
     required this.onValueChanged,
     required this.child,
     super.key,
   });
 
-  final void Function(T) onValueChanged;
+  final void Function(X) onValueChanged;
   final Widget child;
 
   @override
+  State<ValueListener<Y, X>> createState() => _ValueListenerState<X, Y>();
+}
+
+class _ValueListenerState<X, Y extends ValueNotifier<X>>
+    extends State<ValueListener<Y, X>> {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    context.read<Y>()
+      ..removeListener(_onValueChanged)
+      ..addListener(_onValueChanged);
+  }
+
+  void _onValueChanged() {
+    widget.onValueChanged(context.read<Y>().value);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Selector<T, T>(
-      shouldRebuild: (T oldValue, T newValue) {
-        onValueChanged(newValue);
-        return false;
-      },
-      builder: (_, __, child) => child!,
-      selector: (_, T value) => value,
-      child: child,
-    );
+    return widget.child;
+  }
+}
+
+extension ChangeNotifierExtension on ChangeNotifier {
+  void replaceListener(VoidCallback listener) {
+    removeListener(listener);
+    addListener(listener);
   }
 }

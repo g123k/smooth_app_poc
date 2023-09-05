@@ -8,45 +8,58 @@ import 'package:smoothapp_poc/pages/search_page/search_state_manager.dart';
 import 'package:smoothapp_poc/pages/search_page/search_suggestions_state_manager.dart';
 import 'package:smoothapp_poc/pages/search_page/ui/search_page_empty.dart';
 import 'package:smoothapp_poc/pages/search_page/ui/search_page_results.dart';
+import 'package:smoothapp_poc/utils/provider_utils.dart';
 import 'package:smoothapp_poc/utils/widgets/circled_icon.dart';
 import 'package:smoothapp_poc/utils/widgets/search_bar.dart';
 
 class SearchPage extends StatelessWidget {
-  const SearchPage({
+  SearchPage({
     super.key,
   });
+
+  final TextEditingController _controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ListenableProvider(create: (_) => _controller),
         ChangeNotifierProvider(create: (_) => SearchStateManager()),
         ChangeNotifierProvider(create: (_) => SearchSuggestionsStateManager()),
       ],
-      child: Builder(builder: (BuildContext context) {
-        return Scaffold(
-          body: CustomScrollView(
-            slivers: [
-              FixedSearchAppBar(
-                onCameraTapped: () {
-                  Navigator.of(context).pop(SearchPageResult.openCamera);
-                },
-                actionWidget: const CloseCircledIcon(),
-                onSearchChanged: (String query) {
-                  SearchSuggestionsStateManager.of(context)
-                      .onSearchModified(query);
-                },
-                onSearchEntered: (String query) {
-                  SearchStateManager.of(context).search(query);
-                },
-                onFocusGained: () {},
-                onFocusLost: () {},
-              ),
-              const _SearchPageBody(),
-            ],
-          ),
-        );
-      }),
+      child: ValueListener<SearchStateManager, SearchState>(
+        onValueChanged: (SearchState searchState) {
+          final String? search = searchState.search;
+          if (_controller.text != search && search != null) {
+            _controller.text = search;
+          }
+        },
+        child: Builder(builder: (BuildContext context) {
+          return Scaffold(
+            body: CustomScrollView(
+              slivers: [
+                FixedSearchAppBar(
+                  onCameraTapped: () {
+                    Navigator.of(context).pop(SearchPageResult.openCamera);
+                  },
+                  actionWidget: const CloseCircledIcon(),
+                  onSearchChanged: (String query) {
+                    SearchStateManager.of(context).cancelSearch();
+                    SearchSuggestionsStateManager.of(context)
+                        .onSearchModified(query);
+                  },
+                  onSearchEntered: (String query) {
+                    SearchStateManager.of(context).search(query);
+                  },
+                  onFocusGained: () {},
+                  onFocusLost: () {},
+                ),
+                const _SearchPageBody(),
+              ],
+            ),
+          );
+        }),
+      ),
     );
   }
 
@@ -54,7 +67,7 @@ class SearchPage extends StatelessWidget {
     return Navigator.push<SearchPageResult?>(
       context,
       PageRouteBuilder<SearchPageResult>(
-        pageBuilder: (context, animation1, animation2) => const SearchPage(),
+        pageBuilder: (context, animation1, animation2) => SearchPage(),
         transitionDuration: const Duration(milliseconds: 250),
         reverseTransitionDuration: const Duration(milliseconds: 100),
         transitionsBuilder: (_, Animation<double> animation, __, Widget child) {
@@ -121,18 +134,26 @@ class _SearchPageBodyState extends State<_SearchPageBody> {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    context.read<SearchStateManager>().addListener(_onSearchChanged);
+    context.read<SearchStateManager>().replaceListener(_onSearchChanged);
     context
         .read<SearchSuggestionsStateManager>()
-        .addListener(_onSuggestionsChanged);
+        .replaceListener(_onSuggestionsChanged);
   }
 
   void _onSearchChanged() {
-    setState(() => _bodyType = _SearchBodyType.search);
+    String? search = context.read<SearchStateManager>().value.search;
+
+    if (search == null) {
+      _onSuggestionsChanged();
+    } else if (_bodyType != _SearchBodyType.search) {
+      setState(() => _bodyType = _SearchBodyType.search);
+    }
   }
 
   void _onSuggestionsChanged() {
-    setState(() => _bodyType = _SearchBodyType.suggestions);
+    if (_bodyType != _SearchBodyType.suggestions) {
+      setState(() => _bodyType = _SearchBodyType.suggestions);
+    }
   }
 
   @override

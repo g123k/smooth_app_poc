@@ -3,7 +3,7 @@
 final List<String> fakeSearchHistory = [];
 const List<String> fakeSearchSuggestions = [
   'Nutella',
-  'Christaline',
+  'Cristaline',
   'Pâtes à la bolognaise',
 ];
 

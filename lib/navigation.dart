@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:smoothapp_poc/pages/homepage/homepage.dart';
+import 'package:smoothapp_poc/utils/ui_utils.dart';
 
 class NavApp extends StatefulWidget {
   const NavApp({super.key});
@@ -53,7 +54,7 @@ class NavAppState extends State<NavApp> with TickerProviderStateMixin {
 
     _sheetVisibility = SheetVisibilityNotifier(_SheetVisibility.gone);
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    onNextFrame(() {
       _navBarHeight = _navBarTranslation = kBottomNavigationBarHeight +
           MediaQuery.of(context).viewPadding.bottom;
     });

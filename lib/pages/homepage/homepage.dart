@@ -11,6 +11,7 @@ import 'package:smoothapp_poc/pages/homepage/camera/view/ui/camera_view.dart';
 import 'package:smoothapp_poc/pages/homepage/list/history_list.dart';
 import 'package:smoothapp_poc/pages/homepage/settings_icon.dart';
 import 'package:smoothapp_poc/pages/search_page/search_page.dart';
+import 'package:smoothapp_poc/utils/ui_utils.dart';
 import 'package:smoothapp_poc/utils/widgets/search_bar.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -84,7 +85,7 @@ class HomePageState extends State<HomePage> {
   }
 
   void _setInitialScroll() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    onNextFrame(() {
       final double offset = _initialOffset;
 
       if (offset == 0) {

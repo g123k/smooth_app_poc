@@ -1,21 +1,23 @@
+import 'package:async/async.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
 import 'package:provider/provider.dart';
+import 'package:smoothapp_poc/pages/search_page/data/search_page_data_source.dart';
 
 class SearchStateManager extends ValueNotifier<SearchState> {
   SearchStateManager() : super(const SearchInitialState());
 
-  // TODO
-  final List<String> _fakeHistory = [];
-  static const List<String> _fakeSuggestions = [
-    'Nutella',
-    'Christaline',
-    'Pâtes à la bolognaise',
-  ];
+  CancelableOperation? _cancelableSearch;
 
   Future<void> search(String search) async {
+    _cancelableSearch = CancelableOperation.fromFuture(
+      _search(search),
+    );
     value = SearchLoadingSearchState(search);
-    _addToHistory(search);
+  }
+
+  Future<void> _search(String search) async {
+    addToHistory(search);
 
     try {
       final SearchResult results = await OpenFoodAPIClient.searchProducts(
@@ -28,19 +30,33 @@ class SearchStateManager extends ValueNotifier<SearchState> {
       );
 
       if (results.products?.isEmpty ?? true) {
-        value = const SearchNoResultState();
+        value = SearchNoResultState(search);
       } else {
-        value = SearchResultsState(results.products!);
+        value = SearchResultsState(search, results.products!);
       }
     } catch (_) {
       value = SearchErrorState(search);
     }
+
+    _cancelableSearch = null;
   }
 
-  void _addToHistory(String search) {
-    if (!_fakeHistory.contains(search.trim())) {
-      _fakeHistory.add(search.trim());
+  void cancelSearch() {
+    _cancelableSearch?.cancel();
+    _cancelableSearch = null;
+  }
+
+  @override
+  set value(SearchState newValue) {
+    if (_cancelableSearch != null || _cancelableSearch?.isCompleted == false) {
+      super.value = newValue;
     }
+  }
+
+  @override
+  void dispose() {
+    cancelSearch();
+    super.dispose();
   }
 
   static SearchStateManager of(BuildContext context) {
@@ -49,32 +65,31 @@ class SearchStateManager extends ValueNotifier<SearchState> {
 }
 
 sealed class SearchState {
-  const SearchState._();
+  final String? search;
+
+  const SearchState._(this.search);
 }
 
 class SearchInitialState extends SearchState {
-  const SearchInitialState() : super._();
+  const SearchInitialState() : super._(null);
 }
 
 class SearchLoadingSearchState extends SearchState {
-  final String search;
-
-  const SearchLoadingSearchState(this.search) : super._();
+  const SearchLoadingSearchState(String search) : super._(search);
 }
 
 class SearchErrorState extends SearchState {
-  final String search;
   final Exception? exception;
 
-  const SearchErrorState(this.search, [this.exception]) : super._();
+  const SearchErrorState(String search, [this.exception]) : super._(search);
 }
 
 class SearchResultsState extends SearchState {
   final List<Product> products;
 
-  const SearchResultsState(this.products) : super._();
+  const SearchResultsState(String search, this.products) : super._(search);
 }
 
 class SearchNoResultState extends SearchState {
-  const SearchNoResultState() : super._();
+  const SearchNoResultState(String search) : super._(search);
 }

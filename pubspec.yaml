@@ -11,15 +11,19 @@ dependencies:
     sdk: flutter
 
   provider: any
+  async: any
+  diacritic: any
+  openfoodfacts: any
+
   flutter_svg: any
   bottom_sheet: any
-  mobile_scanner: any
+
   visibility_detector: any
   sliver_tools: any
   flutter_keyboard_visibility: any
-  diacritic: any
-  openfoodfacts: any
   circular_reveal_animation: any
+
+  mobile_scanner: any
 
 
 dev_dependencies:

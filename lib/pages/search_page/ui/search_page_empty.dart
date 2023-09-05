@@ -57,7 +57,7 @@ class SearchBodySuggestions extends StatelessWidget {
                     return SearchQueryItem.search(
                       value: search!,
                       onTap: () {
-                        SearchStateManager.of(context).search(search!);
+                        SearchStateManager.of(context).search(search);
                       },
                     );
                   } else if (index == count - 1) {
@@ -77,7 +77,7 @@ class SearchBodySuggestions extends StatelessWidget {
                 return switch (suggestion.type) {
                   SearchSuggestionType.history => SearchQueryItem.history(
                       value: suggestion.term,
-                      search: search!,
+                      search: search,
                       onTap: () {
                         SearchStateManager.of(context).search(suggestion.term);
                       },
