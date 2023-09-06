@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
 import 'package:provider/provider.dart';
+import 'package:smoothapp_poc/pages/homepage/homepage.dart';
 import 'package:smoothapp_poc/pages/search_page/search_state_manager.dart';
 import 'package:smoothapp_poc/resources/app_colors.dart';
+import 'package:smoothapp_poc/resources/app_icons.dart' as icons;
 import 'package:smoothapp_poc/utils/widgets/app_widget.dart';
+import 'package:smoothapp_poc/utils/widgets/search_bar.dart';
+import 'package:smoothapp_poc/utils/widgets/useful_widgets.dart';
 
 class SearchBodyResults extends StatefulWidget {
   const SearchBodyResults({super.key});
@@ -67,146 +71,130 @@ class _SearchBodyWithResultsState extends State<_SearchBodyWithResults> {
     return SliverList.separated(
       itemBuilder: (BuildContext context, int position) {
         final Product product = widget.products[position];
-        final bool hasBanner = _showHelpBanner && position == 0;
 
-        return Column(
-          children: <Widget>[
-            InkWell(
-              onTap: () {
-                // TODO Open product page
-              },
-              child: Padding(
-                padding: EdgeInsetsDirectional.only(
-                  start: 26.0,
-                  end: 26.0,
-                  top: 17.0,
-                  bottom: hasBanner ? 13.0 : 17.0,
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      constraints: BoxConstraints(
-                        maxWidth: MediaQuery.of(context).size.width * 0.26,
-                        maxHeight: MediaQuery.of(context).size.width * 0.26,
-                      ),
-                      child: AspectRatio(
-                        aspectRatio: 1.0,
-                        child: Stack(
-                          children: [
-                            Positioned.fill(
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(10.0),
-                                child: ColoredBox(
-                                  color: AppColors.greyLight2,
-                                  child: Image.network(
-                                    product.imageFrontUrl ?? '',
-                                    width: MediaQuery.of(context).size.width *
-                                        0.26,
-                                    errorBuilder: (_, __, ___) =>
-                                        const ImagePlaceholder(),
-                                    loadingBuilder: (
-                                      BuildContext context,
-                                      Widget child,
-                                      ImageChunkEvent? loadingProgress,
-                                    ) =>
-                                        loadingProgress == null ||
-                                                loadingProgress
-                                                        .cumulativeBytesLoaded ==
-                                                    loadingProgress
-                                                        .expectedTotalBytes
-                                            ? child
-                                            : const ImagePlaceholder(),
-                                  ),
+        return InkWell(
+          onTap: () {
+            // TODO Open product page
+          },
+          child: Padding(
+            padding: const EdgeInsetsDirectional.symmetric(
+              horizontal: 26.0,
+              vertical: 17.0,
+            ),
+            child: IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.26,
+                    height: double.infinity,
+                    child: Column(
+                      children: [
+                        const SizedBox(
+                          height: 36.0,
+                          child: CompatibilityScore(
+                            level: 100,
+                          ),
+                        ),
+                        ConstrainedBox(
+                          constraints: const BoxConstraints(
+                            maxHeight: 110.0,
+                          ),
+                          child: AspectRatio(
+                            aspectRatio: 1.0,
+                            child: ClipRRect(
+                              borderRadius: const BorderRadius.vertical(
+                                bottom: Radius.circular(10.0),
+                              ),
+                              child: ColoredBox(
+                                color: AppColors.greyLight2,
+                                child: Image.network(
+                                  product.imageFrontUrl ?? '',
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.26,
+                                  errorBuilder: (_, __, ___) =>
+                                      const ImagePlaceholder(),
+                                  loadingBuilder: (
+                                    BuildContext context,
+                                    Widget child,
+                                    ImageChunkEvent? loadingProgress,
+                                  ) =>
+                                      loadingProgress == null ||
+                                              loadingProgress
+                                                      .cumulativeBytesLoaded ==
+                                                  loadingProgress
+                                                      .expectedTotalBytes
+                                          ? child
+                                          : const ImagePlaceholder(),
                                 ),
                               ),
                             ),
-                            Positioned.directional(
-                              bottom: 5.0,
-                              end: 5.0,
-                              textDirection: Directionality.of(context),
-                              child: const CompatibilityScore(
-                                level: CompatibilityScoreLevel.high,
-                              ),
-                            )
-                          ],
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                    const SizedBox(
-                      width: 10.0,
-                    ),
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            product.productName ?? '',
-                            style: const TextStyle(
-                              fontSize: 18.0,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            product.brands ?? '',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 16.5,
-                            ),
-                          ),
-                          Text(
-                            product.quantity ?? '',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 16.5,
-                            ),
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              SvgPicture.asset(
-                                'assets/images/nutriscore-a.svg',
-                                height: 39.0,
+                  ),
+                  const SizedBox(
+                    width: 10.0,
+                  ),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ConstrainedBox(
+                          constraints: const BoxConstraints(minHeight: 36.0),
+                          child: Align(
+                            alignment: AlignmentDirectional.centerStart,
+                            child: Text(
+                              product.productName ?? '',
+                              style: const TextStyle(
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.bold,
                               ),
-                              const SizedBox(width: 18.0),
-                              SvgPicture.asset(
-                                'assets/images/ecoscore-a.svg',
-                                height: 34.0,
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 6.0),
+                        Text(
+                          product.brands ?? '',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 16.5,
+                          ),
+                        ),
+                        Text(
+                          product.quantity ?? '',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 16.5,
+                          ),
+                        ),
+                        const SizedBox(height: 6.0),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            SvgPicture.asset(
+                              'assets/images/nutriscore-a.svg',
+                              height: 39.0,
+                            ),
+                            const SizedBox(width: 18.0),
+                            SvgPicture.asset(
+                              'assets/images/ecoscore-a.svg',
+                              height: 34.0,
+                            ),
+                          ],
+                        )
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-            if (hasBanner)
-              Padding(
-                padding: const EdgeInsetsDirectional.only(
-                  start: 26.0,
-                  end: 26.0,
-                  bottom: 12.0,
-                ),
-                child: InfoWidget(
-                  text:
-                      'La pastille de couleur sur la photo indique le degré de compatibilité avec vos préférences alimentaires (sur une échelle de vert à rouge)',
-                  onClose: () {
-                    setState(() => _showHelpBanner = false);
-                  },
-                  dismissible: true,
-                  actionText: 'Modifier mes préférences',
-                  actionCallback: () {
-                    // TODO Open the food preferences
-                  },
-                ),
-              ),
-          ],
+          ),
         );
       },
       itemCount: widget.products.length,
@@ -222,37 +210,32 @@ class CompatibilityScore extends StatelessWidget {
     super.key,
   });
 
-  final CompatibilityScoreLevel level;
+  final int level;
   final double size;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox.square(
-      dimension: size,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-            color: switch (level) {
-              CompatibilityScoreLevel.high => AppColors.compatibilityHigh,
-              CompatibilityScoreLevel.medium => AppColors.compatibilityMedium,
-              CompatibilityScoreLevel.low => AppColors.compatibilityLow,
-            },
-            shape: BoxShape.circle,
-            boxShadow: <BoxShadow>[
-              BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                offset: const Offset(0.0, 2.0),
-                blurRadius: 4.0,
-              )
-            ]),
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: switch (level) {
+          >= 0 && < 33 => AppColors.compatibilityHigh,
+          >= 33 && < 6 => AppColors.compatibilityMedium,
+          _ => AppColors.compatibilityLow,
+        },
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(10.0)),
+      ),
+      padding: const EdgeInsets.all(8.0),
+      child: Text(
+        '$level %',
+        textAlign: TextAlign.center,
+        style: const TextStyle(
+          color: AppColors.white,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }
-}
-
-enum CompatibilityScoreLevel {
-  high,
-  medium,
-  low,
 }
 
 class _SearchBodyLoadingResults extends StatelessWidget {
@@ -342,4 +325,61 @@ class _SearchBodyNoResult extends StatelessWidget {
       ),
     );
   }
+}
+
+class SearchFooterResults extends StatelessWidget
+    implements SearchBarFooterWidget {
+  const SearchFooterResults({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    context.watch<SearchStateManager>().value;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 20.0,
+      ),
+      child: switch (context.watch<SearchStateManager>().value) {
+        SearchResultsState(products: final List<Product> products) => Row(
+            children: [
+              const icons.Info(
+                size: 24.0,
+                color: AppColors.blackSecondary,
+              ),
+              const SizedBox(width: 18.0),
+              Expanded(
+                child: RichText(
+                  text: TextSpan(
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: products.length.toString(),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                      const TextSpan(text: ' produits trouvés (en France)\n'),
+                      const TextSpan(
+                        text: 'Résultats mis en cache depuis : 2 semaines',
+                        style: TextStyle(fontStyle: FontStyle.italic),
+                      )
+                    ],
+                    style: DefaultTextStyle.of(context).style.copyWith(
+                          color: AppColors.blackSecondary,
+                        ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        _ => EMPTY_WIDGET
+      },
+    );
+  }
+
+  @override
+  double get height => 50.0 + (HomePage.BORDER_RADIUS / 2);
+
+  @override
+  Color get color => AppColors.orangeVeryLight;
 }

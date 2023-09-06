@@ -47,27 +47,12 @@ class SearchPage extends StatelessWidget {
                 }
               },
               child: Scaffold(
+                extendBodyBehindAppBar: true,
                 body: CustomScrollView(
                   controller: _scrollController,
-                  slivers: [
-                    FixedSearchAppBar(
-                      onCameraTapped: () {
-                        Navigator.of(context).pop(SearchPageResult.openCamera);
-                      },
-                      actionWidget: const CloseCircledIcon(),
-                      onSearchChanged: (String query) {
-                        SearchStateManager.of(context).cancelSearch();
-                        SearchSuggestionsStateManager.of(context)
-                            .onSearchModified(query);
-                      },
-                      onSearchEntered: (String query) {
-                        SearchStateManager.of(context).search(query);
-                        SearchBarController.of(context).hideKeyboard();
-                      },
-                      onFocusGained: () {},
-                      onFocusLost: () {},
-                    ),
-                    const _SearchPageBody(),
+                  slivers: const [
+                    _SearchAppBar(),
+                    _SearchPageBody(),
                   ],
                 ),
               ),
@@ -98,6 +83,46 @@ class SearchPage extends StatelessWidget {
           );
         },
       ),
+    );
+  }
+}
+
+class _SearchAppBar extends StatelessWidget {
+  const _SearchAppBar();
+
+  @override
+  Widget build(BuildContext context) {
+    return Selector2<SearchStateManager, SearchBarController,
+        SearchBarFooterWidget?>(
+      selector: (_, SearchStateManager searchStateManager,
+          SearchBarController controller) {
+        if (searchStateManager.hasResults &&
+            controller.controller.text ==
+                (searchStateManager.value as SearchResultsState).search) {
+          return const SearchFooterResults();
+        } else {
+          return null;
+        }
+      },
+      builder: (BuildContext context, SearchBarFooterWidget? footer, _) {
+        return FixedSearchAppBar(
+          onCameraTapped: () {
+            Navigator.of(context).pop(SearchPageResult.openCamera);
+          },
+          actionWidget: const CloseCircledIcon(),
+          onSearchChanged: (String query) {
+            SearchStateManager.of(context).cancelSearch();
+            SearchSuggestionsStateManager.of(context).onSearchModified(query);
+          },
+          onSearchEntered: (String query) {
+            SearchStateManager.of(context).search(query);
+            SearchBarController.of(context).hideKeyboard();
+          },
+          onFocusGained: () {},
+          onFocusLost: () {},
+          footer: footer,
+        );
+      },
     );
   }
 }

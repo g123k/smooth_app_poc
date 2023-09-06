@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:smoothapp_poc/pages/homepage/homepage.dart';
+import 'package:smoothapp_poc/resources/app_colors.dart';
 import 'package:smoothapp_poc/resources/app_icons.dart' as icons;
 import 'package:smoothapp_poc/utils/num_utils.dart';
 import 'package:smoothapp_poc/utils/ui_utils.dart';
@@ -63,6 +64,7 @@ class FixedSearchAppBar extends StatelessWidget {
     required this.onFocusGained,
     required this.onFocusLost,
     this.actionWidget,
+    this.footer,
     Key? key,
   }) : super(key: key);
 
@@ -72,6 +74,7 @@ class FixedSearchAppBar extends StatelessWidget {
   final VoidCallback onFocusGained;
   final VoidCallback onFocusLost;
   final Widget? actionWidget;
+  final SearchBarFooterWidget? footer;
 
   @override
   Widget build(BuildContext context) {
@@ -85,6 +88,7 @@ class FixedSearchAppBar extends StatelessWidget {
         onFocusGained: onFocusGained,
         onFocusLost: onFocusLost,
         actionWidget: actionWidget,
+        footer: footer,
       ),
       pinned: true,
     );
@@ -102,6 +106,7 @@ class _SliverSearchAppBar extends SliverPersistentHeaderDelegate {
     this.onFocusGained,
     this.onFocusLost,
     this.actionWidget,
+    this.footer,
   });
 
   final double topPadding;
@@ -114,6 +119,7 @@ class _SliverSearchAppBar extends SliverPersistentHeaderDelegate {
   final VoidCallback? onFocusGained;
   final VoidCallback? onFocusLost;
   final Widget? actionWidget;
+  final SearchBarFooterWidget? footer;
 
   @override
   Widget build(
@@ -172,6 +178,7 @@ class _SliverSearchAppBar extends SliverPersistentHeaderDelegate {
       actionWidget: actionWidget,
       onSearchChanged: onSearchChanged,
       onSearchEntered: onSearchEntered,
+      footer: footer,
     );
   }
 
@@ -180,14 +187,20 @@ class _SliverSearchAppBar extends SliverPersistentHeaderDelegate {
   }
 
   @override
-  double get maxExtent => ExpandableSearchAppBar.HEIGHT + topPadding * 1.5;
+  double get maxExtent {
+    double height = ExpandableSearchAppBar.HEIGHT + topPadding * 1.5;
+    if (footer != null) {
+      height += footer!.height + (HomePage.BORDER_RADIUS / 2);
+    }
+    return height;
+  }
 
   @override
   double get minExtent => maxExtent;
 
   @override
-  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
-      false;
+  bool shouldRebuild(_SliverSearchAppBar oldDelegate) =>
+      oldDelegate.footer != footer;
 }
 
 class _SearchAppBar extends StatelessWidget {
@@ -199,6 +212,7 @@ class _SearchAppBar extends StatelessWidget {
     required this.progress,
     required this.autofocus,
     this.actionWidget,
+    this.footer,
     this.onSearchChanged,
     this.onSearchEntered,
   });
@@ -210,49 +224,65 @@ class _SearchAppBar extends StatelessWidget {
   final VoidCallback? onFocusGained;
   final VoidCallback? onFocusLost;
   final Widget? actionWidget;
+  final SearchBarFooterWidget? footer;
   final bool autofocus;
   final double progress;
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-          color: const Color(0xffffc589),
-          borderRadius: const BorderRadius.vertical(
-            bottom: Radius.circular(HomePage.BORDER_RADIUS),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? const Color(0x44FFFFFF)
-                  : const Color(0x44000000),
-              blurRadius: progress * 10.0,
+    return Stack(
+      children: [
+        if (footer != null)
+          Positioned.fill(
+            top: ExpandableSearchAppBar.HEIGHT,
+            child: SafeArea(
+              bottom: false,
+              child: _SearchBarFooterWidgetWrapper(child: footer!),
             ),
-          ]),
-      child: SafeArea(
-        bottom: false,
-        child: SizedBox(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _Logo(
-                progress: progress,
-                actionWidget: actionWidget,
+          ),
+        Positioned.fill(
+          bottom: footer != null ? footer!.height : 0.0,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+                color: AppColors.orangeLight,
+                borderRadius: const BorderRadius.vertical(
+                  bottom: Radius.circular(HomePage.BORDER_RADIUS),
+                ),
+                boxShadow: footer == null
+                    ? [
+                        BoxShadow(
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? const Color(0x44FFFFFF)
+                              : const Color(0x44000000),
+                          blurRadius: progress * 10.0,
+                        ),
+                      ]
+                    : null),
+            child: SafeArea(
+              bottom: false,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _Logo(
+                    progress: progress,
+                    actionWidget: actionWidget,
+                  ),
+                  _SearchBar(
+                    progress: progress,
+                    autofocus: autofocus,
+                    onFieldTapped: onFieldTapped,
+                    onCameraTapped: onCameraTapped,
+                    onSearchEntered: onSearchEntered,
+                    onSearchChanged: onSearchChanged,
+                    onFocusGained: onFocusGained,
+                    onFocusLost: onFocusLost,
+                  ),
+                ],
               ),
-              _SearchBar(
-                progress: progress,
-                autofocus: autofocus,
-                onFieldTapped: onFieldTapped,
-                onCameraTapped: onCameraTapped,
-                onSearchEntered: onSearchEntered,
-                onSearchChanged: onSearchChanged,
-                onFocusGained: onFocusGained,
-                onFocusLost: onFocusLost,
-              ),
-            ],
+            ),
           ),
         ),
-      ),
+      ],
     );
   }
 }
@@ -525,8 +555,14 @@ class SearchBarController extends InheritedWidget {
   SearchBarController({
     super.key,
     required this.controller,
-    required super.child,
-  }) : _keyboardController = StreamController();
+    required Widget child,
+  })  : _keyboardController = StreamController(),
+        super(
+          child: ListenableProvider(
+            create: (_) => controller,
+            child: child,
+          ),
+        );
 
   final TextEditingController controller;
   final StreamController<bool> _keyboardController;
@@ -555,4 +591,36 @@ class SearchBarController extends InheritedWidget {
   bool updateShouldNotify(SearchBarController oldWidget) {
     return oldWidget.controller != controller;
   }
+}
+
+class _SearchBarFooterWidgetWrapper extends StatelessWidget {
+  const _SearchBarFooterWidgetWrapper({
+    required this.child,
+  });
+
+  final SearchBarFooterWidget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: child.color,
+        borderRadius: const BorderRadius.vertical(
+          bottom: Radius.circular(HomePage.BORDER_RADIUS),
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.only(top: HomePage.BORDER_RADIUS * 1.5),
+        child: SizedBox.expand(child: child.build(context)),
+      ),
+    );
+  }
+}
+
+abstract class SearchBarFooterWidget {
+  Color get color;
+
+  double get height;
+
+  Widget build(BuildContext context);
 }

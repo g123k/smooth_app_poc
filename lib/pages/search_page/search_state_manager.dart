@@ -20,19 +20,26 @@ class SearchStateManager extends ValueNotifier<SearchState> {
     addToHistory(search);
 
     try {
+      final ProductSearchQueryConfiguration queryConfig =
+          ProductSearchQueryConfiguration(
+        fields: [ProductField.ALL],
+        parametersList: [],
+        version: ProductQueryVersion.v3,
+      );
       final SearchResult results = await OpenFoodAPIClient.searchProducts(
         null,
-        ProductSearchQueryConfiguration(
-          fields: [ProductField.ALL],
-          parametersList: [],
-          version: ProductQueryVersion.v3,
-        ),
+        queryConfig,
       );
 
       if (results.products?.isEmpty ?? true) {
         value = SearchNoResultState(search);
       } else {
-        value = SearchResultsState(search, results.products!);
+        value = SearchResultsState(
+          search,
+          results.products!,
+          results.count ?? results.products!.length,
+          queryConfig,
+        );
       }
     } catch (_) {
       value = SearchErrorState(search);
@@ -42,6 +49,8 @@ class SearchStateManager extends ValueNotifier<SearchState> {
   }
 
   bool get hasASearch => value is! SearchInitialState;
+
+  bool get hasResults => value is SearchResultsState;
 
   void cancelSearch() {
     _cancelableSearch?.cancel();
@@ -93,8 +102,15 @@ class SearchErrorState extends SearchState {
 
 class SearchResultsState extends SearchState {
   final List<Product> products;
+  final ProductSearchQueryConfiguration configuration;
+  final int total;
 
-  const SearchResultsState(String search, this.products) : super._(search);
+  const SearchResultsState(
+    String search,
+    this.products,
+    this.total,
+    this.configuration,
+  ) : super._(search);
 }
 
 class SearchNoResultState extends SearchState {

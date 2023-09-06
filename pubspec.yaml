@@ -24,6 +24,7 @@ dependencies:
   circular_reveal_animation: any
 
   mobile_scanner: any
+  flutter_custom_tabs: any
 
 
 dev_dependencies:
