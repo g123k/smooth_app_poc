@@ -4,6 +4,7 @@ import 'package:smoothapp_poc/pages/homepage/camera/view/ui/camera_view.dart';
 import 'package:smoothapp_poc/pages/homepage/homepage.dart';
 import 'package:smoothapp_poc/utils/num_utils.dart';
 
+//ignore_for_file: constant_identifier_names
 class ExpandableCamera extends StatelessWidget {
   const ExpandableCamera({
     required this.controller,

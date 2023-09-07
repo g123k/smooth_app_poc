@@ -12,11 +12,40 @@ import 'package:smoothapp_poc/utils/provider_utils.dart';
 import 'package:smoothapp_poc/utils/widgets/circled_icon.dart';
 import 'package:smoothapp_poc/utils/widgets/search_bar.dart';
 
-class SearchPage extends StatelessWidget {
+class SearchPage extends StatefulWidget {
   SearchPage({
     super.key,
   });
 
+  @override
+  State<SearchPage> createState() => _SearchPageState();
+
+  static Future<SearchPageResult?> open(BuildContext context) {
+    return Navigator.push<SearchPageResult?>(
+      context,
+      PageRouteBuilder<SearchPageResult>(
+        pageBuilder: (context, animation1, animation2) => SearchPage(),
+        transitionDuration: const Duration(milliseconds: 250),
+        reverseTransitionDuration: const Duration(milliseconds: 100),
+        transitionsBuilder: (_, Animation<double> animation, __, Widget child) {
+          return FadeTransition(
+            opacity: animation,
+            child: Provider.value(
+              value: animation.value < 1.0
+                  ? _TransitionState.animating
+                  : _TransitionState.idle,
+              child:
+                  IgnorePointer(ignoring: animation.value < 1.0, child: child),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+// The state is only for controllers
+class _SearchPageState extends State<SearchPage> {
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _searchBarController = TextEditingController();
 
@@ -30,7 +59,7 @@ class SearchPage extends StatelessWidget {
       child: PrimaryScrollController(
         controller: _scrollController,
         child: SearchBarController(
-          controller: _searchBarController,
+          editingController: _searchBarController,
           child: Builder(builder: (context) {
             return ValueListener<SearchStateManager, SearchState>(
               onValueChanged: (SearchState searchState) {
@@ -62,29 +91,6 @@ class SearchPage extends StatelessWidget {
       ),
     );
   }
-
-  static Future<SearchPageResult?> open(BuildContext context) {
-    return Navigator.push<SearchPageResult?>(
-      context,
-      PageRouteBuilder<SearchPageResult>(
-        pageBuilder: (context, animation1, animation2) => SearchPage(),
-        transitionDuration: const Duration(milliseconds: 250),
-        reverseTransitionDuration: const Duration(milliseconds: 100),
-        transitionsBuilder: (_, Animation<double> animation, __, Widget child) {
-          return FadeTransition(
-            opacity: animation,
-            child: Provider.value(
-              value: animation.value < 1.0
-                  ? _TransitionState.animating
-                  : _TransitionState.idle,
-              child:
-                  IgnorePointer(ignoring: animation.value < 1.0, child: child),
-            ),
-          );
-        },
-      ),
-    );
-  }
 }
 
 class _SearchAppBar extends StatelessWidget {
@@ -92,12 +98,15 @@ class _SearchAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Selector2<SearchStateManager, SearchBarController,
+    return Selector2<SearchStateManager, TextEditingController,
         SearchBarFooterWidget?>(
-      selector: (_, SearchStateManager searchStateManager,
-          SearchBarController controller) {
+      selector: (
+        _,
+        SearchStateManager searchStateManager,
+        TextEditingController controller,
+      ) {
         if (searchStateManager.hasResults &&
-            controller.controller.text ==
+            controller.text ==
                 (searchStateManager.value as SearchResultsState).search) {
           return const SearchFooterResults();
         } else {

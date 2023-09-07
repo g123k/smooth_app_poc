@@ -11,6 +11,7 @@ import 'package:smoothapp_poc/resources/app_icons.dart' as icons;
 import 'package:smoothapp_poc/utils/num_utils.dart';
 import 'package:smoothapp_poc/utils/ui_utils.dart';
 
+//ignore_for_file: constant_identifier_names
 class ExpandableSearchAppBar extends StatelessWidget {
   static const double HEIGHT = _Logo.MAX_HEIGHT + _SearchBar.SEARCH_BAR_HEIGHT;
   static const EdgeInsetsDirectional CONTENT_PADDING =
@@ -132,10 +133,11 @@ class _SliverSearchAppBar extends SliverPersistentHeaderDelegate {
         context: context,
         progress: 1.0,
         autofocus: true,
+        shrinkOffset: shrinkOffset,
       );
     }
 
-    return Selector<ScrollController, double>(
+    return Selector<ScrollController, (double, double)>(
       selector: (BuildContext context, ScrollController controller) {
         final double position = controller.offset;
         final HomePageState homePageState = HomePage.of(context);
@@ -143,21 +145,26 @@ class _SliverSearchAppBar extends SliverPersistentHeaderDelegate {
         final double cameraPeak = homePageState.cameraPeak;
 
         if (position >= cameraHeight) {
-          return 1.0;
+          return (1.0, shrinkOffset);
         } else if (position < cameraPeak) {
-          return 0.0;
+          return (0.0, shrinkOffset);
         } else {
-          return (position - cameraPeak) / (cameraHeight - cameraPeak);
+          return (
+            (position - cameraPeak) / (cameraHeight - cameraPeak),
+            shrinkOffset
+          );
         }
       },
-      shouldRebuild: (double previous, double next) {
-        return previous != next;
+      shouldRebuild: ((double, double) previous, (double, double) next) {
+        return previous.$1 != next.$1 ||
+            (footer != null && previous.$2 != next.$2);
       },
-      builder: (BuildContext context, double progress, _) {
+      builder: (BuildContext context, (double, double) progress, _) {
         return _build(
           context: context,
-          progress: progress,
+          progress: progress.$1,
           autofocus: false,
+          shrinkOffset: progress.$2,
         );
       },
     );
@@ -167,9 +174,14 @@ class _SliverSearchAppBar extends SliverPersistentHeaderDelegate {
     required BuildContext context,
     required double progress,
     required bool autofocus,
+    required double shrinkOffset,
   }) {
+    final double max = maxExtent - minExtent;
+
     return _SearchAppBar(
       progress: progress,
+      topPadding: topPadding,
+      minExtent: minExtent,
       autofocus: autofocus,
       onFieldTapped: onFieldTapped,
       onCameraTapped: onCameraTapped,
@@ -178,7 +190,11 @@ class _SliverSearchAppBar extends SliverPersistentHeaderDelegate {
       actionWidget: actionWidget,
       onSearchChanged: onSearchChanged,
       onSearchEntered: onSearchEntered,
-      footer: footer,
+      footer: shrinkOffset < max ? footer : null,
+      footerOffset: footer == null || shrinkOffset >= max
+          ? null
+          : shrinkOffset.clamp(0.0, max),
+      footerMaxOffset: footer != null ? max : null,
     );
   }
 
@@ -187,16 +203,12 @@ class _SliverSearchAppBar extends SliverPersistentHeaderDelegate {
   }
 
   @override
-  double get maxExtent {
-    double height = ExpandableSearchAppBar.HEIGHT + topPadding * 1.5;
-    if (footer != null) {
-      height += footer!.height + (HomePage.BORDER_RADIUS / 2);
-    }
-    return height;
-  }
+  double get maxExtent =>
+      minExtent +
+      (footer == null ? 0 : (footer!.height + (HomePage.BORDER_RADIUS / 2)));
 
   @override
-  double get minExtent => maxExtent;
+  double get minExtent => ExpandableSearchAppBar.HEIGHT + (topPadding * 1.5);
 
   @override
   bool shouldRebuild(_SliverSearchAppBar oldDelegate) =>
@@ -205,14 +217,18 @@ class _SliverSearchAppBar extends SliverPersistentHeaderDelegate {
 
 class _SearchAppBar extends StatelessWidget {
   const _SearchAppBar({
+    required this.progress,
+    required this.autofocus,
+    required this.minExtent,
+    required this.topPadding,
     required this.onCameraTapped,
     required this.onFieldTapped,
     required this.onFocusGained,
     required this.onFocusLost,
-    required this.progress,
-    required this.autofocus,
     this.actionWidget,
     this.footer,
+    this.footerOffset,
+    this.footerMaxOffset,
     this.onSearchChanged,
     this.onSearchEntered,
   });
@@ -225,30 +241,51 @@ class _SearchAppBar extends StatelessWidget {
   final VoidCallback? onFocusLost;
   final Widget? actionWidget;
   final SearchBarFooterWidget? footer;
+  final double topPadding;
+  final double? footerOffset;
+  final double? footerMaxOffset;
+  final double minExtent;
   final bool autofocus;
+
   final double progress;
 
   @override
   Widget build(BuildContext context) {
+    final bool footerInvisible =
+        footer == null ? true : footerOffset! >= footerMaxOffset!;
+
     return Stack(
       children: [
         if (footer != null)
           Positioned.fill(
-            top: ExpandableSearchAppBar.HEIGHT,
-            child: SafeArea(
-              bottom: false,
-              child: _SearchBarFooterWidgetWrapper(child: footer!),
+            top: minExtent -
+                topPadding -
+                (HomePage.BORDER_RADIUS / 2) -
+                footerOffset!,
+            bottom: 0.0,
+            child: Offstage(
+              offstage: footerInvisible,
+              child: SafeArea(
+                bottom: false,
+                child: _SearchBarFooterWidgetWrapper(
+                  child: footer!,
+                  progress: footerOffset!,
+                ),
+              ),
             ),
           ),
         Positioned.fill(
-          bottom: footer != null ? footer!.height : 0.0,
+          top: 0.0,
+          bottom: footer != null && footerOffset! < footerMaxOffset!
+              ? footer!.height - footerOffset! + (HomePage.BORDER_RADIUS / 2)
+              : 0.0,
           child: DecoratedBox(
             decoration: BoxDecoration(
                 color: AppColors.orangeLight,
                 borderRadius: const BorderRadius.vertical(
                   bottom: Radius.circular(HomePage.BORDER_RADIUS),
                 ),
-                boxShadow: footer == null
+                boxShadow: footerInvisible
                     ? [
                         BoxShadow(
                           color: Theme.of(context).brightness == Brightness.dark
@@ -554,12 +591,13 @@ class _SearchBarState extends State<_SearchBar> {
 class SearchBarController extends InheritedWidget {
   SearchBarController({
     super.key,
-    required this.controller,
+    required TextEditingController editingController,
     required Widget child,
-  })  : _keyboardController = StreamController(),
+  })  : controller = editingController,
+        _keyboardController = StreamController(),
         super(
           child: ListenableProvider(
-            create: (_) => controller,
+            create: (_) => editingController,
             child: child,
           ),
         );
@@ -596,22 +634,29 @@ class SearchBarController extends InheritedWidget {
 class _SearchBarFooterWidgetWrapper extends StatelessWidget {
   const _SearchBarFooterWidgetWrapper({
     required this.child,
+    required this.progress,
   });
 
   final SearchBarFooterWidget child;
+  final double progress;
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: child.color,
-        borderRadius: const BorderRadius.vertical(
-          bottom: Radius.circular(HomePage.BORDER_RADIUS),
-        ),
+    return ClipRRect(
+      borderRadius: const BorderRadius.vertical(
+        bottom: Radius.circular(HomePage.BORDER_RADIUS),
       ),
-      child: Padding(
-        padding: const EdgeInsets.only(top: HomePage.BORDER_RADIUS * 1.5),
-        child: SizedBox.expand(child: child.build(context)),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: child.color,
+          borderRadius: const BorderRadius.vertical(
+            bottom: Radius.circular(HomePage.BORDER_RADIUS),
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.only(top: HomePage.BORDER_RADIUS * 0.5),
+          child: SizedBox.expand(child: child.build(context)),
+        ),
       ),
     );
   }

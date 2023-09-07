@@ -15,6 +15,7 @@ import 'package:smoothapp_poc/utils/ui_utils.dart';
 import 'package:smoothapp_poc/utils/widgets/search_bar.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
+//ignore_for_file: constant_identifier_names
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 

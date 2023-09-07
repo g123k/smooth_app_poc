@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smoothapp_poc/pages/homepage/list/horizontal_list.dart';
 
+//ignore_for_file: constant_identifier_names
 class ProductHistoryList extends StatelessWidget {
   const ProductHistoryList({super.key});
 
