@@ -5,6 +5,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:smoothapp_poc/pages/homepage/homepage.dart';
 import 'package:smoothapp_poc/resources/app_colors.dart';
 import 'package:smoothapp_poc/resources/app_icons.dart' as icons;
@@ -432,16 +433,24 @@ class _SearchBarState extends State<_SearchBar> {
   @override
   void initState() {
     super.initState();
+    _searchFocusNode.addListener(() {
+      if (!mounted) {
+        return;
+      }
 
-    if (widget.onFocusGained != null || widget.onFocusLost != null) {
-      _searchFocusNode.addListener(() {
+      if (_searchFocusNode.hasFocus) {
+        SearchBarController.maybeOf(context)?.showKeyboard();
+      } else {
+        SearchBarController.maybeOf(context)?.hideKeyboard();
+      }
+      if (widget.onFocusGained != null || widget.onFocusLost != null) {
         if (_searchFocusNode.hasFocus) {
           widget.onFocusGained?.call();
         } else {
           widget.onFocusLost?.call();
         }
-      });
-    }
+      }
+    });
   }
 
   TextEditingController _searchController = TextEditingController();
@@ -460,9 +469,9 @@ class _SearchBarState extends State<_SearchBar> {
   }
 
   void _updateKeyboardVisibility(bool visible) {
-    if (visible) {
+    if (visible && !_searchFocusNode.hasFocus) {
       _searchFocusNode.requestFocus();
-    } else {
+    } else if (!visible && !_buttonFocusNode.hasFocus) {
       _buttonFocusNode.requestFocus();
       _searchFocusNode.unfocus();
     }
@@ -470,15 +479,6 @@ class _SearchBarState extends State<_SearchBar> {
 
   @override
   Widget build(BuildContext context) {
-    /// When we go up and the keyboard is visible, we move the focus to the
-    /// barcode button, just to hide the keyboard.
-    /*if (widget.progress < 1.0 &&
-        _searchFocusNode.hasFocus &&
-        _ignoreFocusChange != null &&
-        DateTime.now().isAfter(_ignoreFocusChange!)) {
-      _buttonFocusNode.requestFocus();
-    }*/
-
     return Padding(
       padding: EdgeInsetsDirectional.symmetric(
         horizontal: (1 - widget.progress).progress2(
@@ -493,7 +493,9 @@ class _SearchBarState extends State<_SearchBar> {
             Expanded(
               child: TextFormField(
                 controller: _searchController,
-                autofocus: widget.autofocus,
+                autofocus: widget.autofocus
+                    ? SearchBarController.of(context).isKeyboardVisible
+                    : false,
                 textAlignVertical: TextAlignVertical.center,
                 onTap: _manageOnTap ? () => widget.onFieldTapped?.call() : null,
                 focusNode: _searchFocusNode,
@@ -592,21 +594,25 @@ class SearchBarController extends InheritedWidget {
   SearchBarController({
     super.key,
     required TextEditingController editingController,
+    required BehaviorSubject<bool> keyboardStreamController,
     required Widget child,
   })  : controller = editingController,
-        _keyboardController = StreamController(),
+        _keyboardController = keyboardStreamController,
         super(
           child: ListenableProvider(
             create: (_) => editingController,
             child: child,
           ),
-        );
+        ) {
+    _keyboardController.add(true);
+  }
 
   final TextEditingController controller;
-  final StreamController<bool> _keyboardController;
+  final BehaviorSubject<bool> _keyboardController;
 
   StreamSubscription<bool> listenToKeyboardChanges(
-      void Function(bool) onEvent) {
+    void Function(bool) onEvent,
+  ) {
     return _keyboardController.stream.listen(onEvent);
   }
 
@@ -618,11 +624,24 @@ class SearchBarController extends InheritedWidget {
     _keyboardController.add(false);
   }
 
+  bool get isKeyboardVisible => _keyboardController.value;
+
   static SearchBarController of(BuildContext context) {
     final SearchBarController? result =
         context.dependOnInheritedWidgetOfExactType<SearchBarController>();
     assert(result != null, 'No SearchBarController found in context');
     return result!;
+  }
+
+  static SearchBarController find(BuildContext context) {
+    final SearchBarController? result =
+        context.findAncestorWidgetOfExactType<SearchBarController>();
+    assert(result != null, 'No SearchBarController found in context');
+    return result!;
+  }
+
+  static SearchBarController? maybeOf(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<SearchBarController>();
   }
 
   @override

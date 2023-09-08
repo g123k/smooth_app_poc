@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_custom_tabs/flutter_custom_tabs.dart';
 import 'package:provider/provider.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 import 'package:smoothapp_poc/pages/search_page/search_state_manager.dart';
@@ -66,7 +67,9 @@ class SearchBodySuggestions extends StatelessWidget {
                     return SearchQueryItem.advancedSearch(
                       value: search!,
                       onTap: () {
-                        // TODO Open website to the search page
+                        launch(
+                          'https://world.openfoodfacts.org/cgi/search.pl?action=display&search_terms=$search',
+                        );
                       },
                     );
                   } else {

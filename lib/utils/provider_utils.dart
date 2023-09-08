@@ -42,3 +42,14 @@ extension ChangeNotifierExtension on ChangeNotifier {
     addListener(listener);
   }
 }
+
+abstract class DistinctValueNotifier<T> extends ValueNotifier<T> {
+  DistinctValueNotifier(T value) : super(value);
+
+  @override
+  set value(T newValue) {
+    if (newValue != value) {
+      super.value = newValue;
+    }
+  }
+}

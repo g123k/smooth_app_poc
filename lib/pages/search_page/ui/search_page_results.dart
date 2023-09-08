@@ -64,6 +64,7 @@ class _SearchBodyWithResults extends StatefulWidget {
 }
 
 class _SearchBodyWithResultsState extends State<_SearchBodyWithResults> {
+  // TODO
   bool _showHelpBanner = true;
 
   @override

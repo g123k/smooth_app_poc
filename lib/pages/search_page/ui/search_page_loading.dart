@@ -23,7 +23,7 @@ class SearchPageLoading extends StatelessWidget {
               TextSpan(text: search),
               const TextSpan(
                   text:
-                      '" esr en cours.\nMerci de patienter quelques instants'),
+                      '" est en cours.\nMerci de patienter quelques instants'),
             ], style: const TextStyle(height: 1.6)),
           )
         ],

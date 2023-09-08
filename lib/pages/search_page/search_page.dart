@@ -4,8 +4,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:provider/provider.dart';
+import 'package:rxdart/subjects.dart';
 import 'package:smoothapp_poc/pages/search_page/search_state_manager.dart';
 import 'package:smoothapp_poc/pages/search_page/search_suggestions_state_manager.dart';
+import 'package:smoothapp_poc/pages/search_page/search_ui_manager.dart';
 import 'package:smoothapp_poc/pages/search_page/ui/search_page_empty.dart';
 import 'package:smoothapp_poc/pages/search_page/ui/search_page_results.dart';
 import 'package:smoothapp_poc/utils/provider_utils.dart';
@@ -13,7 +15,7 @@ import 'package:smoothapp_poc/utils/widgets/circled_icon.dart';
 import 'package:smoothapp_poc/utils/widgets/search_bar.dart';
 
 class SearchPage extends StatefulWidget {
-  SearchPage({
+  const SearchPage({
     super.key,
   });
 
@@ -24,7 +26,7 @@ class SearchPage extends StatefulWidget {
     return Navigator.push<SearchPageResult?>(
       context,
       PageRouteBuilder<SearchPageResult>(
-        pageBuilder: (context, animation1, animation2) => SearchPage(),
+        pageBuilder: (context, animation1, animation2) => const SearchPage(),
         transitionDuration: const Duration(milliseconds: 250),
         reverseTransitionDuration: const Duration(milliseconds: 100),
         transitionsBuilder: (_, Animation<double> animation, __, Widget child) {
@@ -34,8 +36,10 @@ class SearchPage extends StatefulWidget {
               value: animation.value < 1.0
                   ? _TransitionState.animating
                   : _TransitionState.idle,
-              child:
-                  IgnorePointer(ignoring: animation.value < 1.0, child: child),
+              child: IgnorePointer(
+                ignoring: animation.value < 1.0,
+                child: child,
+              ),
             ),
           );
         },
@@ -48,48 +52,55 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _searchBarController = TextEditingController();
+  final BehaviorSubject<bool> _searchBarKeyboardController = BehaviorSubject();
+
+  @override
+  void initState() {
+    super.initState();
+    _searchBarKeyboardController.add(true);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => SearchStateManager()),
-        ChangeNotifierProvider(create: (_) => SearchSuggestionsStateManager()),
-      ],
-      child: PrimaryScrollController(
-        controller: _scrollController,
-        child: SearchBarController(
-          editingController: _searchBarController,
+    return SearchBarController(
+      editingController: _searchBarController,
+      keyboardStreamController: _searchBarKeyboardController,
+      child: MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => SearchStateManager()),
+          ChangeNotifierProvider(
+              create: (_) => SearchSuggestionsStateManager()),
+          ChangeNotifierProvider(
+            create: (BuildContext context) => SearchUIManager(
+              context,
+            ),
+          ),
+        ],
+        child: PrimaryScrollController(
+          controller: _scrollController,
           child: Builder(builder: (context) {
-            return ValueListener<SearchStateManager, SearchState>(
-              onValueChanged: (SearchState searchState) {
-                // When we click on a suggestion, prefill the search bar +
-                // hide the keyboard
-                final String? search = searchState.search;
-                if (_searchBarController.text != search && search != null) {
-                  _searchBarController.text = search;
-                  _searchBarController.selection = TextSelection.fromPosition(
-                    TextPosition(offset: search.length),
-                  );
-
-                  SearchBarController.of(context).hideKeyboard();
-                }
-              },
-              child: Scaffold(
-                extendBodyBehindAppBar: true,
-                body: CustomScrollView(
-                  controller: _scrollController,
-                  slivers: const [
-                    _SearchAppBar(),
-                    _SearchPageBody(),
-                  ],
-                ),
+            return Scaffold(
+              extendBodyBehindAppBar: true,
+              body: CustomScrollView(
+                controller: _scrollController,
+                slivers: const [
+                  _SearchAppBar(),
+                  _SearchPageBody(),
+                ],
               ),
             );
           }),
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _searchBarController.dispose();
+    _searchBarKeyboardController.close();
+    super.dispose();
   }
 }
 
@@ -98,14 +109,16 @@ class _SearchAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Selector2<SearchStateManager, TextEditingController,
+    return Selector3<SearchUIManager, SearchStateManager, TextEditingController,
         SearchBarFooterWidget?>(
       selector: (
         _,
+        SearchUIManager searchUIManager,
         SearchStateManager searchStateManager,
         TextEditingController controller,
       ) {
-        if (searchStateManager.hasResults &&
+        if (searchUIManager.isShowingResults &&
+            searchStateManager.hasResults &&
             controller.text ==
                 (searchStateManager.value as SearchResultsState).search) {
           return const SearchFooterResults();
@@ -155,7 +168,6 @@ class _SearchPageBody extends StatefulWidget {
 class _SearchPageBodyState extends State<_SearchPageBody> {
   StreamSubscription<bool>? _keyboardSubscription;
   bool? _lastKeyboardVisibleEvent;
-  _SearchBodyType _bodyType = _SearchBodyType.suggestions;
 
   // To save the last search position, we need to have two variables:
   int? _previousSearchScrollState;
@@ -172,12 +184,13 @@ class _SearchPageBodyState extends State<_SearchPageBody> {
           keyboardController.onChange.listen((bool visible) {
         if (!visible && _lastKeyboardVisibleEvent == true) {
           // Prevent a double pop when during the fade transition
-          _TransitionState state = context.read<_TransitionState>();
+          final _TransitionState state = context.read<_TransitionState>();
+          final SearchUIType type = SearchUIManager.read(context).value;
           if (state == _TransitionState.idle) {
-            if (_bodyType == _SearchBodyType.search) {
+            if (type == SearchUIType.results) {
               // Ignore the event when the search is visible
               return;
-            } else if (_bodyType == _SearchBodyType.suggestions &&
+            } else if (type == SearchUIType.suggestions &&
                 SearchStateManager.of(context).hasASearch) {
               return;
             }
@@ -202,11 +215,7 @@ class _SearchPageBodyState extends State<_SearchPageBody> {
   }
 
   void _onSearchChanged() {
-    String? search = context.read<SearchStateManager>().value.search;
-
-    if (search == null) {
-      _onSuggestionsChanged();
-    } else if (_bodyType != _SearchBodyType.search) {
+    if (!SearchUIManager.read(context).isShowingResults) {
       /// When we reopen the search, if it was previously here
       /// AND with the same state, we restore the scroll position
       if (_previousSearchScrollPosition != null &&
@@ -215,12 +224,13 @@ class _SearchPageBodyState extends State<_SearchPageBody> {
         PrimaryScrollController.of(context)
             .jumpTo(_previousSearchScrollPosition!);
       }
-      setState(() => _bodyType = _SearchBodyType.search);
+
+      SearchUIManager.read(context).showSearchResults();
     }
   }
 
   void _onSuggestionsChanged() {
-    if (_bodyType != _SearchBodyType.suggestions) {
+    if (!SearchUIManager.read(context).isShowingSuggestions) {
       /// When we switch between suggestions and search, ensure to save
       /// the search scroll position.
       _previousSearchScrollState =
@@ -228,29 +238,37 @@ class _SearchPageBodyState extends State<_SearchPageBody> {
       _previousSearchScrollPosition =
           PrimaryScrollController.of(context).offset;
 
-      setState(() => _bodyType = _SearchBodyType.suggestions);
+      SearchUIManager.read(context).showSuggestions();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    switch (_bodyType) {
-      case _SearchBodyType.suggestions:
+    switch (SearchUIManager.watch(context).value) {
+      case SearchUIType.suggestions:
         return SearchBodySuggestions(
           onExitSearch: () {
             _lastKeyboardVisibleEvent = false;
 
             // When we click on the empty space below the suggestions…
             if (SearchStateManager.of(context).hasASearch) {
+              // Restore the previous search
+              final SearchBarController searchBarController =
+                  SearchBarController.find(context);
+              searchBarController.controller.text =
+                  SearchStateManager.of(context).value.search ?? '';
+
+              searchBarController.hideKeyboard();
+
               // Go back to the search results
-              SearchStateManager.of(context).forceReEmitEvent();
+              SearchUIManager.read(context).showSearchResults();
             } else {
               // Close the screen
               Navigator.of(context).pop();
             }
           },
         );
-      case _SearchBodyType.search:
+      case SearchUIType.results:
         return const SearchBodyResults();
     }
   }
@@ -260,9 +278,4 @@ class _SearchPageBodyState extends State<_SearchPageBody> {
     _keyboardSubscription?.cancel();
     super.dispose();
   }
-}
-
-enum _SearchBodyType {
-  suggestions,
-  search,
 }
