@@ -7,6 +7,7 @@ import 'package:smoothapp_poc/pages/search_page/search_state_manager.dart';
 import 'package:smoothapp_poc/resources/app_colors.dart';
 import 'package:smoothapp_poc/resources/app_icons.dart' as icons;
 import 'package:smoothapp_poc/utils/widgets/app_widget.dart';
+import 'package:smoothapp_poc/utils/widgets/list.dart';
 import 'package:smoothapp_poc/utils/widgets/search_bar.dart';
 import 'package:smoothapp_poc/utils/widgets/useful_widgets.dart';
 
@@ -82,118 +83,138 @@ class _SearchBodyWithResultsState extends State<_SearchBodyWithResults> {
               horizontal: 26.0,
               vertical: 17.0,
             ),
-            child: IntrinsicHeight(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.26,
-                    height: double.infinity,
-                    child: Column(
-                      children: [
-                        const SizedBox(
-                          height: 36.0,
-                          child: CompatibilityScore(
-                            level: 100,
+            child: Column(
+              children: <Widget>[
+                IntrinsicHeight(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.26,
+                        height: double.infinity,
+                        child: IntrinsicWidth(
+                          child: Column(
+                            children: [
+                              const SizedBox(
+                                height: 36.0,
+                                child: CompatibilityScore(
+                                  level: 100,
+                                ),
+                              ),
+                              ClipRRect(
+                                borderRadius: const BorderRadius.vertical(
+                                  bottom: Radius.circular(10.0),
+                                ),
+                                child: Container(
+                                  width: double.infinity,
+                                  color: AppColors.greyLight2,
+                                  child: ConstrainedBox(
+                                    constraints: const BoxConstraints(
+                                      maxHeight: 110.0,
+                                    ),
+                                    child: AspectRatio(
+                                      aspectRatio: 1.0,
+                                      child: Image.network(
+                                        product.imageFrontUrl ?? '',
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.26,
+                                        errorBuilder: (_, __, ___) =>
+                                            const ImagePlaceholder(),
+                                        loadingBuilder: (
+                                          BuildContext context,
+                                          Widget child,
+                                          ImageChunkEvent? loadingProgress,
+                                        ) =>
+                                            loadingProgress == null ||
+                                                    loadingProgress
+                                                            .cumulativeBytesLoaded ==
+                                                        loadingProgress
+                                                            .expectedTotalBytes
+                                                ? child
+                                                : const ImagePlaceholder(),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        ConstrainedBox(
-                          constraints: const BoxConstraints(
-                            maxHeight: 110.0,
-                          ),
-                          child: AspectRatio(
-                            aspectRatio: 1.0,
-                            child: ClipRRect(
-                              borderRadius: const BorderRadius.vertical(
-                                bottom: Radius.circular(10.0),
-                              ),
-                              child: ColoredBox(
-                                color: AppColors.greyLight2,
-                                child: Image.network(
-                                  product.imageFrontUrl ?? '',
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.26,
-                                  errorBuilder: (_, __, ___) =>
-                                      const ImagePlaceholder(),
-                                  loadingBuilder: (
-                                    BuildContext context,
-                                    Widget child,
-                                    ImageChunkEvent? loadingProgress,
-                                  ) =>
-                                      loadingProgress == null ||
-                                              loadingProgress
-                                                      .cumulativeBytesLoaded ==
-                                                  loadingProgress
-                                                      .expectedTotalBytes
-                                          ? child
-                                          : const ImagePlaceholder(),
+                      ),
+                      const SizedBox(
+                        width: 10.0,
+                      ),
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ConstrainedBox(
+                              constraints:
+                                  const BoxConstraints(minHeight: 36.0),
+                              child: Align(
+                                alignment: AlignmentDirectional.centerStart,
+                                child: Text(
+                                  product.productName ?? '',
+                                  style: const TextStyle(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 10.0,
-                  ),
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        ConstrainedBox(
-                          constraints: const BoxConstraints(minHeight: 36.0),
-                          child: Align(
-                            alignment: AlignmentDirectional.centerStart,
-                            child: Text(
-                              product.productName ?? '',
+                            const SizedBox(height: 6.0),
+                            Text(
+                              product.brands ?? '',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
-                                fontSize: 18.0,
-                                fontWeight: FontWeight.bold,
+                                fontSize: 16.5,
                               ),
                             ),
-                          ),
-                        ),
-                        const SizedBox(height: 6.0),
-                        Text(
-                          product.brands ?? '',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontSize: 16.5,
-                          ),
-                        ),
-                        Text(
-                          product.quantity ?? '',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontSize: 16.5,
-                          ),
-                        ),
-                        const SizedBox(height: 6.0),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            SvgPicture.asset(
-                              'assets/images/nutriscore-a.svg',
-                              height: 39.0,
+                            Text(
+                              product.quantity ?? '',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 16.5,
+                              ),
                             ),
-                            const SizedBox(width: 18.0),
-                            SvgPicture.asset(
-                              'assets/images/ecoscore-a.svg',
-                              height: 34.0,
+                            const SizedBox(height: 6.0),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                SvgPicture.asset(
+                                  'assets/images/nutriscore-a.svg',
+                                  height: 39.0,
+                                ),
+                                const SizedBox(width: 18.0),
+                                SvgPicture.asset(
+                                  'assets/images/ecoscore-a.svg',
+                                  height: 34.0,
+                                ),
+                              ],
                             ),
+                            const SizedBox(height: 6.0),
                           ],
-                        )
-                      ],
-                    ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+                ListItem.text(
+                  'Pas de moutarde',
+                  padding: const EdgeInsets.only(top: 10.0),
+                  leading: const ListItemLeadingScore.high(),
+                ),
+                ListItem.text(
+                  'Aliment ultra-transformé (NOVA 4)',
+                  padding: const EdgeInsets.only(top: 10.0),
+                  leading: const ListItemLeadingScore.low(),
+                ),
+              ],
             ),
           ),
         );

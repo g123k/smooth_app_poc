@@ -158,18 +158,6 @@ class InfoWidget extends StatelessWidget {
   }
 }
 
-class ListItemDivider extends StatelessWidget {
-  const ListItemDivider({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Divider(
-      height: 1.0,
-      color: AppColors.greyLight2,
-    );
-  }
-}
-
 class ImagePlaceholder extends StatelessWidget {
   const ImagePlaceholder({super.key});
 
