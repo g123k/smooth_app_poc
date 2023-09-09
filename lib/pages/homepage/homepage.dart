@@ -418,7 +418,7 @@ class _CustomPhysics extends ClampingScrollPhysics {
     if (simulation == null || proposedPixels == null) {
       var (double? min, _) = _getRange(position.pixels);
 
-      if (min != null) {
+      if (min != null && min != steps.last) {
         return ScrollSpringSimulation(
           spring,
           position.pixels,

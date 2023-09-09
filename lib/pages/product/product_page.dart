@@ -22,8 +22,16 @@ class ProductPage extends StatefulWidget {
     this.topSliver,
     this.scrollController,
     super.key,
-  });
+  }) : forModalSheet = false;
 
+  const ProductPage.fromModalSheet({
+    required this.product,
+    this.topSliver,
+    this.scrollController,
+    super.key,
+  }) : forModalSheet = true;
+
+  final bool forModalSheet;
   final Product product;
   final Widget? topSliver;
   final ScrollController? scrollController;
@@ -50,6 +58,16 @@ class _ProductPageState extends State<ProductPage>
 
   @override
   Widget build(BuildContext context) {
+    if (widget.forModalSheet) {
+      return _buildChild(context);
+    } else {
+      return Scaffold(
+        body: SafeArea(child: _buildChild(context)),
+      );
+    }
+  }
+
+  Widget _buildChild(BuildContext context) {
     return Provider<Product>.value(
       value: widget.product,
       child: ListenableProvider<TabController>(
@@ -57,12 +75,7 @@ class _ProductPageState extends State<ProductPage>
         child: CustomScrollView(
           controller: widget.scrollController ?? ScrollController(),
           slivers: [
-            widget.topSliver ??
-                SliverPadding(
-                  padding: EdgeInsetsDirectional.only(
-                    top: MediaQuery.viewPaddingOf(context).top,
-                  ),
-                ),
+            if (widget.topSliver != null) widget.topSliver!,
             SliverPinnedHeader(
               child: _ProductHeader(
                 onElementTapped: () {

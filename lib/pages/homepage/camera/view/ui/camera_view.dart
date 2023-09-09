@@ -165,7 +165,7 @@ class CameraView extends StatelessWidget {
                     scrollController: draggableScrollableController,
                     style: DefaultTextStyle.of(topContext).style,
                     minFraction: fraction,
-                    child: ProductPage(
+                    child: ProductPage.fromModalSheet(
                       product: product,
                       scrollController: scrollController,
                       topSliver: _MagicTopPadding(
