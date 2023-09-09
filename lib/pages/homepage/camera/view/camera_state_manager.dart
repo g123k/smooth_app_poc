@@ -16,16 +16,18 @@ class CameraViewStateManager extends ValueNotifier<CameraViewState> {
     _barcode = barcode;
     value = CameraViewLoadingBarcodeState(barcode);
 
+    // TODO TEst
+    barcode = '8714100635674';
     if (BarcodeUtils.isABarcode(barcode)) {
       try {
         final ProductResultV3 product = await OpenFoodAPIClient.getProductV3(
           ProductQueryConfiguration(barcode, version: ProductQueryVersion.v3),
         );
 
-        if (product.product!.nutriscore == null) {
-          value = CameraViewProductAvailableState(product.product!);
+        if (product.product == null || product.product!.nutriscore == null) {
+          value = CameraViewUnknownProductState(barcode);
         } else {
-          value = CameraViewIncompleteProductState(product.product!);
+          value = CameraViewProductAvailableState(product.product!);
         }
       } catch (_) {
         value = CameraViewErrorBarcodeState(barcode);
@@ -77,9 +79,9 @@ class CameraViewProductAvailableState extends CameraViewState {
 }
 
 class CameraViewIncompleteProductState extends CameraViewState {
-  final Product product;
+  final String barcode;
 
-  const CameraViewIncompleteProductState(this.product) : super._();
+  const CameraViewIncompleteProductState(this.barcode) : super._();
 }
 
 class CameraViewUnknownProductState extends CameraViewState {

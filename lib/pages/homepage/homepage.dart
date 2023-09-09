@@ -48,6 +48,7 @@ class HomePageState extends State<HomePage> {
 
   bool _ignoreAllEvents = false;
   SettingsIconType _floatingSettingsType = SettingsIconType.floating;
+  ScrollMetrics? _userInitialScrollMetrics;
   ScrollDirection _direction = ScrollDirection.forward;
   bool _screenVisible = false;
 
@@ -116,6 +117,10 @@ class HomePageState extends State<HomePage> {
 
             if (notification is UserScrollNotification) {
               _direction = notification.direction;
+
+              if (notification.direction != ScrollDirection.idle) {
+                _userInitialScrollMetrics = notification.metrics;
+              }
             } else if (notification is ScrollEndNotification) {
               if (notification.metrics.axis != Axis.vertical ||
                   notification.dragDetails == null) {
@@ -292,9 +297,24 @@ class HomePageState extends State<HomePage> {
     final double cameraViewHeight = cameraHeight;
     final double scrollPosition = notification.metrics.pixels;
 
-    if ([0.0, cameraPeak, cameraViewHeight].contains(scrollPosition) ||
-        scrollPosition.roundToDouble() >= cameraViewHeight ||
+    final List<double> steps = [0.0, cameraPeak, cameraViewHeight];
+    if (steps.contains(scrollPosition)) {
+      double fixedPosition = _CustomPhysics.fixInconsistency(
+        steps,
+        scrollPosition,
+        _userInitialScrollMetrics!.pixels,
+      );
+
+      if (fixedPosition != scrollPosition) {
+        // If the user scrolls really quickly, he/she can miss a step
+        Future.delayed(Duration.zero, () {
+          _controller.jumpTo(fixedPosition);
+        });
+      }
+      return;
+    } else if (scrollPosition.roundToDouble() >= cameraViewHeight ||
         _direction == ScrollDirection.idle) {
+      print('Je marrête');
       return;
     }
 
@@ -377,17 +397,13 @@ class _CustomPhysics extends ClampingScrollPhysics {
     return _CustomPhysics(parent: buildParent(ancestor), steps: steps);
   }
 
-  double _lastPixels = 0.0;
+  double? _lastPixels;
 
   @override
   Simulation? createBallisticSimulation(
     ScrollMetrics position,
     double velocity,
   ) {
-    final Tolerance tolerance = toleranceFor(position);
-    if (velocity.abs() < tolerance.velocity) {
-      return null;
-    }
     if (velocity > 0.0 && position.pixels >= position.maxScrollExtent) {
       return null;
     }
@@ -400,7 +416,18 @@ class _CustomPhysics extends ClampingScrollPhysics {
     double? proposedPixels = simulation?.x(double.infinity);
 
     if (simulation == null || proposedPixels == null) {
-      return null;
+      var (double? min, _) = _getRange(position.pixels);
+
+      if (min != null) {
+        return ScrollSpringSimulation(
+          spring,
+          position.pixels,
+          min,
+          velocity,
+        );
+      } else {
+        return null;
+      }
     }
 
     var (double? min, double? max) = _getRange(position.pixels);
@@ -416,12 +443,16 @@ class _CustomPhysics extends ClampingScrollPhysics {
       }
     }
 
-    _lastPixels = _fixInconsistency(proposedPixels);
+    if (_lastPixels == null) {
+      _lastPixels = proposedPixels;
+    } else {
+      _lastPixels = _fixInconsistency(proposedPixels);
+    }
 
     return ScrollSpringSimulation(
       spring,
       position.pixels,
-      _lastPixels,
+      _lastPixels!,
       velocity,
     );
   }
@@ -440,11 +471,19 @@ class _CustomPhysics extends ClampingScrollPhysics {
     return (null, null);
   }
 
-  // In some cases, the proposed pixels have a giant space and findind the range
+  // In some cases, the proposed pixels have a giant space and finding the range
   // is incorrect. In that case, we ensure to have a contiguous range.
   double _fixInconsistency(double proposedPixels) {
-    int newPosition = _getStepPosition(proposedPixels);
-    int oldPosition = _getStepPosition(_lastPixels);
+    return fixInconsistency(steps, proposedPixels, _lastPixels!);
+  }
+
+  static double fixInconsistency(
+    List<double> steps,
+    double proposedPixels,
+    double initialPixelPosition,
+  ) {
+    int newPosition = _getStepPosition(steps, proposedPixels);
+    int oldPosition = _getStepPosition(steps, initialPixelPosition);
 
     if (newPosition - oldPosition >= 2) {
       return steps[math.min(newPosition - 1, 0)];
@@ -455,9 +494,9 @@ class _CustomPhysics extends ClampingScrollPhysics {
     return proposedPixels;
   }
 
-  int _getStepPosition(double pixels) {
+  static int _getStepPosition(List<double> steps, double pixels) {
     for (int i = steps.length - 1; i >= 0; i--) {
-      final double step = steps[i];
+      final double step = steps.elementAt(i);
 
       if (pixels >= step) {
         return i;

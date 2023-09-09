@@ -21,9 +21,7 @@ class _ValueListenerState<X, Y extends ValueNotifier<X>>
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    context.read<Y>()
-      ..removeListener(_onValueChanged)
-      ..addListener(_onValueChanged);
+    context.read<Y>().replaceListener(_onValueChanged);
   }
 
   void _onValueChanged() {

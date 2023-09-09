@@ -17,7 +17,7 @@ class NavApp extends StatefulWidget {
 
 class NavAppState extends State<NavApp> with TickerProviderStateMixin {
   late AnimationController _bottomSheetAndNavBarController;
-  late AnimationController _bottomSheetController;
+  late AnimationController _bottomSheetAnimationController;
   late Animation<Offset> _bottomSheetAnimation;
   late SheetVisibilityNotifier _sheetVisibility;
 
@@ -34,7 +34,7 @@ class NavAppState extends State<NavApp> with TickerProviderStateMixin {
       vsync: this,
       duration: const Duration(milliseconds: 250),
     );
-    _bottomSheetController = BottomSheet.createAnimationController(
+    _bottomSheetAnimationController = BottomSheet.createAnimationController(
       this,
     )..addStatusListener((status) {
         if (status == AnimationStatus.dismissed) {
@@ -43,13 +43,13 @@ class NavAppState extends State<NavApp> with TickerProviderStateMixin {
       });
 
     _bottomSheetAnimation = Tween<Offset>(
-      begin: const Offset(0.0, -100.0),
+      begin: const Offset(0.0, 150.0),
       end: const Offset(0.0, 0.0),
     ).animate(
       CurvedAnimation(
-        parent: _bottomSheetController,
+        parent: _bottomSheetAnimationController,
         curve: Curves.easeInCubic,
-      ),
+      )..addListener(() => setState(() {})),
     );
 
     _sheetVisibility = SheetVisibilityNotifier(_SheetVisibility.gone);
@@ -62,123 +62,126 @@ class NavAppState extends State<NavApp> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        if (_sheet != null) {
-          setState(() => _sheet = null);
-          return false;
-        } else {
-          return true;
-        }
-      },
-      child: MultiProvider(
-        providers: [
-          Provider.value(value: this),
-          ChangeNotifierProvider<SheetVisibilityNotifier>.value(
-            value: _sheetVisibility,
-          ),
-        ],
-        child: Stack(
-          children: [
-            Positioned.fill(
-              child: Offstage(
-                offstage: _sheetVisibility.isFullyVisible,
-                child: Column(
-                  children: [
-                    const Expanded(
-                      child: HomePage(),
-                    ),
-                    Transform.translate(
-                      offset: Offset(0.0, _navBarHeight - _navBarTranslation),
-                      child: MediaQuery.removePadding(
-                        removeTop: true,
-                        removeBottom: true,
-                        context: context,
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 2.0,
-                              offset: const Offset(-2.0, -2.0),
-                            ),
-                          ]),
-                          child: SafeArea(
-                            bottom: true,
-                            child: NavigationBar(
-                              height: kBottomNavigationBarHeight +
-                                  MediaQuery.viewPaddingOf(context).bottom,
-                              selectedIndex: 1,
-                              labelBehavior:
-                                  NavigationDestinationLabelBehavior.alwaysShow,
-                              destinations: const <Widget>[
-                                NavigationDestination(
-                                  icon: Icon(Icons.account_circle),
-                                  label: 'My profile',
-                                ),
-                                NavigationDestination(
-                                  icon: Icon(Icons.camera_alt),
-                                  label: 'Scan',
-                                ),
-                                NavigationDestination(
-                                  icon: Icon(Icons.list),
-                                  label: 'My lists',
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+    return MultiProvider(
+      providers: [
+        Provider.value(value: this),
+        ChangeNotifierProvider<SheetVisibilityNotifier>.value(
+          value: _sheetVisibility,
+        ),
+      ],
+      child: Stack(
+        children: [
+          Positioned.fill(
+            bottom: _navBarHeight,
+            child: Offstage(
+              offstage: _sheetVisibility.isFullyVisible,
+              child: const HomePage(),
             ),
-            if (_sheet != null)
-              Positioned.fill(
-                bottom: _navBarTranslation,
-                child: SlideTransition(
-                  position: _bottomSheetAnimation,
+          ),
+          if (_sheet != null)
+            Positioned.fill(
+              bottom: _navBarTranslation,
+              child: Transform.translate(
+                offset: _bottomSheetAnimation.value,
+                child: Opacity(
+                  opacity: _bottomSheetAnimationController.value,
                   child: _sheet!,
                 ),
               ),
-          ],
-        ),
+            ),
+          Positioned.fill(
+            top: null,
+            child: Transform.translate(
+              offset: Offset(0.0, _navBarHeight - _navBarTranslation),
+              child: MediaQuery.removePadding(
+                removeTop: true,
+                removeBottom: true,
+                context: context,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 2.0,
+                      offset: const Offset(-2.0, -2.0),
+                    ),
+                  ]),
+                  child: SafeArea(
+                    bottom: true,
+                    child: NavigationBar(
+                      height: kBottomNavigationBarHeight +
+                          MediaQuery.viewPaddingOf(context).bottom,
+                      selectedIndex: 1,
+                      labelBehavior:
+                          NavigationDestinationLabelBehavior.alwaysShow,
+                      destinations: const <Widget>[
+                        NavigationDestination(
+                          icon: Icon(Icons.account_circle),
+                          label: 'My profile',
+                        ),
+                        NavigationDestination(
+                          icon: Icon(Icons.camera_alt),
+                          label: 'Scan',
+                        ),
+                        NavigationDestination(
+                          icon: Icon(Icons.list),
+                          label: 'My lists',
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  void showSheet(DraggableScrollableSheet sheet) {
+  Future<void> showSheet(DraggableScrollableSheet sheet) async {
     assert(sheet.controller != null, 'A controller is mandatory');
+    if (_sheet != null) {
+      await hideSheet();
+    }
+
     _sheetVisibility.value = _SheetVisibility.partiallyVisible;
     sheet.controller!.addListener(_onSheetScrolled);
     _sheet = sheet;
-    _bottomSheetController.forward();
-    setState(() {});
+    _bottomSheetAnimationController.forward();
+    HapticFeedback.heavyImpact();
   }
 
-  void hideSheet() {
-    _sheet?.controller?.removeListener(_onSheetScrolled);
-    _sheetVisibility.value = _SheetVisibility.gone;
-    _bottomSheetController.reverse();
-    //setState(() => _sheet = null);
+  Future<void> hideSheet() async {
+    if ((_sheet?.controller?.size ?? 0.0) >= 0.99) {
+      _sheet!.controller!.reset();
+    } else {
+      _sheet?.controller?.removeListener(_onSheetScrolled);
+      _sheetVisibility.value = _SheetVisibility.gone;
+      return _bottomSheetAnimationController.reverse();
+    }
   }
 
   bool get hasSheet => _sheet != null;
+
+  double get navBarHeight => _navBarHeight;
 
   bool get isSheetFullyVisible =>
       _sheetVisibility.value == _SheetVisibility.fullyVisible;
 
   void _onSheetScrolled() {
-    if (_sheet!.controller!.size >= 0.999999999999 &&
-        _navBarTranslation == _navBarHeight) {
-      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
-      _animateBottomBar(0.0);
+    if (_sheet!.controller!.size >= 0.999) {
+      if (_navBarTranslation == _navBarHeight) {
+        SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
+        _animateBottomBar(0.0);
+      }
       if (_sheetVisibility.value != _SheetVisibility.fullyVisible) {
         _sheetVisibility.value = _SheetVisibility.fullyVisible;
       }
-    } else if (_sheet!.controller!.size < 1.0 && _navBarTranslation == 0.0) {
-      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
-      _animateBottomBar(_navBarHeight);
+    } else if (_sheet!.controller!.size < 1.0) {
+      if (_navBarTranslation == 0.0) {
+        SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+        _animateBottomBar(_navBarHeight);
+      }
 
       if (_sheetVisibility.value != _SheetVisibility.partiallyVisible) {
         _sheetVisibility.value = _SheetVisibility.partiallyVisible;
@@ -206,7 +209,7 @@ class NavAppState extends State<NavApp> with TickerProviderStateMixin {
   @override
   void dispose() {
     _sheet?.controller?.removeListener(_onSheetScrolled);
-    _bottomSheetController.dispose();
+    _bottomSheetAnimationController.dispose();
     _bottomSheetAndNavBarController.dispose();
     super.dispose();
   }
@@ -221,6 +224,10 @@ class SheetVisibilityNotifier extends ValueNotifier<_SheetVisibility> {
   bool get isPartiallyVisible => value == _SheetVisibility.partiallyVisible;
 
   bool get isGone => value == _SheetVisibility.gone;
+
+  static SheetVisibilityNotifier of(BuildContext context) {
+    return context.watch<SheetVisibilityNotifier>();
+  }
 }
 
 enum _SheetVisibility {

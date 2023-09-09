@@ -16,13 +16,17 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        fontFamily: 'DroidSans',
+        fontFamily: 'OpenSans',
         colorScheme: ColorScheme.fromSeed(seedColor: AppColors.orangeLight),
         useMaterial3: true,
         dividerColor: AppColors.grey,
         dividerTheme: const DividerThemeData(
           space: 1.0,
           color: AppColors.grey,
+        ),
+        tabBarTheme: const TabBarTheme(
+          labelStyle: TextStyle(fontWeight: FontWeight.bold),
+          unselectedLabelStyle: TextStyle(fontWeight: FontWeight.w500),
         ),
       ),
       home: const NavApp(),

@@ -10,15 +10,17 @@ class CircledIcon extends StatelessWidget {
     this.iconColor,
     this.borderColor,
     this.backgroundColor,
+    this.padding,
     super.key,
   });
 
-  final AppIcon icon;
+  final Widget icon;
   final String tooltip;
   final VoidCallback? onPressed;
   final Color? iconColor;
   final Color? borderColor;
   final Color? backgroundColor;
+  final EdgeInsetsGeometry? padding;
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +46,7 @@ class CircledIcon extends StatelessWidget {
               ),
               color: backgroundColor ?? AppColors.orangeVeryLight,
             ),
-            padding: const EdgeInsets.all(12.0),
+            padding: padding ?? const EdgeInsets.all(12.0),
             child: icon,
           ),
         ),

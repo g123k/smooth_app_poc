@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smoothapp_poc/navigation.dart';
 import 'package:smoothapp_poc/pages/homepage/camera/peak_view/peak_view.dart';
 import 'package:smoothapp_poc/pages/homepage/camera/view/ui/camera_view.dart';
 import 'package:smoothapp_poc/pages/homepage/homepage.dart';
@@ -19,6 +20,12 @@ class ExpandableCamera extends StatelessWidget {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
+        final NavAppState app = NavApp.of(context);
+        if (app.hasSheet) {
+          app.hideSheet();
+          return false;
+        }
+
         final HomePageState screenController = HomePage.of(context);
         if (screenController.isExpanded) {
           screenController.collapseCamera();

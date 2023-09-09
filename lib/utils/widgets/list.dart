@@ -28,26 +28,32 @@ class ListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: _computePadding(),
-      child: SizedBox(
-        width: double.infinity,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            if (leading != null)
-              Padding(
-                padding: const EdgeInsetsDirectional.only(end: 10.0),
-                child: leading!.build(context),
-              ),
-            Expanded(child: child),
-            if (trailing == ListItemTrailingType.chevron)
-              const Icon(
-                Icons.chevron_right,
-                color: AppColors.greyLight2,
-              ),
-          ],
+    final bool hasSemantics = child is Text;
+
+    return Semantics(
+      label: hasSemantics ? (child as Text).data : null,
+      excludeSemantics: hasSemantics,
+      child: Padding(
+        padding: _computePadding(),
+        child: SizedBox(
+          width: double.infinity,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              if (leading != null)
+                Padding(
+                  padding: const EdgeInsetsDirectional.only(end: 10.0),
+                  child: leading!.build(context),
+                ),
+              Expanded(child: child),
+              if (trailing == ListItemTrailingType.chevron)
+                const Icon(
+                  Icons.chevron_right,
+                  color: AppColors.greyLight2,
+                ),
+            ],
+          ),
         ),
       ),
     );

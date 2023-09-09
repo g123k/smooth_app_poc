@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:smoothapp_poc/navigation.dart';
 import 'package:smoothapp_poc/pages/homepage/camera/view/camera_state_manager.dart';
 import 'package:smoothapp_poc/pages/homepage/camera/view/ui/camera_view.dart';
 import 'package:smoothapp_poc/pages/homepage/homepage.dart';
+import 'package:smoothapp_poc/resources/app_animations.dart';
 import 'package:smoothapp_poc/resources/app_icons.dart' as icons;
 import 'package:smoothapp_poc/utils/widgets/circled_icon.dart';
 import 'package:smoothapp_poc/utils/widgets/search_bar.dart';
@@ -58,7 +60,9 @@ class CameraButtonBars extends StatelessWidget {
                 icon: const icons.ToggleCamera(
                   size: 20.0,
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  context.read<CustomScannerController>().toggleCamera();
+                },
                 tooltip: 'Changer de caméra',
               ),
               const _TorchIcon(),
@@ -93,15 +97,17 @@ class _TorchIconState extends State<_TorchIcon> {
       padding: const EdgeInsetsDirectional.only(start: 10.0),
       child: CircledIcon(
         icon: switch (isTorchOn) {
-          true => const icons.Torch.on(size: 24.0),
-          false => const icons.Torch.off(size: 24.0),
+          true => const TorchAnimation.on(),
+          false => const TorchAnimation.off(),
         },
+        padding: const EdgeInsets.all(6.0),
         onPressed: () {
           if (isTorchOn) {
             controller.turnTorchOff();
           } else {
             controller.turnTorchOn();
           }
+          HapticFeedback.selectionClick();
           setState(() {});
         },
         tooltip: _getLabel(controller.isTorchOn),

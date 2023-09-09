@@ -17,6 +17,7 @@ dependencies:
   openfoodfacts: any
 
   flutter_svg: any
+  rive: any
   bottom_sheet: any
 
   visibility_detector: any
@@ -38,18 +39,20 @@ flutter:
 
   uses-material-design: true
 
-# Don't use icons SVGs, but add them to them font
+# /!\
+# Don't use icons SVGs (in assets/icons), but add them to the font
 # cf (assets/fonts/README.md)
   assets:
+    - assets/animations/
     - assets/images/
 
-
-
   fonts:
-    - family: DroidSans
+    - family: OpenSans
       fonts:
-        - asset: assets/fonts/DroidSans.ttf
-        - asset: assets/fonts/DroidSans-Bold.ttf
+        - asset: assets/fonts/OpenSans-Regular.ttf
+        - asset: assets/fonts/OpenSans-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/OpenSans-Bold.ttf
           weight: 700
 
     - family: SmoothIcons
