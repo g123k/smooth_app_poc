@@ -1,48 +1,26 @@
-part of 'product_page.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:openfoodfacts/openfoodfacts.dart';
+import 'package:provider/provider.dart';
+import 'package:smoothapp_poc/pages/product/header/product_header.dart';
+import 'package:smoothapp_poc/pages/product/product_page.dart';
+import 'package:smoothapp_poc/resources/app_colors.dart';
+import 'package:smoothapp_poc/resources/app_icons.dart' as icons;
+import 'package:smoothapp_poc/utils/num_utils.dart';
+import 'package:smoothapp_poc/utils/widgets/list.dart';
 
-class _ProductHeaderWrapperForSize extends StatefulWidget {
-  const _ProductHeaderWrapperForSize(this.product);
-
-  final Product product;
-
-  @override
-  State<_ProductHeaderWrapperForSize> createState() =>
-      _ProductHeaderWrapperForSizeState();
-}
-
-class _ProductHeaderWrapperForSizeState
-    extends State<_ProductHeaderWrapperForSize>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _tabController = TabController(
-      length: _ProductHeader.tabs.length,
-      vsync: this,
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Provider<Product>.value(
-      value: widget.product,
-      child: ListenableProvider(
-        create: (_) => _tabController,
-        child: const _ProductHeader(),
-      ),
-    );
-  }
-}
-
-class _ProductHeader extends StatelessWidget {
-  const _ProductHeader({
+class ProductHeaderBody extends StatelessWidget {
+  const ProductHeaderBody({
+    super.key,
     this.onElementTapped,
+    this.onTabChanged,
+    this.shrinkContent,
   });
 
-  final VoidCallback? onElementTapped;
+  final Function(ElementTappedType)? onElementTapped;
+  final Function(int)? onTabChanged;
+  final double? shrinkContent;
 
   static const List<Tab> tabs = [
     Tab(text: 'Pour moi'),
@@ -56,31 +34,67 @@ class _ProductHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TabController tabController = context.read<TabController>();
-    return Material(
-      type: MaterialType.card,
-      child: Align(
-        child: Column(
-          children: [
-            _ProductHeaderDetails(
-              onNutriScoreClicked: () {
-                tabController.animateTo(1);
-                onElementTapped?.call();
-              },
-              onEcoScoreClicked: () {
-                tabController.animateTo(2);
-                onElementTapped?.call();
-              },
-            ),
-            TabBar(
-              controller: tabController,
-              tabs: _ProductHeader.tabs,
-              isScrollable: true,
-              onTap: (_) => onElementTapped?.call(),
-            ),
-          ],
-        ),
-      ),
+
+    final Widget headerDetails = _ProductHeaderDetails(
+      onNutriScoreClicked: () {
+        onElementTapped?.call(ElementTappedType.nutriscore);
+      },
+      onEcoScoreClicked: () {
+        onElementTapped?.call(ElementTappedType.ecoscore);
+      },
     );
+
+    final Widget tabBar = TabBar(
+      controller: tabController,
+      tabs: ProductHeaderBody.tabs,
+      isScrollable: true,
+      onTap: (int position) => onTabChanged?.call(position),
+    );
+
+    if (shrinkContent == null) {
+      // Only used when we pre-compute the size
+      return Material(
+        type: MaterialType.canvas,
+        child: Align(
+          child: ClipRect(
+            child: Column(
+              children: [
+                headerDetails,
+                tabBar,
+              ],
+            ),
+          ),
+        ),
+      );
+    } else {
+      return Material(
+        type: MaterialType.canvas,
+        child: Align(
+          child: ClipRect(
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  top: shrinkContent!,
+                  bottom: null,
+                  child: Opacity(
+                    opacity: 1 -
+                        (shrinkContent!.progress(
+                          0,
+                          -ProductHeaderConfiguration.of(context).minThreshold,
+                        )).clamp(0.0, 1.0),
+                    child: headerDetails,
+                  ),
+                ),
+                Positioned.fill(
+                  top: null,
+                  child: tabBar,
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
   }
 }
 

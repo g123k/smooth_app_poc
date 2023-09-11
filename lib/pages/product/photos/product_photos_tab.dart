@@ -5,11 +5,18 @@ class ProductPhotosTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SliverList.builder(
-      itemBuilder: (BuildContext context, int index) {
-        return const Placeholder();
-      },
-      itemCount: 20,
-    );
+    return LayoutBuilder(builder: (context, constraints) {
+      return SizedBox(
+        width: constraints.maxWidth,
+        height: (constraints.maxWidth / 856) * 1616,
+        child: Image.asset(
+          'assets/images/product_photos.webp',
+          // 856 x 1616
+          width: constraints.maxWidth,
+          height: (constraints.maxWidth / 856) * 1616,
+          alignment: AlignmentDirectional.topCenter,
+        ),
+      );
+    });
   }
 }

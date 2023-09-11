@@ -359,7 +359,7 @@ class _Logo extends StatelessWidget {
           width: imageWidth,
           height: math.max(MAX_HEIGHT * (1 - progress), MIN_HEIGHT),
           margin: EdgeInsetsDirectional.only(
-            start: math.max((1 - progress) * ((width - imageWidth) / 2), 10.0),
+            start: math.max((1 - progress) * ((width - imageWidth) / 4), 10.0),
             bottom: 5.0,
           ),
           alignment: AlignmentDirectional.centerStart,

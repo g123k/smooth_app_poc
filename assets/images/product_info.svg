@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="428px" height="1180px" viewBox="0 0 428 1180" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Fiche produit informations</title>
+    <g id="Fiche-produit-informations" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group-2" transform="translate(-2, -1)">
+            <line x1="0.5" y1="201.5" x2="428.5" y2="201.5" id="Line" stroke="#E4E4E4" stroke-linecap="square"></line>
+            <g id="Group-5" transform="translate(96, 133)">
+                <line x1="8.91936013e-14" y1="29.5" x2="334" y2="29" id="Line" stroke="#E4E4E4" stroke-linecap="square"></line>
+                <g id="ic_arrow" transform="translate(294, 2)" fill="#8F8F8F">
+                    <path d="M4.07742124,2.92257876 C3.77661569,2.92257876 3.47590735,3.03451676 3.21457402,3.25851676 L-2.34684089,8.02414176 C-2.706952,8.33314176 -2.92257876,8.85290676 -2.92257876,9.40890676 C-2.92257876,10.7379068 -1.76999718,11.5306728 -0.909774959,10.7936728 L4.07742124,6.51828176 L9.06461713,10.7956258 C9.92483935,11.5326258 11.0774212,10.7379068 11.0774212,9.40890676 C11.0774212,8.85190676 10.861017,8.33314176 10.5016837,8.02414176 L4.94026846,3.25851676 C4.67893513,3.03451676 4.3782268,2.92257876 4.07742124,2.92257876 Z" id="Path" transform="translate(4.0774, 7) rotate(90) translate(-4.0774, -7)"></path>
+                </g>
+                <text id="Sans-gluten" font-family="GoogleSans-Regular, Google Sans" font-size="15" font-weight="normal" fill="#000000">
+                    <tspan x="21" y="14">Sans gluten</tspan>
+                </text>
+            </g>
+            <g id="Group-3" transform="translate(95.583, 56)">
+                <line x1="0.416978777" y1="28.5" x2="334" y2="28.5" id="Line" stroke="#E4E4E4" stroke-linecap="square"></line>
+                <text id="Sans-colorants" font-family="GoogleSans-Regular, Google Sans" font-size="15" font-weight="normal" fill="#000000">
+                    <tspan x="21.4169788" y="14">Sans colorants</tspan>
+                </text>
+            </g>
+            <g id="Group-4" transform="translate(96, 94)">
+                <line x1="0.416978777" y1="29" x2="334" y2="29" id="Line" stroke="#E4E4E4" stroke-linecap="square"></line>
+                <text id="Sans-conservateurs" font-family="GoogleSans-Regular, Google Sans" font-size="15" font-weight="normal" fill="#000000">
+                    <tspan x="21" y="14">Sans conservateurs</tspan>
+                </text>
+                <g id="ic_arrow" transform="translate(294, 3)" fill="#8F8F8F">
+                    <path d="M4.07742124,2.92257876 C3.77661569,2.92257876 3.47590735,3.03451676 3.21457402,3.25851676 L-2.34684089,8.02414176 C-2.706952,8.33314176 -2.92257876,8.85290676 -2.92257876,9.40890676 C-2.92257876,10.7379068 -1.76999718,11.5306728 -0.909774959,10.7936728 L4.07742124,6.51828176 L9.06461713,10.7956258 C9.92483935,11.5326258 11.0774212,10.7379068 11.0774212,9.40890676 C11.0774212,8.85190676 10.861017,8.33314176 10.5016837,8.02414176 L4.94026846,3.25851676 C4.67893513,3.03451676 4.3782268,2.92257876 4.07742124,2.92257876 Z" id="Path" transform="translate(4.0774, 7) rotate(90) translate(-4.0774, -7)"></path>
+                </g>
+            </g>
+            <g id="Group" transform="translate(2, 0)">
+                <rect id="Rectangle" fill="#F9F9F9" x="0" y="0" width="428" height="46"></rect>
+                <line x1="7.30743591e-14" y1="46" x2="444" y2="46" id="Line" stroke="#E4E4E4" stroke-linecap="square"></line>
+                <text id="Labels" font-family="GoogleSans-Bold, Google Sans" font-size="15" font-weight="bold" fill="#341100">
+                    <tspan x="62" y="28">Labels</tspan>
+                </text>
+                <path d="M49,23 L44.65,29.15 C44.4666667,29.4166667 44.2291667,29.625 43.9375,29.775 C43.6458333,29.925 43.3333333,30 43,30 L33,30 C32.45,30 31.9791667,29.8041667 31.5875,29.4125 C31.1958333,29.0208333 31,28.55 31,28 L31,18 C31,17.45 31.1958333,16.9791667 31.5875,16.5875 C31.9791667,16.1958333 32.45,16 33,16 L43,16 C43.3333333,16 43.6458333,16.075 43.9375,16.225 C44.2291667,16.375 44.4666667,16.5833333 44.65,16.85 L49,23 Z M33.0375,23 L33.0375,28 L33.0375,18 L33.0375,23 Z" id="Shape" fill="#341100" fill-rule="nonzero"></path>
+                <g id="ic_edit" transform="translate(383, 15)" fill="#8F8F8F" fill-rule="nonzero">
+                    <path d="M13.6184211,0 C13.0089474,0 12.3994737,0.232105263 11.9342105,0.697368421 L10.9473684,1.68421053 L14.3157895,5.05263158 L15.3026316,4.06578947 C16.2323158,3.13610526 16.2323158,1.62789474 15.3026316,0.697368421 C14.8373684,0.232105263 14.2278947,0 13.6184211,0 Z M9.68421053,2.94736842 L0,12.6315789 L0,16 L3.36842105,16 L13.0526316,6.31578947 L9.68421053,2.94736842 Z" id="Shape"></path>
+                </g>
+            </g>
+            <g id="Group-6" transform="translate(117, 173)">
+                <g id="ic_arrow" transform="translate(273, 1)" fill="#8F8F8F">
+                    <path d="M4.07742124,2.92257876 C3.77661569,2.92257876 3.47590735,3.03451676 3.21457402,3.25851676 L-2.34684089,8.02414176 C-2.706952,8.33314176 -2.92257876,8.85290676 -2.92257876,9.40890676 C-2.92257876,10.7379068 -1.76999718,11.5306728 -0.909774959,10.7936728 L4.07742124,6.51828176 L9.06461713,10.7956258 C9.92483935,11.5326258 11.0774212,10.7379068 11.0774212,9.40890676 C11.0774212,8.85190676 10.861017,8.33314176 10.5016837,8.02414176 L4.94026846,3.25851676 C4.67893513,3.03451676 4.3782268,2.92257876 4.07742124,2.92257876 Z" id="Path" transform="translate(4.0774, 7) rotate(90) translate(-4.0774, -7)"></path>
+                </g>
+                <text id="Triman" font-family="GoogleSans-Regular, Google Sans" font-size="15" font-weight="normal" fill="#000000">
+                    <tspan x="0" y="14">Triman</tspan>
+                </text>
+            </g>
+        </g>
+        <g id="Group-2" transform="translate(-2, 201)">
+            <g id="Group-10" transform="translate(95, 131)">
+                <line x1="8.91936013e-14" y1="29.5" x2="334" y2="29" id="Line" stroke="#E4E4E4" stroke-linecap="square"></line>
+                <text id="Pâtes-à-tartiner" font-family="GoogleSans-Regular, Google Sans" font-size="15" font-weight="normal" fill="#000000">
+                    <tspan x="21" y="14">Pâtes à tartiner</tspan>
+                </text>
+            </g>
+            <line x1="0.5" y1="238.5" x2="428.5" y2="238.5" id="Line" stroke="#E4E4E4" stroke-linecap="square"></line>
+            <g id="Group-8" transform="translate(94.583, 56)">
+                <line x1="0.416978777" y1="27.5" x2="334" y2="27.5" id="Line" stroke="#E4E4E4" stroke-linecap="square"></line>
+                <text id="Petits-déjeuners" font-family="GoogleSans-Regular, Google Sans" font-size="15" font-weight="normal" fill="#000000">
+                    <tspan x="21.4169788" y="14">Petits-déjeuners</tspan>
+                </text>
+            </g>
+            <g id="Group-9" transform="translate(95, 93)">
+                <line x1="0.416978777" y1="28" x2="334" y2="28" id="Line" stroke="#E4E4E4" stroke-linecap="square"></line>
+                <text id="Produits-à-tartiner" font-family="GoogleSans-Regular, Google Sans" font-size="15" font-weight="normal" fill="#000000">
+                    <tspan x="21" y="14">Produits à tartiner</tspan>
+                </text>
+            </g>
+            <g id="Group-7" transform="translate(2, 0)">
+                <rect id="Rectangle" fill="#F9F9F9" x="0" y="0" width="428" height="46"></rect>
+                <line x1="7.30743591e-14" y1="46" x2="444" y2="46" id="Line" stroke="#E4E4E4" stroke-linecap="square"></line>
+                <text id="Catégories" font-family="GoogleSans-Bold, Google Sans" font-size="15" font-weight="bold" fill="#000000">
+                    <tspan x="63" y="28">Catégories</tspan>
+                </text>
+                <path d="M33.5,22 L39,13 L44.5,22 L33.5,22 Z M44.5,33 C43.25,33 42.1875,32.5625 41.3125,31.6875 C40.4375,30.8125 40,29.75 40,28.5 C40,27.25 40.4375,26.1875 41.3125,25.3125 C42.1875,24.4375 43.25,24 44.5,24 C45.75,24 46.8125,24.4375 47.6875,25.3125 C48.5625,26.1875 49,27.25 49,28.5 C49,29.75 48.5625,30.8125 47.6875,31.6875 C46.8125,32.5625 45.75,33 44.5,33 Z M30,32.5 L30,24.5 L38,24.5 L38,32.5 L30,32.5 Z M44.5,31 C45.2,31 45.7916667,30.7583333 46.275,30.275 C46.7583333,29.7916667 47,29.2 47,28.5 C47,27.8 46.7583333,27.2083333 46.275,26.725 C45.7916667,26.2416667 45.2,26 44.5,26 C43.8,26 43.2083333,26.2416667 42.725,26.725 C42.2416667,27.2083333 42,27.8 42,28.5 C42,29.2 42.2416667,29.7916667 42.725,30.275 C43.2083333,30.7583333 43.8,31 44.5,31 Z M32,30.5 L36,30.5 L36,26.5 L32,26.5 L32,30.5 Z M37.05,20 L40.95,20 L39,16.85 L37.05,20 Z" id="Shape" fill="#341100" fill-rule="nonzero"></path>
+                <g id="ic_edit" transform="translate(383, 15)" fill="#8F8F8F" fill-rule="nonzero">
+                    <path d="M13.6184211,0 C13.0089474,0 12.3994737,0.232105263 11.9342105,0.697368421 L10.9473684,1.68421053 L14.3157895,5.05263158 L15.3026316,4.06578947 C16.2323158,3.13610526 16.2323158,1.62789474 15.3026316,0.697368421 C14.8373684,0.232105263 14.2278947,0 13.6184211,0 Z M9.68421053,2.94736842 L0,12.6315789 L0,16 L3.36842105,16 L13.0526316,6.31578947 L9.68421053,2.94736842 Z" id="Shape"></path>
+                </g>
+            </g>
+            <g id="Group-11" transform="translate(95, 171)">
+                <text id="Produits-à-tartiner" font-family="GoogleSans-Regular, Google Sans" font-size="15" font-weight="normal" fill="#000000">
+                    <tspan x="21" y="14">Produits à tartiner sucrés</tspan>
+                </text>
+                <line x1="8.91936013e-14" y1="28" x2="334" y2="27.5" id="Line" stroke="#E4E4E4" stroke-linecap="square"></line>
+            </g>
+            <g id="Pâtes-à-tartiner-aux-2" transform="translate(115.7915, 209.25)" fill="#000000" font-family="GoogleSans-Regular, Google Sans" font-size="15" font-weight="normal">
+                <text id="Pâtes-à-tartiner-aux">
+                    <tspan x="0" y="14">Pâtes à tartiner aux noisettes et au cacao</tspan>
+                </text>
+            </g>
+        </g>
+        <g id="Group-2" transform="translate(-0.5, 643)">
+            <g id="Group-18" transform="translate(95.083, 56)">
+                <line x1="0.416978777" y1="28.5" x2="334" y2="28.5" id="Line" stroke="#E4E4E4" stroke-linecap="square"></line>
+                <text id="Energie" font-family="GoogleSans-Regular, Google Sans" font-size="15" font-weight="normal" fill="#000000">
+                    <tspan x="21.4169788" y="14">Energie</tspan>
+                </text>
+                <text id="2252-kJ" font-family="GoogleSans-Regular, Google Sans" font-size="15" font-weight="normal" fill="#000000">
+                    <tspan x="254.341979" y="14">2252 kJ</tspan>
+                </text>
+            </g>
+            <g id="Group-19" transform="translate(95.5, 94)">
+                <line x1="0.416978777" y1="28" x2="334" y2="28" id="Line" stroke="#E4E4E4" stroke-linecap="square"></line>
+                <text id="539-kcal" font-family="GoogleSans-Regular, Google Sans" font-size="15" font-weight="normal" fill="#000000">
+                    <tspan x="249.8" y="14">539 kcal</tspan>
+                </text>
+                <text id="Energie" font-family="GoogleSans-Regular, Google Sans" font-size="15" font-weight="normal" fill="#000000">
+                    <tspan x="21" y="14">Energie</tspan>
+                </text>
+            </g>
+            <g id="Group-17" transform="translate(0.5, 0)">
+                <rect id="Rectangle" fill="#F9F9F9" x="0" y="0" width="428" height="46"></rect>
+                <line x1="7.30743591e-14" y1="46" x2="444" y2="46" id="Line" stroke="#E4E4E4" stroke-linecap="square"></line>
+                <text id="Composition-nutritio" font-family="GoogleSans-Bold, Google Sans" font-size="15" font-weight="bold" fill="#000000">
+                    <tspan x="63" y="26">Composition nutritionnelle</tspan>
+                </text>
+                <path d="M32,30 L32,28 L41,28 L41,16.825 C40.5666667,16.675 40.1916667,16.4416667 39.875,16.125 C39.5583333,15.8083333 39.325,15.4333333 39.175,15 L36,15 L39,22 C39,22.8333333 38.6583333,23.5416667 37.975,24.125 C37.2916667,24.7083333 36.4666667,25 35.5,25 C34.5333333,25 33.7083333,24.7083333 33.025,24.125 C32.3416667,23.5416667 32,22.8333333 32,22 L35,15 L33,15 L33,13 L39.175,13 C39.375,12.4166667 39.7333333,11.9375 40.25,11.5625 C40.7666667,11.1875 41.35,11 42,11 C42.65,11 43.2333333,11.1875 43.75,11.5625 C44.2666667,11.9375 44.625,12.4166667 44.825,13 L51,13 L51,15 L49,15 L52,22 C52,22.8333333 51.6583333,23.5416667 50.975,24.125 C50.2916667,24.7083333 49.4666667,25 48.5,25 C47.5333333,25 46.7083333,24.7083333 46.025,24.125 C45.3416667,23.5416667 45,22.8333333 45,22 L48,15 L44.825,15 C44.675,15.4333333 44.4416667,15.8083333 44.125,16.125 C43.8083333,16.4416667 43.4333333,16.675 43,16.825 L43,28 L52,28 L52,30 L32,30 Z M46.625,22 L50.375,22 L48.5,17.65 L46.625,22 Z M33.625,22 L37.375,22 L35.5,17.65 L33.625,22 Z M42,15 C42.2833333,15 42.5208333,14.9041667 42.7125,14.7125 C42.9041667,14.5208333 43,14.2833333 43,14 C43,13.7166667 42.9041667,13.4791667 42.7125,13.2875 C42.5208333,13.0958333 42.2833333,13 42,13 C41.7166667,13 41.4791667,13.0958333 41.2875,13.2875 C41.0958333,13.4791667 41,13.7166667 41,14 C41,14.2833333 41.0958333,14.5208333 41.2875,14.7125 C41.4791667,14.9041667 41.7166667,15 42,15 Z" id="Shape" fill="#341100" fill-rule="nonzero"></path>
+                <g id="ic_edit-2" transform="translate(384, 12)" fill="#8F8F8F" fill-rule="nonzero">
+                    <g id="ic_edit">
+                        <path d="M13.6184211,0 C13.0089474,0 12.3994737,0.232105263 11.9342105,0.697368421 L10.9473684,1.68421053 L14.3157895,5.05263158 L15.3026316,4.06578947 C16.2323158,3.13610526 16.2323158,1.62789474 15.3026316,0.697368421 C14.8373684,0.232105263 14.2278947,0 13.6184211,0 Z M9.68421053,2.94736842 L0,12.6315789 L0,16 L3.36842105,16 L13.0526316,6.31578947 L9.68421053,2.94736842 Z" id="Shape"></path>
+                    </g>
+                </g>
+            </g>
+            <g id="Group-20" transform="translate(94.5, 132)">
+                <text id="30,9-g" font-family="GoogleSans-Regular, Google Sans" font-size="15" font-weight="normal" fill="#000000">
+                    <tspan x="263.895" y="14">30,9 g</tspan>
+                </text>
+                <line x1="0.5" y1="29.5" x2="334" y2="29" id="Line" stroke="#E4E4E4" stroke-linecap="square"></line>
+                <text id="Matières-grasses" font-family="GoogleSans-Regular, Google Sans" font-size="15" font-weight="normal" fill="#000000">
+                    <tspan x="21.75" y="14">Matières grasses</tspan>
+                </text>
+            </g>
+            <g id="Group-21" transform="translate(116.25, 172)">
+                <text id="Tout-voir" font-family="GoogleSans-Regular, Google Sans" font-size="15" font-weight="normal" fill="#000000" text-decoration="underline">
+                    <tspan x="0" y="14">Tout voir</tspan>
+                </text>
+                <g id="ic_edit" transform="translate(267.3274, 5.9226)" fill="#8F8F8F">
+                    <path d="M7,8.8817842e-16 C6.69919444,8.8817842e-16 6.39848611,0.111938 6.13715278,0.335938 L0.575737867,5.101563 C0.215626756,5.410563 0,5.930328 0,6.486328 C0,7.815328 1.15258158,8.608094 2.0128038,7.871094 L7,3.595703 L11.9871959,7.873047 C12.8474181,8.610047 14,7.815328 14,6.486328 C14,5.929328 13.7835958,5.410563 13.4242624,5.101563 L7.86284722,0.335938 C7.60151389,0.111938 7.30080556,8.8817842e-16 7,8.8817842e-16 Z" id="Path" transform="translate(7, 4.0774) rotate(180) translate(-7, -4.0774)"></path>
+                </g>
+            </g>
+            <line x1="0.5" y1="201.25" x2="429" y2="201.75" id="Line" stroke="#E4E4E4" stroke-linecap="square"></line>
+        </g>
+        <g id="Group-2" transform="translate(-0.5, 440)">
+            <g id="Group-15" transform="translate(93.5, 133)">
+                <line x1="0.5" y1="29" x2="334" y2="29" id="Line" stroke="#E4E4E4" stroke-linecap="square"></line>
+                <text id="Noisettes-13-%" font-family="GoogleSans-Regular, Google Sans" font-size="15" font-weight="normal" fill="#000000">
+                    <tspan x="22" y="14">Noisettes 13 %</tspan>
+                </text>
+            </g>
+            <g id="Group-13" transform="translate(94.083, 56)">
+                <line x1="0.416978777" y1="28.5" x2="334" y2="28.5" id="Line" stroke="#E4E4E4" stroke-linecap="square"></line>
+                <text id="Sucre" font-family="GoogleSans-Regular, Google Sans" font-size="15" font-weight="normal" fill="#000000">
+                    <tspan x="21.4169788" y="14">Sucre</tspan>
+                </text>
+            </g>
+            <g id="Group-14" transform="translate(94.5, 94)">
+                <line x1="0.416978777" y1="29" x2="334" y2="29" id="Line" stroke="#E4E4E4" stroke-linecap="square"></line>
+                <text id="Huile-de-palme" font-family="GoogleSans-Regular, Google Sans" font-size="15" font-weight="normal" fill="#000000">
+                    <tspan x="21" y="14">Huile de palme</tspan>
+                </text>
+            </g>
+            <g id="Group-16" transform="translate(116, 172.75)">
+                <g id="ic_edit" transform="translate(267.3274, 5.9226)" fill="#8F8F8F">
+                    <path d="M7,8.8817842e-16 C6.69919444,8.8817842e-16 6.39848611,0.111938 6.13715278,0.335938 L0.575737867,5.101563 C0.215626756,5.410563 0,5.930328 0,6.486328 C0,7.815328 1.15258158,8.608094 2.0128038,7.871094 L7,3.595703 L11.9871959,7.873047 C12.8474181,8.610047 14,7.815328 14,6.486328 C14,5.929328 13.7835958,5.410563 13.4242624,5.101563 L7.86284722,0.335938 C7.60151389,0.111938 7.30080556,8.8817842e-16 7,8.8817842e-16 Z" id="Path" transform="translate(7, 4.0774) rotate(180) translate(-7, -4.0774)"></path>
+                </g>
+                <text id="Tout-voir" font-family="GoogleSans-Regular, Google Sans" font-size="15" font-weight="normal" fill="#000000" text-decoration="underline">
+                    <tspan x="0" y="14">Tout voir</tspan>
+                </text>
+            </g>
+            <g id="Group-12" transform="translate(0.5, 0)">
+                <rect id="Rectangle" fill="#F9F9F9" x="0" y="0" width="428" height="46"></rect>
+                <line x1="7.30743591e-14" y1="46" x2="444" y2="46" id="Line" stroke="#E4E4E4" stroke-linecap="square"></line>
+                <text id="Ingrédients" font-family="GoogleSans-Bold, Google Sans" font-size="15" font-weight="bold" fill="#000000">
+                    <tspan x="63" y="28">Ingrédients</tspan>
+                </text>
+                <path d="M36.625,30 L36.625,22.68 C35.88125,22.4933333 35.2578125,22.12 34.7546875,21.56 C34.2515625,21 34,20.3466667 34,19.6 L34,14 L35.75,14 L35.75,19.6 L36.625,19.6 L36.625,14 L38.375,14 L38.375,19.6 L39.25,19.6 L39.25,14 L41,14 L41,19.6 C41,20.3466667 40.7484375,21 40.2453125,21.56 C39.7421875,22.12 39.11875,22.4933333 38.375,22.68 L38.375,30 L36.625,30 Z M45,30 L45,23.6 L42,23.6 L42,18 C42,16.8933333 42.4875,15.95 43.4625,15.17 C44.4375,14.39 45.6166667,14 47,14 L47,30 L45,30 Z" id="Shape" fill="#341100" fill-rule="nonzero"></path>
+                <g id="ic_edit" transform="translate(383, 15)" fill="#8F8F8F" fill-rule="nonzero">
+                    <path d="M13.6184211,0 C13.0089474,0 12.3994737,0.232105263 11.9342105,0.697368421 L10.9473684,1.68421053 L14.3157895,5.05263158 L15.3026316,4.06578947 C16.2323158,3.13610526 16.2323158,1.62789474 15.3026316,0.697368421 C14.8373684,0.232105263 14.2278947,0 13.6184211,0 Z M9.68421053,2.94736842 L0,12.6315789 L0,16 L3.36842105,16 L13.0526316,6.31578947 L9.68421053,2.94736842 Z" id="Shape"></path>
+                </g>
+            </g>
+            <line x1="0.5" y1="202.25" x2="429" y2="202.75" id="Line" stroke="#E4E4E4" stroke-linecap="square"></line>
+        </g>
+        <g id="Group-2" transform="translate(-8, 1007)">
+            <g id="Group-28" transform="translate(123, 133)" fill="#000000" font-family="GoogleSans-Regular, Google Sans" font-size="15" font-weight="normal">
+                <text id="France">
+                    <tspan x="0" y="14">France</tspan>
+                </text>
+            </g>
+            <g id="Group-26" transform="translate(101.583, 56)">
+                <line x1="0.416978777" y1="28.5" x2="334" y2="28.5" id="Line" stroke="#E4E4E4" stroke-linecap="square"></line>
+                <text id="Allemagne" font-family="GoogleSans-Regular, Google Sans" font-size="15" font-weight="normal" fill="#000000">
+                    <tspan x="21.4169788" y="14">Allemagne</tspan>
+                </text>
+            </g>
+            <g id="Group-27" transform="translate(102, 94)">
+                <line x1="0.416978777" y1="29" x2="334" y2="29" id="Line" stroke="#E4E4E4" stroke-linecap="square"></line>
+                <text id="Belgique" font-family="GoogleSans-Regular, Google Sans" font-size="15" font-weight="normal" fill="#000000">
+                    <tspan x="21" y="14">Belgique</tspan>
+                </text>
+            </g>
+            <g id="Group-25">
+                <rect id="Rectangle" fill="#F9F9F9" x="8" y="0" width="428" height="46"></rect>
+                <line x1="7.30743591e-14" y1="46" x2="444" y2="46" id="Line" stroke="#E4E4E4" stroke-linecap="square"></line>
+                <text id="Pays" font-family="GoogleSans-Bold, Google Sans" font-size="15" font-weight="bold" fill="#000000">
+                    <tspan x="71" y="27">Pays</tspan>
+                </text>
+                <path d="M48,33 C46.6166667,33 45.3166667,32.7375 44.1,32.2125 C42.8833333,31.6875 41.825,30.975 40.925,30.075 C40.025,29.175 39.3125,28.1166667 38.7875,26.9 C38.2625,25.6833333 38,24.3833333 38,23 C38,21.6166667 38.2625,20.3166667 38.7875,19.1 C39.3125,17.8833333 40.025,16.825 40.925,15.925 C41.825,15.025 42.8833333,14.3125 44.1,13.7875 C45.3166667,13.2625 46.6166667,13 48,13 C49.3833333,13 50.6833333,13.2625 51.9,13.7875 C53.1166667,14.3125 54.175,15.025 55.075,15.925 C55.975,16.825 56.6875,17.8833333 57.2125,19.1 C57.7375,20.3166667 58,21.6166667 58,23 C58,24.3833333 57.7375,25.6833333 57.2125,26.9 C56.6875,28.1166667 55.975,29.175 55.075,30.075 C54.175,30.975 53.1166667,31.6875 51.9,32.2125 C50.6833333,32.7375 49.3833333,33 48,33 Z M47,30.95 L47,29 C46.45,29 45.9791667,28.8041667 45.5875,28.4125 C45.1958333,28.0208333 45,27.55 45,27 L45,26 L40.2,21.2 C40.15,21.5 40.1041667,21.8 40.0625,22.1 C40.0208333,22.4 40,22.7 40,23 C40,25.0166667 40.6625,26.7833333 41.9875,28.3 C43.3125,29.8166667 44.9833333,30.7 47,30.95 Z M53.9,28.4 C54.2333333,28.0333333 54.5333333,27.6375 54.8,27.2125 C55.0666667,26.7875 55.2875,26.3458333 55.4625,25.8875 C55.6375,25.4291667 55.7708333,24.9583333 55.8625,24.475 C55.9541667,23.9916667 56,23.5 56,23 C56,21.3666667 55.5458333,19.875 54.6375,18.525 C53.7291667,17.175 52.5166667,16.2 51,15.6 L51,16 C51,16.55 50.8041667,17.0208333 50.4125,17.4125 C50.0208333,17.8041667 49.55,18 49,18 L47,18 L47,20 C47,20.2833333 46.9041667,20.5208333 46.7125,20.7125 C46.5208333,20.9041667 46.2833333,21 46,21 L44,21 L44,23 L50,23 C50.2833333,23 50.5208333,23.0958333 50.7125,23.2875 C50.9041667,23.4791667 51,23.7166667 51,24 L51,27 L52,27 C52.4333333,27 52.825,27.1291667 53.175,27.3875 C53.525,27.6458333 53.7666667,27.9833333 53.9,28.4 Z" id="Shape" fill="#341100" fill-rule="nonzero"></path>
+                <g id="ic_edit" transform="translate(391, 13)" fill="#8F8F8F" fill-rule="nonzero">
+                    <path d="M13.6184211,0 C13.0089474,0 12.3994737,0.232105263 11.9342105,0.697368421 L10.9473684,1.68421053 L14.3157895,5.05263158 L15.3026316,4.06578947 C16.2323158,3.13610526 16.2323158,1.62789474 15.3026316,0.697368421 C14.8373684,0.232105263 14.2278947,0 13.6184211,0 Z M9.68421053,2.94736842 L0,12.6315789 L0,16 L3.36842105,16 L13.0526316,6.31578947 L9.68421053,2.94736842 Z" id="Shape"></path>
+                </g>
+            </g>
+        </g>
+        <g id="Group-2" transform="translate(-8, 845)">
+            <line x1="6.5" y1="161.5" x2="435" y2="162" id="Line" stroke="#E4E4E4" stroke-linecap="square"></line>
+            <g id="Group-23" transform="translate(100.583, 56)">
+                <line x1="0.416978777" y1="27.5" x2="334" y2="27.5" id="Line" stroke="#E4E4E4" stroke-linecap="square"></line>
+                <text id="Carrefour" font-family="GoogleSans-Regular, Google Sans" font-size="15" font-weight="normal" fill="#000000">
+                    <tspan x="21.4169788" y="14">Carrefour</tspan>
+                </text>
+            </g>
+            <g id="Group-24" transform="translate(101, 93)">
+                <line x1="0.416978777" y1="29" x2="334" y2="29" id="Line" stroke="#E4E4E4" stroke-linecap="square"></line>
+                <text id="Hermes" font-family="GoogleSans-Regular, Google Sans" font-size="15" font-weight="normal" fill="#000000">
+                    <tspan x="21" y="14">Hermes</tspan>
+                </text>
+            </g>
+            <g id="Group-22">
+                <rect id="Rectangle" fill="#F9F9F9" x="8" y="0" width="428" height="46"></rect>
+                <line x1="7.30743591e-14" y1="46" x2="444" y2="46" id="Line" stroke="#E4E4E4" stroke-linecap="square"></line>
+                <text id="Magasins" font-family="GoogleSans-Bold, Google Sans" font-size="15" font-weight="bold" fill="#000000">
+                    <tspan x="71" y="28">Magasins</tspan>
+                </text>
+                <path d="M40,18 L40,16 L56,16 L56,18 L40,18 Z M40,32 L40,26 L39,26 L39,24 L40,19 L56,19 L57,24 L57,26 L56,26 L56,32 L54,32 L54,26 L50,26 L50,32 L40,32 Z M42,30 L48,30 L48,26 L42,26 L42,30 Z M41.05,24.0375 L54.95,24.0375 L41.05,24.0375 Z M41.05,24 L54.95,24 L54.35,21 L41.65,21 L41.05,24 Z" id="Shape" fill="#341100" fill-rule="nonzero"></path>
+                <g id="ic_edit" transform="translate(390, 14)" fill="#8F8F8F" fill-rule="nonzero">
+                    <path d="M13.6184211,0 C13.0089474,0 12.3994737,0.232105263 11.9342105,0.697368421 L10.9473684,1.68421053 L14.3157895,5.05263158 L15.3026316,4.06578947 C16.2323158,3.13610526 16.2323158,1.62789474 15.3026316,0.697368421 C14.8373684,0.232105263 14.2278947,0 13.6184211,0 Z M9.68421053,2.94736842 L0,12.6315789 L0,16 L3.36842105,16 L13.0526316,6.31578947 L9.68421053,2.94736842 Z" id="Shape"></path>
+                </g>
+            </g>
+            <g id="Leclerc-2" transform="translate(122, 132)" fill="#000000" font-family="GoogleSans-Regular, Google Sans" font-size="15" font-weight="normal">
+                <text id="Leclerc">
+                    <tspan x="0" y="14">Leclerc</tspan>
+                </text>
+            </g>
+        </g>
+        <g id="icons8-orange" transform="translate(33, 256)"></g>
+    </g>
+</svg>

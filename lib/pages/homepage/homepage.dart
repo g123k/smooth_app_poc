@@ -314,7 +314,6 @@ class HomePageState extends State<HomePage> {
       return;
     } else if (scrollPosition.roundToDouble() >= cameraViewHeight ||
         _direction == ScrollDirection.idle) {
-      print('Je marrête');
       return;
     }
 

@@ -6,4 +6,8 @@ extension DoubleExtension on double {
   double progress2(double min, double max) {
     return this * (max - min) + min;
   }
+
+  double positive() {
+    return this < 0 ? -this : this;
+  }
 }

@@ -5,14 +5,12 @@ import 'package:flutter/services.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
 import 'package:provider/provider.dart';
-import 'package:sliver_tools/sliver_tools.dart';
 import 'package:smoothapp_poc/navigation.dart';
 import 'package:smoothapp_poc/pages/homepage/camera/view/camera_state_manager.dart';
 import 'package:smoothapp_poc/pages/homepage/camera/view/ui/camera_buttons_bar.dart';
 import 'package:smoothapp_poc/pages/homepage/homepage.dart';
 import 'package:smoothapp_poc/pages/product/product_page.dart';
 import 'package:smoothapp_poc/resources/app_animations.dart';
-import 'package:smoothapp_poc/resources/app_colors.dart';
 import 'package:smoothapp_poc/utils/num_utils.dart';
 import 'package:smoothapp_poc/utils/provider_utils.dart';
 import 'package:smoothapp_poc/utils/widgets/offline_size_widget.dart';
@@ -138,9 +136,8 @@ class CameraView extends StatelessWidget {
         // The fraction should allow to view the header
         // + the hint (slide up to see details)
         // + a slight padding
-
         final double fraction =
-            (size.height + _MagicBackgroundState.HINT_SIZE + 40.0) /
+            (size.height + _MagicBackgroundBottomSheetState.HINT_SIZE + 40.0) /
                 (MediaQuery.of(topContext).size.height -
                     NavApp.of(topContext).navBarHeight);
 
@@ -161,16 +158,14 @@ class CameraView extends StatelessWidget {
                   value: SystemUiOverlayStyle(
                     statusBarBrightness: Theme.of(context).brightness,
                   ),
-                  child: _MagicBackground(
+                  child: _MagicBackgroundBottomSheet(
                     scrollController: draggableScrollableController,
                     style: DefaultTextStyle.of(topContext).style,
                     minFraction: fraction,
                     child: ProductPage.fromModalSheet(
                       product: product,
+                      topSliverHeight: size.height,
                       scrollController: scrollController,
-                      topSliver: _MagicTopPadding(
-                        scrollController: draggableScrollableController,
-                      ),
                     ),
                   ),
                 ),
@@ -183,8 +178,8 @@ class CameraView extends StatelessWidget {
   }
 }
 
-class _MagicBackground extends StatefulWidget {
-  const _MagicBackground({
+class _MagicBackgroundBottomSheet extends StatefulWidget {
+  const _MagicBackgroundBottomSheet({
     required this.scrollController,
     required this.style,
     required this.minFraction,
@@ -197,10 +192,12 @@ class _MagicBackground extends StatefulWidget {
   final Widget child;
 
   @override
-  State<_MagicBackground> createState() => _MagicBackgroundState();
+  State<_MagicBackgroundBottomSheet> createState() =>
+      _MagicBackgroundBottomSheetState();
 }
 
-class _MagicBackgroundState extends State<_MagicBackground> {
+class _MagicBackgroundBottomSheetState
+    extends State<_MagicBackgroundBottomSheet> {
   //ignore: constant_identifier_names
   static const double HINT_SIZE = 50.0;
 
@@ -390,67 +387,6 @@ class _MagicHint extends StatelessWidget {
             )),
       ),
     );
-  }
-}
-
-class _MagicTopPadding extends StatefulWidget {
-  const _MagicTopPadding({
-    required this.scrollController,
-  });
-
-  final DraggableScrollableController scrollController;
-
-  @override
-  State<_MagicTopPadding> createState() => _MagicTopPaddingState();
-}
-
-class _MagicTopPaddingState extends State<_MagicTopPadding> {
-  double _topPadding = 0.0;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    widget.scrollController.replaceListener(_onScroll);
-  }
-
-  void _onScroll() {
-    final MediaQueryData mediaQueryData = MediaQuery.of(context);
-    final double screenTopPadding = mediaQueryData.viewPadding.top;
-
-    final double screenHeight =
-        widget.scrollController.pixels / widget.scrollController.size;
-    final double startPoint = screenHeight - screenTopPadding;
-    final double padding;
-
-    if (widget.scrollController.pixels < startPoint) {
-      padding = 0.0;
-    } else {
-      padding = math.min(
-        widget.scrollController.pixels - startPoint,
-        screenTopPadding,
-      );
-    }
-
-    if (padding != _topPadding) {
-      setState(() => _topPadding = padding);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SliverPinnedHeader(
-      child: ColoredBox(
-        color: Theme.of(context).bottomSheetTheme.backgroundColor ??
-            AppColors.white,
-        child: SizedBox(height: _topPadding),
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    widget.scrollController.removeListener(_onScroll);
-    super.dispose();
   }
 }
 
