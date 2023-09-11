@@ -56,63 +56,68 @@ class _ProductHeaderAppBarState extends State<ProductHeaderAppBar> {
   Widget build(BuildContext context) {
     final Product product = context.read<Product>();
 
-    return AppBar(
-      leading: Tooltip(
-        message: MaterialLocalizations.of(context).closeButtonTooltip,
-        child: InkWell(
-          customBorder: const CircleBorder(),
-          onTap: () {
-            if (ProductHeaderConfiguration.of(context).type ==
-                ProductHeaderType.modalSheet) {
-              context.read<DraggableScrollableController>().reset();
-              ProductHeaderAppBarComputation.read(context).minimize();
-            } else {
-              Navigator.of(context).pop();
-            }
-          },
-          child: IconTheme(
-            data: const IconThemeData(size: 14.0),
-            child: switch (ProductHeaderConfiguration.of(context).type) {
-              ProductHeaderType.modalSheet => const icons.Chevron.down(),
-              ProductHeaderType.fullPage => const icons.Chevron.left(),
+    return MediaQuery.removeViewPadding(
+      context: context,
+      removeTop: true,
+      child: AppBar(
+        leading: Tooltip(
+          message: MaterialLocalizations.of(context).closeButtonTooltip,
+          child: InkWell(
+            customBorder: const CircleBorder(),
+            onTap: () {
+              if (ProductHeaderConfiguration.of(context).type ==
+                  ProductHeaderType.modalSheet) {
+                context.read<DraggableScrollableController>().reset();
+                ProductHeaderAppBarComputation.read(context).minimize();
+              } else {
+                Navigator.of(context).pop();
+              }
             },
+            child: IconTheme(
+              data: const IconThemeData(size: 14.0),
+              child: switch (ProductHeaderConfiguration.of(context).type) {
+                ProductHeaderType.modalSheet => const icons.Chevron.down(),
+                ProductHeaderType.fullPage => const icons.Chevron.left(),
+              },
+            ),
           ),
         ),
-      ),
-      automaticallyImplyLeading: false,
-      centerTitle: false,
-      title: Offstage(
-        offstage: _titleOpacity == 0,
-        child: Opacity(
-          opacity: _titleOpacity,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                product.productName ?? '',
-                maxLines: 1,
-                overflow: TextOverflow.fade,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18.0,
+        automaticallyImplyLeading: false,
+        centerTitle: false,
+        title: Offstage(
+          offstage: _titleOpacity == 0,
+          child: Opacity(
+            opacity: _titleOpacity,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  product.productName ?? '',
+                  maxLines: 1,
+                  overflow: TextOverflow.fade,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18.0,
+                  ),
                 ),
-              ),
-              Text(
-                product.brands ?? '',
-                maxLines: 1,
-                overflow: TextOverflow.fade,
-                style: const TextStyle(
-                  fontSize: 16.5,
+                Text(
+                  product.brands ?? '',
+                  maxLines: 1,
+                  overflow: TextOverflow.fade,
+                  style: const TextStyle(
+                    fontSize: 16.5,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
+        toolbarHeight:
+            ProductHeaderAppBarComputation.watch(context).headerHeight,
+        elevation: 0,
+        scrolledUnderElevation: 0.0,
       ),
-      toolbarHeight: ProductHeaderAppBarComputation.watch(context).headerHeight,
-      elevation: 0,
-      scrolledUnderElevation: 0.0,
     );
   }
 }
