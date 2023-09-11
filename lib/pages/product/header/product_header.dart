@@ -17,8 +17,10 @@ class ProductHeader extends StatefulWidget {
     super.key,
     required this.onElementTapped,
     required this.onTabChanged,
+    this.onCardTapped,
   });
 
+  final VoidCallback? onCardTapped;
   final Function(ElementTappedType, double scrollExpectedPosition)
       onElementTapped;
   final Function(int position, double scrollExpectedPosition) onTabChanged;
@@ -99,6 +101,7 @@ class _ProductHeaderState extends State<ProductHeader> {
                 ProductHeaderTopPaddingComputation.watch(context).topPadding,
             toolbarHeight:
                 ProductHeaderAppBarComputation.watch(context).headerHeight,
+            onCardTapped: widget.onCardTapped,
             onElementTapped: widget.onElementTapped,
             onTabChanged: widget.onTabChanged,
           ),
@@ -116,8 +119,10 @@ class _ProductHeaderDelegate extends SliverPersistentHeaderDelegate {
     required this.headerMaxHeight,
     required this.topPadding,
     required this.toolbarHeight,
+    this.onCardTapped,
   });
 
+  final VoidCallback? onCardTapped;
   final Function(ElementTappedType, double scrollExpectedPosition)
       onElementTapped;
   final Function(int, double) onTabChanged;
@@ -151,14 +156,17 @@ class _ProductHeaderDelegate extends SliverPersistentHeaderDelegate {
         ),
         Positioned.fill(
           top: topPadding + toolbarHeight,
-          child: ProductHeaderBody(
-            onElementTapped: (ElementTappedType type) => onElementTapped.call(
-              type,
-              maxExtent - minExtent,
+          child: GestureDetector(
+            onTap: onCardTapped,
+            child: ProductHeaderBody(
+              onElementTapped: (ElementTappedType type) => onElementTapped.call(
+                type,
+                maxExtent - minExtent,
+              ),
+              onTabChanged: (int index) =>
+                  onTabChanged(index, maxExtent - minExtent),
+              shrinkContent: math.max(-shrinkOffset, -(maxExtent - minExtent)),
             ),
-            onTabChanged: (int index) =>
-                onTabChanged(index, maxExtent - minExtent),
-            shrinkContent: math.max(-shrinkOffset, -(maxExtent - minExtent)),
           ),
         ),
       ],

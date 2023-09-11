@@ -132,6 +132,11 @@ class _ProductPageState extends State<ProductPage>
             ) async {
               await _onTabChanged(scrollExpectedPosition);
             },
+            onCardTapped: () {
+              if (!_isSheetVisible) {
+                _openSheet(context);
+              }
+            },
           ),
           // The body
           SliverToBoxAdapter(
@@ -185,7 +190,7 @@ class _ProductPageState extends State<ProductPage>
         return controller.animateTo(
           1,
           curve: Curves.easeInExpo,
-          duration: const Duration(milliseconds: 200),
+          duration: const Duration(milliseconds: 300),
         );
       }
     } catch (_) {}
