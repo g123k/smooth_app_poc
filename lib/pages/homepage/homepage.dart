@@ -49,6 +49,7 @@ class HomePageState extends State<HomePage> {
   bool _ignoreAllEvents = false;
   SettingsIconType _floatingSettingsType = SettingsIconType.floating;
   ScrollMetrics? _userInitialScrollMetrics;
+  _CustomPhysics? _physics;
   ScrollDirection _direction = ScrollDirection.forward;
   bool _screenVisible = false;
 
@@ -89,6 +90,12 @@ class HomePageState extends State<HomePage> {
   void _setInitialScroll() {
     onNextFrame(() {
       final double offset = _initialOffset;
+
+      _physics = _CustomPhysics(steps: [
+        0.0,
+        cameraPeak,
+        cameraHeight,
+      ]);
 
       if (offset == 0) {
         // The MediaQuery is not yet ready (reproducible in production)
@@ -146,11 +153,7 @@ class HomePageState extends State<HomePage> {
                     return CustomScrollView(
                       physics: _ignoreAllEvents
                           ? const NeverScrollableScrollPhysics()
-                          : _CustomPhysics(steps: [
-                              0.0,
-                              cameraPeak,
-                              cameraHeight,
-                            ]),
+                          : _physics,
                       controller: _controller,
                       slivers: [
                         ExpandableCamera(
@@ -225,6 +228,7 @@ class HomePageState extends State<HomePage> {
   }
 
   void expandCamera({Duration? duration}) {
+    _physics?.ignoreNextScroll = true;
     _controller.animateTo(
       0,
       duration: duration ?? const Duration(milliseconds: 500),
@@ -233,6 +237,7 @@ class HomePageState extends State<HomePage> {
   }
 
   void collapseCamera() {
+    _physics?.ignoreNextScroll = true;
     _controller.animateTo(
       _initialOffset,
       duration: const Duration(milliseconds: 500),
@@ -387,9 +392,11 @@ class _CustomPhysics extends ClampingScrollPhysics {
   _CustomPhysics({
     required List<double> steps,
     super.parent,
-  }) : steps = steps.toList()..sort();
+  })  : steps = steps.toList()..sort(),
+        ignoreNextScroll = false;
 
   final List<double> steps;
+  bool ignoreNextScroll;
 
   @override
   ClampingScrollPhysics applyTo(ScrollPhysics? ancestor) {
@@ -404,9 +411,11 @@ class _CustomPhysics extends ClampingScrollPhysics {
     double velocity,
   ) {
     if (velocity > 0.0 && position.pixels >= position.maxScrollExtent) {
+      ignoreNextScroll = false;
       return null;
     }
     if (velocity < 0.0 && position.pixels <= position.minScrollExtent) {
+      ignoreNextScroll = false;
       return null;
     }
 
@@ -417,7 +426,7 @@ class _CustomPhysics extends ClampingScrollPhysics {
     if (simulation == null || proposedPixels == null) {
       var (double? min, _) = _getRange(position.pixels);
 
-      if (min != null && min != steps.last) {
+      if (min != null && min != steps.last && ignoreNextScroll) {
         return ScrollSpringSimulation(
           spring,
           position.pixels,
@@ -425,6 +434,7 @@ class _CustomPhysics extends ClampingScrollPhysics {
           velocity,
         );
       } else {
+        ignoreNextScroll = false;
         return null;
       }
     }
@@ -448,6 +458,7 @@ class _CustomPhysics extends ClampingScrollPhysics {
       _lastPixels = _fixInconsistency(proposedPixels);
     }
 
+    ignoreNextScroll = false;
     return ScrollSpringSimulation(
       spring,
       position.pixels,
