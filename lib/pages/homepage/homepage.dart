@@ -91,16 +91,15 @@ class HomePageState extends State<HomePage> {
     onNextFrame(() {
       final double offset = _initialOffset;
 
-      _physics = _CustomPhysics(steps: [
-        0.0,
-        cameraPeak,
-        cameraHeight,
-      ]);
-
       if (offset == 0) {
         // The MediaQuery is not yet ready (reproducible in production)
         _setInitialScroll();
       } else {
+        _physics = _CustomPhysics(steps: [
+          0.0,
+          cameraPeak,
+          cameraHeight,
+        ]);
         _controller.jumpTo(_initialOffset);
       }
     });

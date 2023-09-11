@@ -78,20 +78,22 @@ class _ProductPageState extends State<ProductPage>
 
   @override
   Widget build(BuildContext context) {
-    if (_headerHeight == null) {
-      return EMPTY_WIDGET;
-    }
-
     if (widget.forModalSheet) {
       return _buildChild(context);
     } else {
       return Scaffold(
-        body: SafeArea(child: _buildChild(context)),
+        body: SafeArea(
+          child: _buildChild(context),
+        ),
       );
     }
   }
 
   Widget _buildChild(BuildContext context) {
+    if (_headerHeight == null) {
+      return EMPTY_WIDGET;
+    }
+
     return MultiProvider(
       providers: [
         Provider<Product>.value(value: widget.product),
