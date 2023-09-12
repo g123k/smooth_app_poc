@@ -16,8 +16,9 @@ class ComputeOfflineSize {
   }) {
     _overlayEntry = OverlayEntry(
       builder: (BuildContext context) {
-        return _OfflineMeasureWidget(
+        return OfflineMeasureWidget(
           onSizeChanged: _onSizeChanged,
+          drawWidgets: false,
 
           /// Injecting a Material widget is mandatory, otherwise fonts
           /// won't be computed correctly
@@ -37,24 +38,31 @@ class ComputeOfflineSize {
   }
 }
 
-class _OfflineMeasureWidget extends SingleChildRenderObjectWidget {
-  const _OfflineMeasureWidget({
+class OfflineMeasureWidget extends SingleChildRenderObjectWidget {
+  const OfflineMeasureWidget({
+    super.key,
     required this.onSizeChanged,
+    this.drawWidgets = true,
     required super.child,
   });
 
   final Function(Size) onSizeChanged;
+  final bool drawWidgets;
 
   @override
   RenderObject createRenderObject(BuildContext context) {
-    return _OfflineSizeRenderObject(onSizeChanged);
+    return _OfflineSizeRenderObject(
+      onSizeChanged,
+      drawWidgets,
+    );
   }
 }
 
 class _OfflineSizeRenderObject extends RenderProxyBox {
-  _OfflineSizeRenderObject(this.onChange);
+  _OfflineSizeRenderObject(this.onChange, this.drawWidgets);
 
   Size? oldSize;
+  final bool drawWidgets;
   final Function(Size) onChange;
 
   @override
@@ -79,6 +87,8 @@ class _OfflineSizeRenderObject extends RenderProxyBox {
 
   @override
   void paint(PaintingContext context, Offset offset) {
-    // Don't paint anything.
+    if (drawWidgets) {
+      super.paint(context, offset);
+    }
   }
 }

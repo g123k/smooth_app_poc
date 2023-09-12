@@ -23,7 +23,7 @@ class _ProductHeaderAppBarState extends State<ProductHeaderAppBar> {
     super.didChangeDependencies();
 
     try {
-      _contentController = context.read<ScrollController>()
+      _contentController = context.read<TrackingScrollController>()
         ..replaceListener(_onScrollContent);
     } catch (_) {}
   }
@@ -44,8 +44,9 @@ class _ProductHeaderAppBarState extends State<ProductHeaderAppBar> {
       max = -max + min;
     }
 
-    final double opacity =
-        _contentController!.position.pixels.progress(min, max).clamp(0, 1);
+    final double opacity = _contentController!.positions.first.pixels
+        .progress(min, max)
+        .clamp(0, 1);
 
     if (opacity != _titleOpacity) {
       setState(() => _titleOpacity = opacity);
