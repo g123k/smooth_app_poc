@@ -46,7 +46,7 @@ class _ProductPageState extends State<ProductPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   late PageController _pageController;
-  late ScrollController _scrollScrollController;
+  late ScrollController _scrollController;
   double? _headerHeight;
 
   @override
@@ -60,8 +60,7 @@ class _ProductPageState extends State<ProductPage>
       keepPage: true,
     );
 
-    _scrollScrollController =
-        widget.scrollController ?? TrackingScrollController();
+    _scrollController = widget.scrollController ?? TrackingScrollController();
 
     _headerHeight = widget.topSliverHeight;
 
@@ -110,11 +109,11 @@ class _ProductPageState extends State<ProductPage>
         ),
         ListenableProvider<TabController>.value(value: _tabController),
         ListenableProvider<ScrollController>.value(
-          value: _scrollScrollController,
+          value: _scrollController,
         )
       ],
       child: CustomScrollView(
-        controller: _scrollScrollController,
+        controller: _scrollController,
         slivers: [
           // The shrinkable header
           ProductHeader(
@@ -135,7 +134,12 @@ class _ProductPageState extends State<ProductPage>
               int position,
               double scrollExpectedPosition,
             ) async {
-              await _onTabChanged(scrollExpectedPosition);
+              if (ignoreTabEvent) {
+                ignoreTabEvent = false;
+                return;
+              } else {
+                await _onTabChanged(scrollExpectedPosition);
+              }
             },
             onCardTapped: () {
               if (!_isSheetVisible) {
@@ -154,16 +158,19 @@ class _ProductPageState extends State<ProductPage>
                   controller: _pageController,
                   itemCount: 6,
                   onPageChanged: (int position) {
-                    _tabController.index = _pageController.page?.toInt() ?? 0;
+                    print('onPageChanged');
+                    //ignoreTabEvent = true;
+                    //_tabController.index = _pageController.page?.toInt() ?? 0;
 
-                    if (_scrollScrollController.offset.round() !=
+                    /*if (_scrollScrollController.offset.round() !=
                         (_headerHeight! - 48).round()) {
                       _scrollScrollController.animateTo(
                         _headerHeight! - 48,
                         duration: const Duration(milliseconds: 150),
                         curve: Curves.ease,
                       );
-                    }
+                    }*/
+                    _startScrollPosition = null;
                   },
                   itemBuilder: (BuildContext context, int position) {
                     return switch (position) {
@@ -185,16 +192,25 @@ class _ProductPageState extends State<ProductPage>
     );
   }
 
+  double? _startScrollPosition = null;
+  bool ignoreTabEvent = false;
+
   Future<void> _onTabChanged(double scrollExpectedPosition) async {
+    print('On tab changed');
     if (_isSheetVisible) {
-      _scrollScrollController.animateTo(
+      _scrollController.animateTo(
         scrollExpectedPosition,
         duration: const Duration(milliseconds: 250),
         curve: Curves.easeIn,
       );
     } else {
       _openSheet(context);
-      _scrollScrollController.jumpTo(scrollExpectedPosition);
+      _scrollController.jumpTo(scrollExpectedPosition);
+      _pageController.animateToPage(
+        _tabController.index,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.ease,
+      );
     }
   }
 
@@ -229,7 +245,7 @@ class _ProductPageState extends State<ProductPage>
   void dispose() {
     _tabController.dispose();
     _pageController.dispose();
-    _scrollScrollController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 }
