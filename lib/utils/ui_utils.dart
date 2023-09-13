@@ -21,3 +21,24 @@ extension StateExtension on State {
     });
   }
 }
+
+extension ScrollMetricsExtension on ScrollMetrics {
+  double get page => extentBefore / extentInside;
+
+  bool get hasScrolled => extentBefore % extentInside != 0;
+}
+
+extension ScrollControllerExtension on ScrollController {
+  void jumpBy(double offset) => jumpTo(position.pixels + offset);
+
+  void animateBy(
+    double offset, {
+    required Duration duration,
+    required Curve curve,
+  }) =>
+      animateTo(
+        position.pixels + offset,
+        duration: duration,
+        curve: curve,
+      );
+}

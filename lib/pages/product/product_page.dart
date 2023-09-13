@@ -134,12 +134,7 @@ class _ProductPageState extends State<ProductPage>
               int position,
               double scrollExpectedPosition,
             ) async {
-              if (ignoreTabEvent) {
-                ignoreTabEvent = false;
-                return;
-              } else {
-                await _onTabChanged(scrollExpectedPosition);
-              }
+              await _onTabChanged(scrollExpectedPosition);
             },
             onCardTapped: () {
               if (!_isSheetVisible) {
@@ -158,19 +153,7 @@ class _ProductPageState extends State<ProductPage>
                   controller: _pageController,
                   itemCount: 6,
                   onPageChanged: (int position) {
-                    print('onPageChanged');
-                    //ignoreTabEvent = true;
-                    //_tabController.index = _pageController.page?.toInt() ?? 0;
-
-                    /*if (_scrollScrollController.offset.round() !=
-                        (_headerHeight! - 48).round()) {
-                      _scrollScrollController.animateTo(
-                        _headerHeight! - 48,
-                        duration: const Duration(milliseconds: 150),
-                        curve: Curves.ease,
-                      );
-                    }*/
-                    _startScrollPosition = null;
+                    _tabController.index = position;
                   },
                   itemBuilder: (BuildContext context, int position) {
                     return switch (position) {
@@ -192,11 +175,7 @@ class _ProductPageState extends State<ProductPage>
     );
   }
 
-  double? _startScrollPosition = null;
-  bool ignoreTabEvent = false;
-
   Future<void> _onTabChanged(double scrollExpectedPosition) async {
-    print('On tab changed');
     if (_isSheetVisible) {
       _scrollController.animateTo(
         scrollExpectedPosition,
