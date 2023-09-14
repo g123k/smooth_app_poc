@@ -18,6 +18,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         fontFamily: 'OpenSans',
         colorScheme: ColorScheme.fromSeed(seedColor: AppColors.orangeLight),
+        scaffoldBackgroundColor: AppColors.white,
         useMaterial3: true,
         dividerColor: AppColors.grey,
         dividerTheme: const DividerThemeData(

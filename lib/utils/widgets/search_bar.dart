@@ -516,11 +516,11 @@ class _SearchBarState extends State<_SearchBar> {
                   fillColor: Colors.white,
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30.0),
-                    borderSide: const BorderSide(color: Color(0xFFFF8714)),
+                    borderSide: const BorderSide(color: AppColors.orange),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30.0),
-                    borderSide: const BorderSide(color: Color(0xFFFF8714)),
+                    borderSide: const BorderSide(color: AppColors.orange),
                   ),
                 ),
               ),
@@ -560,7 +560,7 @@ class _SearchBarState extends State<_SearchBar> {
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(Colors.white),
                       side: MaterialStateProperty.all(
-                        const BorderSide(color: Color(0xFFFF8714)),
+                        const BorderSide(color: AppColors.orange),
                       ),
                       foregroundColor: MaterialStateProperty.all(Colors.black),
                       shape: MaterialStateProperty.all(

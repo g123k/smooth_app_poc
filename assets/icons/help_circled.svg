@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>ic_help</title>
+    <g id="ic_help" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M12,19.5 C11.172,19.5 10.5,18.828 10.5,18 C10.5,17.172 11.172,16.5 12,16.5 C12.828,16.5 13.5,17.172 13.5,18 C13.5,18.828 12.828,19.5 12,19.5 Z" id="Path" fill="#FFFFFF" fill-rule="nonzero"></path>
+        <path d="M14.068,12.5 C13.406,13.111 13,13.512 13,14 L11,14 C11,12.611 11.949,11.735 12.711,11.03 C13.51,10.292 14,9.799 14,9 C14,7.897 13.103,7 12,7 C10.897,7 10,7.897 10,9 L8,9 C8,6.794 9.794,5 12,5 C14.206,5 16,6.794 16,9 C16,10.715 14.929,11.704 14.068,12.5 Z" id="Path" fill="#FFFFFF" fill-rule="nonzero"></path>
+        <circle id="Oval" stroke="#FFFFFF" fill-rule="nonzero" cx="12" cy="12" r="11.5"></circle>
+    </g>
+</svg>

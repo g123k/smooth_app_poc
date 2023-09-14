@@ -3,6 +3,7 @@ import 'package:smoothapp_poc/navigation.dart';
 import 'package:smoothapp_poc/pages/homepage/camera/peak_view/peak_view.dart';
 import 'package:smoothapp_poc/pages/homepage/camera/view/ui/camera_view.dart';
 import 'package:smoothapp_poc/pages/homepage/homepage.dart';
+import 'package:smoothapp_poc/resources/app_colors.dart';
 import 'package:smoothapp_poc/utils/num_utils.dart';
 
 //ignore_for_file: constant_identifier_names
@@ -61,7 +62,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
     return ColoredBox(
       color: borderRadius.bottomLeft.x == 0
           ? Colors.transparent
-          : const Color(0xffffc589),
+          : AppColors.orangeLight,
       child: ClipRRect(
         borderRadius: borderRadius,
         child: Stack(

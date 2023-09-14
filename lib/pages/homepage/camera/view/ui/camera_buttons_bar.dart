@@ -40,7 +40,8 @@ class CameraButtonBars extends StatelessWidget {
           ),
           child: Row(
             children: <Widget>[
-              CircledIcon(
+              CircledTextIcon(
+                text: const Text('Revenir à l\'accueil'),
                 icon: const icons.Close(
                   size: 17.0,
                 ),
@@ -50,9 +51,9 @@ class CameraButtonBars extends StatelessWidget {
                     NavApp.of(context).hideSheet();
                     HomePage.of(context).ignoreAllEvents(false);
                     CameraViewStateManager.of(context).reset();
-                  } else {
-                    onClosed.call();
                   }
+
+                  onClosed.call();
                 },
               ),
               const Spacer(),

@@ -69,6 +69,7 @@ class ProductHeaderBody extends StatelessWidget {
     } else {
       return Material(
         type: MaterialType.canvas,
+        color: Theme.of(context).scaffoldBackgroundColor,
         child: Align(
           child: ClipRect(
             child: Stack(
@@ -263,43 +264,52 @@ class _ProductHeaderButtonsBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 50.0,
-      child: OutlinedButtonTheme(
-        data: OutlinedButtonThemeData(
-          style: OutlinedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20.0),
-            ),
-            side: const BorderSide(color: AppColors.grey),
-            padding: const EdgeInsetsDirectional.symmetric(
-              horizontal: 19.0,
-              vertical: 14.0,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: SizedBox(
+        height: 50.0,
+        child: OutlinedButtonTheme(
+          data: OutlinedButtonThemeData(
+            style: OutlinedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0),
+              ),
+              side: const BorderSide(color: AppColors.grey),
+              padding: const EdgeInsetsDirectional.symmetric(
+                horizontal: 19.0,
+                vertical: 14.0,
+              ),
             ),
           ),
-        ),
-        child: ListView(
-          padding: const EdgeInsetsDirectional.symmetric(horizontal: 20.0),
-          scrollDirection: Axis.horizontal,
-          children: [
-            _ProductHeaderFilledButton(
-              label: 'Comparer',
-              icon: const icons.Compare(),
-              onTap: () {},
-            ),
-            const SizedBox(width: 10.0),
-            _ProductHeaderOutlinedButton(
-              label: 'Ajouter à une liste',
-              icon: const icons.AddToList(),
-              onTap: () {},
-            ),
-            const SizedBox(width: 10.0),
-            _ProductHeaderOutlinedButton(
-              label: 'Modifier',
-              icon: const icons.Edit(),
-              onTap: () {},
-            ),
-          ],
+          child: ListView(
+            padding: const EdgeInsetsDirectional.symmetric(horizontal: 20.0),
+            scrollDirection: Axis.horizontal,
+            children: [
+              _ProductHeaderFilledButton(
+                label: 'Comparer',
+                icon: const icons.Compare(),
+                onTap: () {},
+              ),
+              const SizedBox(width: 10.0),
+              _ProductHeaderOutlinedButton(
+                label: 'Ajouter à une liste',
+                icon: const icons.AddToList(),
+                onTap: () {},
+              ),
+              const SizedBox(width: 10.0),
+              _ProductHeaderOutlinedButton(
+                label: 'Modifier',
+                icon: const icons.Edit(),
+                onTap: () {},
+              ),
+              const SizedBox(width: 10.0),
+              _ProductHeaderOutlinedButton(
+                label: 'Partager',
+                icon: icons.Share(),
+                onTap: () {},
+              ),
+            ],
+          ),
         ),
       ),
     );

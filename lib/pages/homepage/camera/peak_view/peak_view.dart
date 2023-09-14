@@ -51,7 +51,8 @@ class CameraPeakView extends StatelessWidget {
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w500,
-                      height: 1.8,
+                      fontSize: 16.5,
+                      height: 1.7,
                       shadows: [
                         Shadow(
                           color: Colors.black,

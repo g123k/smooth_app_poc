@@ -9,6 +9,7 @@ import 'package:smoothapp_poc/pages/product/header/product_header.dart';
 import 'package:smoothapp_poc/pages/product/health/product_health_tab.dart';
 import 'package:smoothapp_poc/pages/product/info/product_info_tab.dart';
 import 'package:smoothapp_poc/pages/product/photos/product_photos_tab.dart';
+import 'package:smoothapp_poc/utils/physics.dart';
 import 'package:smoothapp_poc/utils/ui_utils.dart';
 import 'package:smoothapp_poc/utils/widgets/offline_size_widget.dart';
 import 'package:smoothapp_poc/utils/widgets/page_view.dart';
@@ -112,66 +113,78 @@ class _ProductPageState extends State<ProductPage>
           value: _scrollController,
         )
       ],
-      child: CustomScrollView(
-        controller: _scrollController,
-        slivers: [
-          // The shrinkable header
-          ProductHeader(
-            onElementTapped: (
-              ElementTappedType type,
-              double scrollExpectedPosition,
-            ) async {
-              switch (type) {
-                case ElementTappedType.nutriscore:
-                  _tabController.animateTo(1);
-                case ElementTappedType.ecoscore:
-                  _tabController.animateTo(2);
-              }
+      child: Builder(builder: (BuildContext context) {
+        return CustomScrollView(
+          controller: _scrollController,
+          physics: VerticalSnapScrollPhysics(steps: [
+            0.0,
+            ProductHeaderConfiguration.of(context).minThreshold,
+          ]),
+          slivers: [
+            // The shrinkable header
+            ProductHeader(
+              onElementTapped: (
+                ElementTappedType type,
+                double scrollExpectedPosition,
+              ) async {
+                switch (type) {
+                  case ElementTappedType.nutriscore:
+                    _tabController.animateTo(1);
+                  case ElementTappedType.ecoscore:
+                    _tabController.animateTo(2);
+                }
 
-              await _onTabChanged(scrollExpectedPosition);
-            },
-            onTabChanged: (
-              int position,
-              double scrollExpectedPosition,
-            ) async {
-              await _onTabChanged(scrollExpectedPosition);
-            },
-            onCardTapped: () {
-              if (!_isSheetVisible) {
-                _openSheet(context);
-              }
-            },
-          ),
-          SliverLayoutBuilder(
-            builder: (BuildContext context, SliverConstraints constraints) {
-              final double min =
-                  MediaQuery.sizeOf(context).height - kToolbarHeight - 48;
+                await _onTabChanged(scrollExpectedPosition);
+              },
+              onTabChanged: (
+                int position,
+                double scrollExpectedPosition,
+              ) async {
+                await _onTabChanged(scrollExpectedPosition);
+              },
+              onCardTapped: () {
+                if (!_isSheetVisible) {
+                  _openSheet(context);
+                }
+              },
+            ),
+            SliverLayoutBuilder(
+              builder: (BuildContext context, SliverConstraints constraints) {
+                final MediaQueryData mediaQuery = MediaQuery.of(context);
+                final double min = mediaQuery.size.height +
+                    mediaQuery.viewPadding.top -
+                    kToolbarHeight -
+                    48;
 
-              return SliverToBoxAdapter(
-                child: PageViewSizeAware(
-                  minHeight: min,
-                  controller: _pageController,
-                  itemCount: 6,
-                  onPageChanged: (int position) {
-                    _tabController.index = position;
-                  },
-                  itemBuilder: (BuildContext context, int position) {
-                    return switch (position) {
-                      0 => const ProductForMeTab(),
-                      1 => const ProductHealthTab(),
-                      2 => const ProductEnvironmentTab(),
-                      3 => const ProductPhotosTab(),
-                      4 => const ProductContributeTab(),
-                      _ => const ProductInfoTab(),
-                    };
-                  },
-                ),
-              );
-            },
-          ),
-          // The body
-        ],
-      ),
+                return SliverToBoxAdapter(
+                  child: PageViewSizeAware(
+                    minHeight: min,
+                    controller: _pageController,
+                    itemCount: 6,
+                    onPageChanged: (int position) {
+                      _tabController.index = position;
+                    },
+                    itemBuilder: (BuildContext context, int position) {
+                      return SafeArea(
+                        top: false,
+                        child: switch (position) {
+                          0 => const ProductForMeTab(),
+                          1 => const ProductHealthTab(),
+                          2 => const ProductEnvironmentTab(),
+                          3 => const ProductPhotosTab(),
+                          4 => const ProductContributeTab(),
+                          _ => const ProductInfoTab(),
+                        },
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
+            // The body
+          ],
+        );
+      }),
     );
   }
 
@@ -185,12 +198,13 @@ class _ProductPageState extends State<ProductPage>
     } else {
       _openSheet(context);
       _scrollController.jumpTo(scrollExpectedPosition);
-      _pageController.animateToPage(
-        _tabController.index,
-        duration: const Duration(milliseconds: 250),
-        curve: Curves.ease,
-      );
     }
+
+    _pageController.animateToPage(
+      _tabController.index,
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.ease,
+    );
   }
 
   bool get _isSheetVisible {
@@ -224,7 +238,6 @@ class _ProductPageState extends State<ProductPage>
   void dispose() {
     _tabController.dispose();
     _pageController.dispose();
-    _scrollController.dispose();
     super.dispose();
   }
 }

@@ -154,18 +154,26 @@ class CameraView extends StatelessWidget {
             ) {
               return ListenableProvider<DraggableScrollableController>(
                 create: (_) => draggableScrollableController,
-                child: AnnotatedRegion<SystemUiOverlayStyle>(
-                  value: SystemUiOverlayStyle(
-                    statusBarBrightness: Theme.of(context).brightness,
-                  ),
-                  child: _MagicBackgroundBottomSheet(
-                    scrollController: draggableScrollableController,
-                    style: DefaultTextStyle.of(topContext).style,
-                    minFraction: fraction,
-                    child: ProductPage.fromModalSheet(
-                      product: product,
-                      topSliverHeight: size.height,
-                      scrollController: scrollController,
+                child: ChangeListener<DraggableScrollableController>(
+                  onValueChanged: () {
+                    if (draggableScrollableController.size < 0.01) {
+                      NavApp.of(topContext).hideSheet();
+                      HomePage.of(topContext).ignoreAllEvents(false);
+                    }
+                  },
+                  child: AnnotatedRegion<SystemUiOverlayStyle>(
+                    value: SystemUiOverlayStyle(
+                      statusBarBrightness: Theme.of(context).brightness,
+                    ),
+                    child: _MagicBackgroundBottomSheet(
+                      scrollController: draggableScrollableController,
+                      style: DefaultTextStyle.of(topContext).style,
+                      minFraction: fraction,
+                      child: ProductPage.fromModalSheet(
+                        product: product,
+                        topSliverHeight: size.height,
+                        scrollController: scrollController,
+                      ),
                     ),
                   ),
                 ),
@@ -235,7 +243,7 @@ class _MagicBackgroundBottomSheetState
           (widget.scrollController.size.progress(
             widget.minFraction,
             maxFraction,
-          ));
+          )).clamp(0.0, 1.0);
     }
 
     if (opacity != _hintOpacity) {
@@ -301,21 +309,23 @@ class _MagicBackgroundBottomSheetState
       );
     }
 
-    return Column(
-      children: [
-        DefaultTextStyle(
-          style: widget.style,
-          child: GestureDetector(
-            onTap: () => _onHintTapped(),
-            onPanStart: (_) => _onHintTapped(),
-            child: _MagicHint(
-              opacity: _hintOpacity,
-              height: _hintSize,
+    return OverflowBox(
+      child: Column(
+        children: [
+          DefaultTextStyle(
+            style: widget.style,
+            child: GestureDetector(
+              onTap: () => _onHintTapped(),
+              onPanStart: (_) => _onHintTapped(),
+              child: _MagicHint(
+                opacity: _hintOpacity,
+                height: _hintSize,
+              ),
             ),
           ),
-        ),
-        Expanded(child: content),
-      ],
+          Expanded(child: content),
+        ],
+      ),
     );
   }
 

@@ -94,4 +94,8 @@ class _IconsFont {
       IconData(0xe852, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData clear_text =
       IconData(0xe853, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData share_cupertino =
+      IconData(0xe8a4, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData share_material =
+      IconData(0xe8a5, fontFamily: _kFontFam, fontPackage: _kFontPkg);
 }

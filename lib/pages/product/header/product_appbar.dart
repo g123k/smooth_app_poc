@@ -3,6 +3,7 @@ import 'package:openfoodfacts/openfoodfacts.dart';
 import 'package:provider/provider.dart';
 import 'package:smoothapp_poc/pages/product/header/product_header.dart';
 import 'package:smoothapp_poc/pages/product/product_page.dart';
+import 'package:smoothapp_poc/resources/app_colors.dart';
 import 'package:smoothapp_poc/resources/app_icons.dart' as icons;
 import 'package:smoothapp_poc/utils/num_utils.dart';
 import 'package:smoothapp_poc/utils/provider_utils.dart';
@@ -23,7 +24,7 @@ class _ProductHeaderAppBarState extends State<ProductHeaderAppBar> {
     super.didChangeDependencies();
 
     try {
-      _contentController = context.read<TrackingScrollController>()
+      _contentController = context.read<ScrollController>()
         ..replaceListener(_onScrollContent);
     } catch (_) {}
   }
@@ -61,6 +62,7 @@ class _ProductHeaderAppBarState extends State<ProductHeaderAppBar> {
       context: context,
       removeTop: true,
       child: AppBar(
+        backgroundColor: AppColors.white,
         leading: Tooltip(
           message: MaterialLocalizations.of(context).closeButtonTooltip,
           child: InkWell(

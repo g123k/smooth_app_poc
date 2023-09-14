@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -9,8 +7,9 @@ import 'package:smoothapp_poc/navigation.dart';
 import 'package:smoothapp_poc/pages/homepage/camera/expandable_view/expandable_camera.dart';
 import 'package:smoothapp_poc/pages/homepage/camera/view/ui/camera_view.dart';
 import 'package:smoothapp_poc/pages/homepage/list/history_list.dart';
-import 'package:smoothapp_poc/pages/homepage/settings_icon.dart';
 import 'package:smoothapp_poc/pages/search_page/search_page.dart';
+import 'package:smoothapp_poc/utils/physics.dart';
+import 'package:smoothapp_poc/utils/provider_utils.dart';
 import 'package:smoothapp_poc/utils/ui_utils.dart';
 import 'package:smoothapp_poc/utils/widgets/search_bar.dart';
 import 'package:visibility_detector/visibility_detector.dart';
@@ -38,7 +37,6 @@ class HomePageState extends State<HomePage> {
   final Key _screenKey = UniqueKey();
 
   // Lazy values (used to minimize the time required on each frame)
-  double? _screenPaddingTop;
   double? _cameraPeakHeight;
   double? _scrollPositionBeforePause;
 
@@ -47,9 +45,8 @@ class HomePageState extends State<HomePage> {
   late final AppLifecycleListener _lifecycleListener;
 
   bool _ignoreAllEvents = false;
-  SettingsIconType _floatingSettingsType = SettingsIconType.floating;
   ScrollMetrics? _userInitialScrollMetrics;
-  _CustomPhysics? _physics;
+  VerticalSnapScrollPhysics? _physics;
   ScrollDirection _direction = ScrollDirection.forward;
   bool _screenVisible = false;
 
@@ -95,7 +92,7 @@ class HomePageState extends State<HomePage> {
         // The MediaQuery is not yet ready (reproducible in production)
         _setInitialScroll();
       } else {
-        _physics = _CustomPhysics(steps: [
+        _physics = VerticalSnapScrollPhysics(steps: [
           0.0,
           cameraPeak,
           cameraHeight,
@@ -107,93 +104,91 @@ class HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return VisibilityDetector(
-      key: _screenKey,
-      onVisibilityChanged: (VisibilityInfo visibility) {
-        _screenVisible = visibility.visibleFraction > 0;
-        _onScreenVisibilityChanged(_screenVisible);
+    return ValueListener<OnTabChangedNotifier, HomeTabs>(
+      onValueChanged: (HomeTabs tab) {
+        NavApp.of(context).hideSheet();
+        collapseCamera();
       },
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: NotificationListener(
-          onNotification: (Object? notification) {
-            if (_ignoreAllEvents) {
+      child: VisibilityDetector(
+        key: _screenKey,
+        onVisibilityChanged: (VisibilityInfo visibility) {
+          _screenVisible = visibility.visibleFraction > 0;
+          _onScreenVisibilityChanged(_screenVisible);
+        },
+        child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          body: NotificationListener(
+            onNotification: (Object? notification) {
+              if (_ignoreAllEvents) {
+                return false;
+              }
+
+              if (notification is UserScrollNotification) {
+                _direction = notification.direction;
+
+                if (notification.direction != ScrollDirection.idle) {
+                  _userInitialScrollMetrics = notification.metrics;
+                }
+              } else if (notification is ScrollEndNotification) {
+                if (notification.metrics.axis != Axis.vertical ||
+                    notification.dragDetails == null) {
+                  return false;
+                }
+
+                _onScrollEnded(notification);
+              } else if (notification is ScrollUpdateNotification) {
+                if (notification.metrics.axis != Axis.vertical) {
+                  return false;
+                }
+                _onScrollUpdate(notification);
+              }
               return false;
-            }
+            },
+            child: Provider.value(
+              value: this,
+              child: ChangeNotifierProvider(
+                create: (_) => _controller,
+                child: Builder(builder: (BuildContext context) {
+                  return CustomScrollView(
+                    physics: _ignoreAllEvents
+                        ? const NeverScrollableScrollPhysics()
+                        : _physics,
+                    controller: _controller,
+                    slivers: [
+                      ExpandableCamera(
+                        controller: _cameraController,
+                        height: MediaQuery.of(context).size.height,
+                      ),
+                      ExpandableSearchAppBar(
+                        onFieldTapped: () {
+                          HomePage.of(context).showAppBar(
+                              onAppBarVisible: () async {
+                            SearchPageResult? res =
+                                await SearchPage.open(context);
 
-            if (notification is UserScrollNotification) {
-              _direction = notification.direction;
-
-              if (notification.direction != ScrollDirection.idle) {
-                _userInitialScrollMetrics = notification.metrics;
-              }
-            } else if (notification is ScrollEndNotification) {
-              if (notification.metrics.axis != Axis.vertical ||
-                  notification.dragDetails == null) {
-                return false;
-              }
-
-              _onScrollEnded(notification);
-            } else if (notification is ScrollUpdateNotification) {
-              if (notification.metrics.axis != Axis.vertical) {
-                return false;
-              }
-              _onScrollUpdate(notification);
-            }
-            return false;
-          },
-          child: Provider.value(
-            value: this,
-            child: Stack(
-              children: [
-                ChangeNotifierProvider(
-                  create: (_) => _controller,
-                  child: Builder(builder: (BuildContext context) {
-                    return CustomScrollView(
-                      physics: _ignoreAllEvents
-                          ? const NeverScrollableScrollPhysics()
-                          : _physics,
-                      controller: _controller,
-                      slivers: [
-                        ExpandableCamera(
-                          controller: _cameraController,
-                          height: MediaQuery.of(context).size.height,
-                        ),
-                        ExpandableSearchAppBar(
-                          onFieldTapped: () {
-                            HomePage.of(context).showAppBar(
-                                onAppBarVisible: () async {
-                              SearchPageResult? res =
-                                  await SearchPage.open(context);
-
-                              if (res == SearchPageResult.openCamera &&
-                                  mounted) {
-                                HomePage.of(context).expandCamera(
-                                  duration: const Duration(milliseconds: 1500),
-                                );
-                              }
-                            });
-                          },
-                          onCameraTapped: () {
-                            HomePage.of(context).expandCamera(
-                              duration: const Duration(milliseconds: 1500),
-                            );
-                          },
-                        ),
-                        const ProductHistoryList(),
-                        const ProductHistoryList(),
-                        const ProductHistoryList(),
-                        const ProductHistoryList(),
-                        const ProductHistoryList(),
-                        const SliverListBldr(),
-                      ],
-                    );
-                  }),
-                ),
-                HomePageSettingsIcon(
-                  type: _floatingSettingsType,
-                ),
-              ],
+                            if (res == SearchPageResult.openCamera && mounted) {
+                              HomePage.of(context).expandCamera(
+                                duration: const Duration(milliseconds: 1500),
+                              );
+                            }
+                          });
+                        },
+                        onCameraTapped: () {
+                          HomePage.of(context).expandCamera(
+                            duration: const Duration(milliseconds: 1500),
+                          );
+                        },
+                      ),
+                      const ProductHistoryList(),
+                      const ProductHistoryList(),
+                      const ProductHistoryList(),
+                      const ProductHistoryList(),
+                      const ProductHistoryList(),
+                      const SliverListBldr(),
+                    ],
+                  );
+                }),
+              ),
             ),
           ),
         ),
@@ -236,6 +231,10 @@ class HomePageState extends State<HomePage> {
   }
 
   void collapseCamera() {
+    if (_controller.offset == _initialOffset) {
+      return;
+    }
+
     _physics?.ignoreNextScroll = true;
     _controller.animateTo(
       _initialOffset,
@@ -268,8 +267,6 @@ class HomePageState extends State<HomePage> {
   /// - Start/stop the camera
   /// - Update the type of the settings icon
   void _onScrollUpdate(ScrollUpdateNotification notification) {
-    SettingsIconType newValue;
-
     if (_controller.offset.ceilToDouble() < cameraHeight) {
       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
       if (!_cameraController.isStarting) {
@@ -278,21 +275,6 @@ class HomePageState extends State<HomePage> {
     } else {
       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
       _cameraController.stop();
-    }
-
-    _screenPaddingTop ??= MediaQuery.of(context).padding.top;
-
-    if (notification.metrics.pixels < 20.0) {
-      newValue = SettingsIconType.invisible;
-    } else if (notification.metrics.pixels <
-        cameraHeight - _screenPaddingTop!) {
-      newValue = SettingsIconType.floating;
-    } else {
-      newValue = SettingsIconType.appBar;
-    }
-
-    if (newValue != _floatingSettingsType) {
-      setState(() => _floatingSettingsType = newValue);
     }
   }
 
@@ -303,7 +285,7 @@ class HomePageState extends State<HomePage> {
 
     final List<double> steps = [0.0, cameraPeak, cameraViewHeight];
     if (steps.contains(scrollPosition)) {
-      double fixedPosition = _CustomPhysics.fixInconsistency(
+      double fixedPosition = VerticalSnapScrollPhysics.fixInconsistency(
         steps,
         scrollPosition,
         _userInitialScrollMetrics!.pixels,
@@ -382,136 +364,5 @@ class SliverListBldr extends StatelessWidget {
         childCount: 20,
       ),
     );
-  }
-}
-
-/// A custom [ScrollPhysics] that snaps to specific [steps].
-/// ignore: must_be_immutable
-class _CustomPhysics extends ClampingScrollPhysics {
-  _CustomPhysics({
-    required List<double> steps,
-    super.parent,
-  })  : steps = steps.toList()..sort(),
-        ignoreNextScroll = false;
-
-  final List<double> steps;
-  bool ignoreNextScroll;
-
-  @override
-  ClampingScrollPhysics applyTo(ScrollPhysics? ancestor) {
-    return _CustomPhysics(parent: buildParent(ancestor), steps: steps);
-  }
-
-  double? _lastPixels;
-
-  @override
-  Simulation? createBallisticSimulation(
-    ScrollMetrics position,
-    double velocity,
-  ) {
-    if (velocity > 0.0 && position.pixels >= position.maxScrollExtent) {
-      ignoreNextScroll = false;
-      return null;
-    }
-    if (velocity < 0.0 && position.pixels <= position.minScrollExtent) {
-      ignoreNextScroll = false;
-      return null;
-    }
-
-    Simulation? simulation =
-        super.createBallisticSimulation(position, velocity);
-    double? proposedPixels = simulation?.x(double.infinity);
-
-    if (simulation == null || proposedPixels == null) {
-      var (double? min, _) = _getRange(position.pixels);
-
-      if (min != null && min != steps.last && ignoreNextScroll) {
-        return ScrollSpringSimulation(
-          spring,
-          position.pixels,
-          min,
-          velocity,
-        );
-      } else {
-        ignoreNextScroll = false;
-        return null;
-      }
-    }
-
-    var (double? min, double? max) = _getRange(position.pixels);
-    if (min != null && max == null) {
-      if (proposedPixels < min) {
-        proposedPixels = min;
-      }
-    } else if (min != null && max != null) {
-      if (position.pixels - proposedPixels > 0) {
-        proposedPixels = min;
-      } else {
-        proposedPixels = max;
-      }
-    }
-
-    if (_lastPixels == null) {
-      _lastPixels = proposedPixels;
-    } else {
-      _lastPixels = _fixInconsistency(proposedPixels);
-    }
-
-    ignoreNextScroll = false;
-    return ScrollSpringSimulation(
-      spring,
-      position.pixels,
-      _lastPixels!,
-      velocity,
-    );
-  }
-
-  (double?, double?) _getRange(double position) {
-    for (int i = steps.length - 1; i >= 0; i--) {
-      final double step = steps[i];
-
-      if (i == steps.length - 1 && position > step) {
-        return (step, null);
-      } else if (position > step && position < steps[i + 1]) {
-        return (step, steps[i + 1]);
-      }
-    }
-
-    return (null, null);
-  }
-
-  // In some cases, the proposed pixels have a giant space and finding the range
-  // is incorrect. In that case, we ensure to have a contiguous range.
-  double _fixInconsistency(double proposedPixels) {
-    return fixInconsistency(steps, proposedPixels, _lastPixels!);
-  }
-
-  static double fixInconsistency(
-    List<double> steps,
-    double proposedPixels,
-    double initialPixelPosition,
-  ) {
-    int newPosition = _getStepPosition(steps, proposedPixels);
-    int oldPosition = _getStepPosition(steps, initialPixelPosition);
-
-    if (newPosition - oldPosition >= 2) {
-      return steps[math.min(newPosition - 1, 0)];
-    } else if (newPosition - oldPosition <= -2) {
-      return steps[math.min(newPosition + 1, steps.length - 1)];
-    }
-
-    return proposedPixels;
-  }
-
-  static int _getStepPosition(List<double> steps, double pixels) {
-    for (int i = steps.length - 1; i >= 0; i--) {
-      final double step = steps.elementAt(i);
-
-      if (pixels >= step) {
-        return i;
-      }
-    }
-
-    return 0;
   }
 }

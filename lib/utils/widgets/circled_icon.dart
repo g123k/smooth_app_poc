@@ -75,3 +75,72 @@ class CloseCircledIcon extends StatelessWidget {
     );
   }
 }
+
+class CircledTextIcon extends StatelessWidget {
+  const CircledTextIcon({
+    required this.icon,
+    required this.text,
+    required this.tooltip,
+    this.onPressed,
+    this.iconColor,
+    this.borderColor,
+    this.backgroundColor,
+    this.padding,
+    super.key,
+  });
+
+  final Widget icon;
+  final Widget text;
+  final String tooltip;
+  final VoidCallback? onPressed;
+  final Color? iconColor;
+  final Color? borderColor;
+  final Color? backgroundColor;
+  final EdgeInsetsGeometry? padding;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      value: tooltip,
+      excludeSemantics: true,
+      child: Material(
+        type: MaterialType.transparency,
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: BorderRadius.circular(20.0),
+          child: Ink(
+            height: 48.0,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20.0),
+              border: Border.all(
+                color: borderColor ?? AppColors.orange,
+                width: 1.0,
+              ),
+              color: backgroundColor ?? AppColors.orangeVeryLight,
+            ),
+            padding: padding ?? const EdgeInsets.all(12.0),
+            child: DefaultTextStyle(
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: IconTheme.of(context).color,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  icon,
+                  const SizedBox(width: 10.0),
+                  // Fake padding to have a better UI
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 3.0),
+                    child: text,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

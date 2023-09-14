@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:smoothapp_poc/utils/widgets/useful_widgets.dart';
 
@@ -381,6 +383,43 @@ class Question extends AppIcon {
     super.shadow,
     super.key,
   }) : super._(_IconsFont.question_circled);
+}
+
+class Share extends AppIcon {
+  factory Share({
+    Color? color,
+    double? size,
+    Shadow? shadow,
+    Key? key,
+  }) {
+    if (Platform.isIOS || Platform.isMacOS) {
+      return Share.cupertino(
+        color: color,
+        size: size,
+        shadow: shadow,
+      );
+    } else {
+      return Share.material(
+        color: color,
+        size: size,
+        shadow: shadow,
+      );
+    }
+  }
+
+  const Share.material({
+    super.color,
+    super.size,
+    super.shadow,
+    super.key,
+  }) : super._(_IconsFont.share_material);
+
+  const Share.cupertino({
+    super.color,
+    super.size,
+    super.shadow,
+    super.key,
+  }) : super._(_IconsFont.share_cupertino);
 }
 
 class Search extends AppIcon {

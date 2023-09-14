@@ -34,6 +34,39 @@ class _ValueListenerState<X, Y extends ValueNotifier<X>>
   }
 }
 
+class ChangeListener<X extends ChangeNotifier> extends StatefulWidget {
+  const ChangeListener({
+    required this.onValueChanged,
+    required this.child,
+    super.key,
+  });
+
+  final VoidCallback onValueChanged;
+  final Widget child;
+
+  @override
+  State<ChangeListener<X>> createState() => _ChangeListenerState<X>();
+}
+
+class _ChangeListenerState<X extends ChangeNotifier>
+    extends State<ChangeListener<X>> {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    context.read<X>().replaceListener(_onValueChanged);
+  }
+
+  void _onValueChanged() {
+    widget.onValueChanged();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.child;
+  }
+}
+
 extension ChangeNotifierExtension on ChangeNotifier {
   void replaceListener(VoidCallback listener) {
     removeListener(listener);

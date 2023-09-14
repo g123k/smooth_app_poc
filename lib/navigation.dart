@@ -16,10 +16,13 @@ class NavApp extends StatefulWidget {
 }
 
 class NavAppState extends State<NavApp> with TickerProviderStateMixin {
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey();
+
   late AnimationController _bottomSheetAndNavBarController;
   late AnimationController _bottomSheetAnimationController;
   late Animation<Offset> _bottomSheetAnimation;
   late SheetVisibilityNotifier _sheetVisibility;
+  int _selectedTab = 1;
 
   Animation<double>? _bottomSheetAndNavBarAnimation;
 
@@ -68,73 +71,95 @@ class NavAppState extends State<NavApp> with TickerProviderStateMixin {
         ChangeNotifierProvider<SheetVisibilityNotifier>.value(
           value: _sheetVisibility,
         ),
+        ChangeNotifierProvider<OnTabChangedNotifier>(
+          create: (_) => OnTabChangedNotifier(HomeTabs.values[_selectedTab]),
+        ),
       ],
-      child: Stack(
-        children: [
-          Positioned.fill(
-            bottom: _navBarHeight,
-            child: Offstage(
-              offstage: _sheetVisibility.isFullyVisible,
-              child: const HomePage(),
-            ),
-          ),
-          if (_sheet != null)
+      child: Builder(builder: (BuildContext context) {
+        return Stack(
+          children: [
             Positioned.fill(
-              bottom: _navBarTranslation,
-              child: Transform.translate(
-                offset: _bottomSheetAnimation.value,
-                child: Opacity(
-                  opacity: _bottomSheetAnimationController.value,
-                  child: _sheet!,
+              bottom: _navBarHeight,
+              child: Offstage(
+                offstage: _sheetVisibility.isFullyVisible,
+                child: Navigator(
+                  key: _navigatorKey,
+                  pages: const [
+                    MaterialPage<void>(
+                      child: HomePage(),
+                    ),
+                  ],
+                  onPopPage: (route, result) => route.didPop(result),
                 ),
               ),
             ),
-          Positioned.fill(
-            top: null,
-            child: Transform.translate(
-              offset: Offset(0.0, _navBarHeight - _navBarTranslation),
-              child: MediaQuery.removePadding(
-                removeTop: true,
-                removeBottom: true,
-                context: context,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 2.0,
-                      offset: const Offset(-2.0, -2.0),
-                    ),
-                  ]),
-                  child: SafeArea(
-                    bottom: true,
-                    child: NavigationBar(
-                      height: kBottomNavigationBarHeight +
-                          MediaQuery.viewPaddingOf(context).bottom,
-                      selectedIndex: 1,
-                      labelBehavior:
-                          NavigationDestinationLabelBehavior.alwaysShow,
-                      destinations: const <Widget>[
-                        NavigationDestination(
-                          icon: Icon(Icons.account_circle),
-                          label: 'My profile',
-                        ),
-                        NavigationDestination(
-                          icon: Icon(Icons.camera_alt),
-                          label: 'Scan',
-                        ),
-                        NavigationDestination(
-                          icon: Icon(Icons.list),
-                          label: 'My lists',
+            if (_sheet != null)
+              Positioned.fill(
+                bottom: _navBarTranslation,
+                child: Transform.translate(
+                  offset: _bottomSheetAnimation.value,
+                  child: Opacity(
+                    opacity: _bottomSheetAnimationController.value,
+                    child: _sheet!,
+                  ),
+                ),
+              ),
+            Positioned.fill(
+              top: null,
+              child: Transform.translate(
+                offset: Offset(0.0, _navBarHeight - _navBarTranslation),
+                child: MediaQuery.removePadding(
+                  removeTop: true,
+                  removeBottom: true,
+                  context: context,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 2.0,
+                          offset: const Offset(-2.0, -2.0),
                         ),
                       ],
+                    ),
+                    child: SafeArea(
+                      bottom: true,
+                      child: NavigationBar(
+                        height: kBottomNavigationBarHeight +
+                            MediaQuery.viewPaddingOf(context).bottom,
+                        onDestinationSelected: (int page) {
+                          if (page == _selectedTab) {
+                            if (_navigatorKey.currentState?.canPop() == true) {
+                              _navigatorKey.currentState!.maybePop();
+                              return;
+                            }
+                          } else {
+                            setState(() => _selectedTab = page);
+                          }
+
+                          OnTabChangedNotifier.of(context)
+                              .updateWith(HomeTabs.values[page]);
+                        },
+                        selectedIndex: _selectedTab,
+                        labelBehavior:
+                            NavigationDestinationLabelBehavior.alwaysShow,
+                        destinations: HomeTabs.values
+                            .map(
+                              (HomeTabs tab) => NavigationDestination(
+                                icon: tab.icon,
+                                label: tab.label,
+                              ),
+                            )
+                            .toList(growable: false),
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
-        ],
-      ),
+          ],
+        );
+      }),
     );
   }
 
@@ -234,4 +259,29 @@ enum _SheetVisibility {
   fullyVisible,
   partiallyVisible,
   gone,
+}
+
+class OnTabChangedNotifier extends ValueNotifier<HomeTabs> {
+  // ignore: library_private_types_in_public_api
+  OnTabChangedNotifier(super.value);
+
+  static OnTabChangedNotifier of(BuildContext context) {
+    return context.read<OnTabChangedNotifier>();
+  }
+
+  void updateWith(HomeTabs value) {
+    this.value = value;
+    notifyListeners();
+  }
+}
+
+enum HomeTabs {
+  profile(Icon(Icons.account_circle), 'My profile'),
+  scanner(Icon(Icons.camera_alt), 'Scan'),
+  lists(Icon(Icons.list), 'My lists');
+
+  const HomeTabs(this.icon, this.label);
+
+  final Icon icon;
+  final String label;
 }
