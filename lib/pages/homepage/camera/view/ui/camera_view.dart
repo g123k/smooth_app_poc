@@ -36,86 +36,82 @@ class CameraView extends StatelessWidget {
 
     return Provider.value(
       value: controller,
-      child: ChangeNotifierProvider(
-        create: (_) => CameraViewStateManager(),
-        child: ValueListener<CameraViewStateManager, CameraViewState>(
-          onValueChanged: (CameraViewState state) {
-            if (state is CameraViewProductAvailableState) {
-              showProduct(context, state.product);
-            }
-          },
-          child: Builder(builder: (BuildContext context) {
-            return Consumer<SheetVisibilityNotifier>(
-              builder: (
-                BuildContext context,
-                SheetVisibilityNotifier notifier,
-                Widget? child,
-              ) {
-                return Offstage(
-                  offstage: notifier.isFullyVisible,
-                  child: child!,
-                );
-              },
-              child: Stack(
-                children: [
-                  Positioned.fill(
-                    child: MobileScanner(
-                      controller: controller._controller,
-                      placeholderBuilder: (_, __) => const SizedBox.expand(
-                          child: ColoredBox(color: Colors.black)),
-                      onDetect: (BarcodeCapture capture) {
-                        if (HomePage.of(context).isCameraFullyVisible) {
-                          final String barcode =
-                              capture.barcodes.first.rawValue!;
+      child: ValueListener<CameraViewStateManager, CameraViewState>(
+        onValueChanged: (CameraViewState state) {
+          if (state is CameraViewProductAvailableState) {
+            showProduct(context, state.product);
+          }
+        },
+        child: Builder(builder: (BuildContext context) {
+          return Consumer<SheetVisibilityNotifier>(
+            builder: (
+              BuildContext context,
+              SheetVisibilityNotifier notifier,
+              Widget? child,
+            ) {
+              return Offstage(
+                offstage: notifier.isFullyVisible,
+                child: child!,
+              );
+            },
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: MobileScanner(
+                    controller: controller._controller,
+                    placeholderBuilder: (_, __) => const SizedBox.expand(
+                        child: ColoredBox(color: Colors.black)),
+                    onDetect: (BarcodeCapture capture) {
+                      if (HomePage.of(context).isCameraFullyVisible) {
+                        final String barcode = capture.barcodes.first.rawValue!;
 
-                          CameraViewStateManager.of(context)
-                              .onBarcodeDetected(barcode);
-                        }
-                      },
+                        CameraViewStateManager.of(context)
+                            .onBarcodeDetected(barcode);
+                      }
+                    },
+                  ),
+                ),
+                Positioned(
+                  top: 0.0,
+                  left: 0.0,
+                  right: 0.0,
+                  child: Offstage(
+                    offstage: !isCameraFullyVisible,
+                    child: CameraButtonBars(
+                      onClosed: onClosed,
                     ),
                   ),
+                ),
+                if (isCameraFullyVisible &&
+                    SheetVisibilityNotifier.of(context).isGone)
                   Positioned(
-                    top: 0.0,
+                    bottom: kBottomNavigationBarHeight + 20.0,
                     left: 0.0,
                     right: 0.0,
-                    child: Offstage(
-                      offstage: !isCameraFullyVisible,
-                      child: CameraButtonBars(
-                        onClosed: onClosed,
-                      ),
+                    child: SafeArea(
+                      bottom: true,
+                      child: _MessageOverlay(),
                     ),
                   ),
-                  if (isCameraFullyVisible &&
-                      SheetVisibilityNotifier.of(context).isGone)
-                    Positioned(
-                      bottom: kBottomNavigationBarHeight + 20.0,
-                      left: 0.0,
-                      right: 0.0,
-                      child: SafeArea(
-                        bottom: true,
-                        child: _MessageOverlay(),
-                      ),
-                    ),
-                  Positioned.fill(
-                    child: _OpaqueOverlay(
-                      isCameraFullyVisible: isCameraFullyVisible,
-                      progress: progress,
+                Positioned.fill(
+                  child: _OpaqueOverlay(
+                    isCameraFullyVisible: isCameraFullyVisible,
+                    progress: progress,
+                  ),
+                ),
+                Positioned(
+                  top: 200,
+                  child: CloseButton(
+                    onPressed: () =>
+                        CameraViewStateManager.of(context).onBarcodeDetected(
+                      '${math.Random().nextInt(100)}01234567${math.Random().nextInt(100)}',
                     ),
                   ),
-                  Positioned(
-                    top: 200,
-                    child: CloseButton(
-                      onPressed: () =>
-                          CameraViewStateManager.of(context).onBarcodeDetected(
-                        '${math.Random().nextInt(100)}01234567${math.Random().nextInt(100)}',
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }),
-        ),
+                ),
+              ],
+            ),
+          );
+        }),
       ),
     );
   }
@@ -137,7 +133,7 @@ class CameraView extends StatelessWidget {
         // + the hint (slide up to see details)
         // + a slight padding
         final double fraction =
-            (size.height + _MagicBackgroundBottomSheetState.HINT_SIZE + 40.0) /
+            (size.height + _MagicBackgroundBottomSheetState.HINT_SIZE + 70.0) /
                 (MediaQuery.of(topContext).size.height -
                     NavApp.of(topContext).navBarHeight);
 

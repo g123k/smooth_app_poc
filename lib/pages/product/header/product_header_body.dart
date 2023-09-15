@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -9,6 +11,7 @@ import 'package:smoothapp_poc/resources/app_colors.dart';
 import 'package:smoothapp_poc/resources/app_icons.dart' as icons;
 import 'package:smoothapp_poc/utils/num_utils.dart';
 import 'package:smoothapp_poc/utils/widgets/list.dart';
+import 'package:smoothapp_poc/utils/widgets/material.dart';
 
 class ProductHeaderBody extends StatelessWidget {
   const ProductHeaderBody({
@@ -22,13 +25,13 @@ class ProductHeaderBody extends StatelessWidget {
   final Function(int)? onTabChanged;
   final double? shrinkContent;
 
-  static const List<Tab> tabs = [
-    Tab(text: 'Pour moi'),
-    Tab(text: 'Santé'),
-    Tab(text: 'Environnement'),
-    Tab(text: 'Photos'),
-    Tab(text: 'Contribuer'),
-    Tab(text: 'Infos'),
+  static const List<ProductHeaderTabs> tabs = [
+    ProductHeaderTabs.forMe,
+    ProductHeaderTabs.health,
+    ProductHeaderTabs.environment,
+    ProductHeaderTabs.photos,
+    ProductHeaderTabs.contribute,
+    ProductHeaderTabs.infos,
   ];
 
   @override
@@ -44,11 +47,57 @@ class ProductHeaderBody extends StatelessWidget {
       },
     );
 
-    final Widget tabBar = TabBar(
-      controller: tabController,
-      tabs: ProductHeaderBody.tabs,
-      isScrollable: true,
-      onTap: (int position) => onTabChanged?.call(position),
+    final Widget tabBar = DecoratedBox(
+      decoration: const BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: AppColors.orange,
+            width: 1.0,
+          ),
+        ),
+      ),
+      child: TabBar(
+        controller: tabController,
+        tabs: ProductHeaderBody.tabs
+            .map(
+              (ProductHeaderTabs tab) => _ProductHeaderTab(
+                tab: tab,
+                selected:
+                    tabController.index == ProductHeaderBody.tabs.indexOf(tab),
+              ),
+            )
+            .toList(growable: false),
+        isScrollable: true,
+        padding: EdgeInsets.zero,
+        labelPadding: EdgeInsets.zero,
+        overlayColor: MaterialStateProperty.all(AppColors.orangeVeryLight),
+        splashBorderRadius: const BorderRadius.vertical(
+          top: Radius.circular(5.0),
+        ),
+        indicator: const BoxDecoration(
+          border: Border(
+            bottom: BorderSide(
+              color: AppColors.orange,
+              width: 3.0,
+            ),
+            top: BorderSide(
+              color: AppColors.orange,
+              width: 0.0,
+            ),
+            left: BorderSide(
+              color: AppColors.orange,
+              width: 0.0,
+            ),
+            right: BorderSide(
+              color: AppColors.orange,
+              width: 0.0,
+            ),
+          ),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(5.0)),
+          color: AppColors.orangeVeryLight,
+        ),
+        onTap: (int position) => onTabChanged?.call(position),
+      ),
     );
 
     if (shrinkContent == null) {
@@ -67,8 +116,9 @@ class ProductHeaderBody extends StatelessWidget {
         ),
       );
     } else {
-      return Material(
+      return DynamicMaterial(
         type: MaterialType.canvas,
+        elevationThreshold: ProductHeaderConfiguration.of(context).minThreshold,
         color: Theme.of(context).scaffoldBackgroundColor,
         child: Align(
           child: ClipRect(
@@ -205,13 +255,14 @@ class _ProductHeaderScores extends StatelessWidget {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         return Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             InkWell(
               onTap: onNutriScoreClicked,
               child: SvgPicture.asset(
                 'assets/images/nutriscore-a.svg',
                 alignment: AlignmentDirectional.topCenter,
-                width: constraints.maxWidth,
+                width: math.min(80.0, constraints.maxWidth),
               ),
             ),
             const SizedBox(height: 10.0),
@@ -224,7 +275,7 @@ class _ProductHeaderScores extends StatelessWidget {
                   child: SvgPicture.asset(
                     'assets/images/ecoscore-a.svg',
                     alignment: AlignmentDirectional.topCenter,
-                    width: constraints.maxWidth,
+                    width: math.min(80.0, constraints.maxWidth),
                   ),
                 ),
               ),
@@ -397,4 +448,49 @@ class _ProductHeaderOutlinedButton extends StatelessWidget {
       ),
     );
   }
+}
+
+class _ProductHeaderTab extends StatelessWidget {
+  const _ProductHeaderTab({
+    required this.tab,
+    required this.selected,
+  });
+
+  final ProductHeaderTabs tab;
+  final bool selected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 18.0),
+      child: SizedBox(
+        height: 46.0,
+        child: Center(
+          child: Text(
+            _label(context),
+          ),
+        ),
+      ),
+    );
+  }
+
+  String _label(BuildContext context) {
+    return switch (tab) {
+      ProductHeaderTabs.forMe => 'Pour moi',
+      ProductHeaderTabs.health => 'Santé',
+      ProductHeaderTabs.environment => 'Environnement',
+      ProductHeaderTabs.photos => 'Photos',
+      ProductHeaderTabs.contribute => 'Contribuer',
+      ProductHeaderTabs.infos => 'Infos',
+    };
+  }
+}
+
+enum ProductHeaderTabs {
+  forMe,
+  health,
+  environment,
+  photos,
+  contribute,
+  infos,
 }

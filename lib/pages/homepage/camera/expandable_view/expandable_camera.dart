@@ -21,13 +21,15 @@ class ExpandableCamera extends StatelessWidget {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
+        final HomePageState screenController = HomePage.of(context);
         final NavAppState app = NavApp.of(context);
         if (app.hasSheet) {
+          screenController.ignoreAllEvents(false);
           app.hideSheet();
           return false;
         }
 
-        final HomePageState screenController = HomePage.of(context);
+
         if (screenController.isExpanded) {
           screenController.collapseCamera();
           return false;

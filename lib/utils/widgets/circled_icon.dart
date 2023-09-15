@@ -118,7 +118,11 @@ class CircledTextIcon extends StatelessWidget {
               ),
               color: backgroundColor ?? AppColors.orangeVeryLight,
             ),
-            padding: padding ?? const EdgeInsets.all(12.0),
+            padding: padding ??
+                const EdgeInsets.symmetric(
+                  horizontal: 14.0,
+                  vertical: 12.0,
+                ),
             child: DefaultTextStyle(
               style: TextStyle(
                 fontWeight: FontWeight.bold,
@@ -129,10 +133,10 @@ class CircledTextIcon extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   icon,
-                  const SizedBox(width: 10.0),
+                  const SizedBox(width: 16.0),
                   // Fake padding to have a better UI
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 3.0),
+                    padding: const EdgeInsets.only(bottom: 0.5),
                     child: text,
                   ),
                 ],

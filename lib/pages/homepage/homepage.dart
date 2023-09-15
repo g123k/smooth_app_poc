@@ -5,6 +5,7 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
 import 'package:smoothapp_poc/navigation.dart';
 import 'package:smoothapp_poc/pages/homepage/camera/expandable_view/expandable_camera.dart';
+import 'package:smoothapp_poc/pages/homepage/camera/view/camera_state_manager.dart';
 import 'package:smoothapp_poc/pages/homepage/camera/view/ui/camera_view.dart';
 import 'package:smoothapp_poc/pages/homepage/list/history_list.dart';
 import 'package:smoothapp_poc/pages/search_page/search_page.dart';
@@ -104,91 +105,102 @@ class HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListener<OnTabChangedNotifier, HomeTabs>(
-      onValueChanged: (HomeTabs tab) {
-        NavApp.of(context).hideSheet();
-        collapseCamera();
-      },
-      child: VisibilityDetector(
-        key: _screenKey,
-        onVisibilityChanged: (VisibilityInfo visibility) {
-          _screenVisible = visibility.visibleFraction > 0;
-          _onScreenVisibilityChanged(_screenVisible);
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => CameraViewStateManager(),
+        ),
+        Provider.value(value: this),
+        ChangeNotifierProvider.value(value: _controller),
+      ],
+      child: ValueListener<OnTabChangedNotifier, HomeTabs>(
+        onValueChanged: (HomeTabs tab) {
+          if (tab == HomeTabs.scanner) {
+            if (NavApp.of(context).hasSheet) {
+              NavApp.of(context).hideSheet();
+              collapseCamera();
+            } else if (!isCameraFullyVisible) {
+              expandCamera();
+            } else {
+              collapseCamera();
+            }
+          }
         },
-        child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          body: NotificationListener(
-            onNotification: (Object? notification) {
-              if (_ignoreAllEvents) {
+        child: VisibilityDetector(
+          key: _screenKey,
+          onVisibilityChanged: (VisibilityInfo visibility) {
+            _screenVisible = visibility.visibleFraction > 0;
+            _onScreenVisibilityChanged(_screenVisible);
+          },
+          child: Scaffold(
+            resizeToAvoidBottomInset: false,
+            body: NotificationListener(
+              onNotification: (Object? notification) {
+                if (_ignoreAllEvents) {
+                  return false;
+                }
+
+                if (notification is UserScrollNotification) {
+                  _direction = notification.direction;
+
+                  if (notification.direction != ScrollDirection.idle) {
+                    _userInitialScrollMetrics = notification.metrics;
+                  }
+                } else if (notification is ScrollEndNotification) {
+                  if (notification.metrics.axis != Axis.vertical ||
+                      notification.dragDetails == null) {
+                    return false;
+                  }
+
+                  _onScrollEnded(notification);
+                } else if (notification is ScrollUpdateNotification) {
+                  if (notification.metrics.axis != Axis.vertical) {
+                    return false;
+                  }
+                  _onScrollUpdate(notification);
+                }
                 return false;
-              }
+              },
+              child: Builder(builder: (BuildContext context) {
+                return CustomScrollView(
+                  physics: _ignoreAllEvents
+                      ? const NeverScrollableScrollPhysics()
+                      : _physics,
+                  controller: _controller,
+                  slivers: [
+                    ExpandableCamera(
+                      controller: _cameraController,
+                      height: MediaQuery.of(context).size.height,
+                    ),
+                    ExpandableSearchAppBar(
+                      onFieldTapped: () {
+                        HomePage.of(context).showAppBar(
+                            onAppBarVisible: () async {
+                          SearchPageResult? res =
+                              await SearchPage.open(context);
 
-              if (notification is UserScrollNotification) {
-                _direction = notification.direction;
-
-                if (notification.direction != ScrollDirection.idle) {
-                  _userInitialScrollMetrics = notification.metrics;
-                }
-              } else if (notification is ScrollEndNotification) {
-                if (notification.metrics.axis != Axis.vertical ||
-                    notification.dragDetails == null) {
-                  return false;
-                }
-
-                _onScrollEnded(notification);
-              } else if (notification is ScrollUpdateNotification) {
-                if (notification.metrics.axis != Axis.vertical) {
-                  return false;
-                }
-                _onScrollUpdate(notification);
-              }
-              return false;
-            },
-            child: Provider.value(
-              value: this,
-              child: ChangeNotifierProvider(
-                create: (_) => _controller,
-                child: Builder(builder: (BuildContext context) {
-                  return CustomScrollView(
-                    physics: _ignoreAllEvents
-                        ? const NeverScrollableScrollPhysics()
-                        : _physics,
-                    controller: _controller,
-                    slivers: [
-                      ExpandableCamera(
-                        controller: _cameraController,
-                        height: MediaQuery.of(context).size.height,
-                      ),
-                      ExpandableSearchAppBar(
-                        onFieldTapped: () {
-                          HomePage.of(context).showAppBar(
-                              onAppBarVisible: () async {
-                            SearchPageResult? res =
-                                await SearchPage.open(context);
-
-                            if (res == SearchPageResult.openCamera && mounted) {
-                              HomePage.of(context).expandCamera(
-                                duration: const Duration(milliseconds: 1500),
-                              );
-                            }
-                          });
-                        },
-                        onCameraTapped: () {
-                          HomePage.of(context).expandCamera(
-                            duration: const Duration(milliseconds: 1500),
-                          );
-                        },
-                      ),
-                      const ProductHistoryList(),
-                      const ProductHistoryList(),
-                      const ProductHistoryList(),
-                      const ProductHistoryList(),
-                      const ProductHistoryList(),
-                      const SliverListBldr(),
-                    ],
-                  );
-                }),
-              ),
+                          if (res == SearchPageResult.openCamera && mounted) {
+                            HomePage.of(context).expandCamera(
+                              duration: const Duration(milliseconds: 1500),
+                            );
+                          }
+                        });
+                      },
+                      onCameraTapped: () {
+                        HomePage.of(context).expandCamera(
+                          duration: const Duration(milliseconds: 1500),
+                        );
+                      },
+                    ),
+                    const ProductHistoryList(),
+                    const ProductHistoryList(),
+                    const ProductHistoryList(),
+                    const ProductHistoryList(),
+                    const ProductHistoryList(),
+                    const SliverListBldr(),
+                  ],
+                );
+              }),
             ),
           ),
         ),
@@ -235,6 +247,7 @@ class HomePageState extends State<HomePage> {
       return;
     }
 
+    ignoreAllEvents(false);
     _physics?.ignoreNextScroll = true;
     _controller.animateTo(
       _initialOffset,

@@ -46,8 +46,8 @@ class ProductPage extends StatefulWidget {
 class _ProductPageState extends State<ProductPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  late PageController _pageController;
-  late ScrollController _scrollController;
+  late PageController _horizontalScrollController;
+  late ScrollController _verticalScrollController;
   double? _headerHeight;
 
   @override
@@ -57,11 +57,12 @@ class _ProductPageState extends State<ProductPage>
       length: ProductHeaderBody.tabs.length,
       vsync: this,
     );
-    _pageController = PageController(
+    _horizontalScrollController = PageController(
       keepPage: true,
-    );
+    )..addListener(_onPageHorizontallyScrolled);
 
-    _scrollController = widget.scrollController ?? TrackingScrollController();
+    _verticalScrollController =
+        widget.scrollController ?? TrackingScrollController();
 
     _headerHeight = widget.topSliverHeight;
 
@@ -77,6 +78,28 @@ class _ProductPageState extends State<ProductPage>
             });
       });
     }
+  }
+
+  void _onPageHorizontallyScrolled() {
+    if (_tabController.indexIsChanging) {
+      return;
+    }
+
+    final double offset = _horizontalScrollController.page! -
+        _horizontalScrollController.page!.floor();
+
+    if (_horizontalScrollController.page! >= _tabController.index + 1 ||
+        _horizontalScrollController.page! <= _tabController.index - 1) {
+      _tabController.index = _horizontalScrollController.page!.toInt();
+    } else if (_horizontalScrollController.page! == _tabController.index - 1) {
+      _tabController.index -= 1;
+    } else if (_horizontalScrollController.page! >= _tabController.index) {
+      _tabController.offset = offset;
+    } else {
+      _tabController.offset = -(1 - offset);
+    }
+
+    //print(_tabController.offset);
   }
 
   @override
@@ -110,12 +133,12 @@ class _ProductPageState extends State<ProductPage>
         ),
         ListenableProvider<TabController>.value(value: _tabController),
         ListenableProvider<ScrollController>.value(
-          value: _scrollController,
+          value: _verticalScrollController,
         )
       ],
       child: Builder(builder: (BuildContext context) {
         return CustomScrollView(
-          controller: _scrollController,
+          controller: _verticalScrollController,
           physics: VerticalSnapScrollPhysics(steps: [
             0.0,
             ProductHeaderConfiguration.of(context).minThreshold,
@@ -159,11 +182,8 @@ class _ProductPageState extends State<ProductPage>
                 return SliverToBoxAdapter(
                   child: PageViewSizeAware(
                     minHeight: min,
-                    controller: _pageController,
+                    controller: _horizontalScrollController,
                     itemCount: 6,
-                    onPageChanged: (int position) {
-                      _tabController.index = position;
-                    },
                     itemBuilder: (BuildContext context, int position) {
                       return SafeArea(
                         top: false,
@@ -189,18 +209,17 @@ class _ProductPageState extends State<ProductPage>
   }
 
   Future<void> _onTabChanged(double scrollExpectedPosition) async {
-    if (_isSheetVisible) {
-      _scrollController.animateTo(
+    if (!_isSheetVisible) {
+      _openSheet(context);
+    } else if (_verticalScrollController.offset > scrollExpectedPosition) {
+      _verticalScrollController.animateTo(
         scrollExpectedPosition,
         duration: const Duration(milliseconds: 250),
         curve: Curves.easeIn,
       );
-    } else {
-      _openSheet(context);
-      _scrollController.jumpTo(scrollExpectedPosition);
     }
 
-    _pageController.animateToPage(
+    _horizontalScrollController.animateToPage(
       _tabController.index,
       duration: const Duration(milliseconds: 250),
       curve: Curves.ease,
@@ -237,7 +256,7 @@ class _ProductPageState extends State<ProductPage>
   @override
   void dispose() {
     _tabController.dispose();
-    _pageController.dispose();
+    _horizontalScrollController.dispose();
     super.dispose();
   }
 }

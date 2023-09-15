@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
 import 'package:provider/provider.dart';
 import 'package:smoothapp_poc/pages/product/header/product_appbar.dart';
+import 'package:smoothapp_poc/pages/product/header/product_compatibility_header.dart';
 import 'package:smoothapp_poc/pages/product/header/product_header_body.dart';
-import 'package:smoothapp_poc/pages/product/header/product_magic_top_space.dart';
 import 'package:smoothapp_poc/pages/product/product_page.dart';
 import 'package:smoothapp_poc/utils/provider_utils.dart';
 
@@ -139,12 +139,9 @@ class _ProductHeaderDelegate extends SliverPersistentHeaderDelegate {
   ) {
     return Stack(
       children: [
-        Positioned.fill(
+        const Positioned.fill(
           bottom: null,
-          child: Offstage(
-            offstage: topPadding <= 0.0,
-            child: const ProductTopPadding(),
-          ),
+          child: ProductCompatibilityHeader(),
         ),
         Positioned.fill(
           top: topPadding,

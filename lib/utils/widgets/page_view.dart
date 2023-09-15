@@ -14,7 +14,6 @@ class PageViewSizeAware extends StatefulWidget {
     required this.itemCount,
     required this.controller,
     required this.minHeight,
-    this.onPageChanged,
     super.key,
   });
 
@@ -22,7 +21,6 @@ class PageViewSizeAware extends StatefulWidget {
   final int itemCount;
   final double minHeight;
   final NullableIndexedWidgetBuilder itemBuilder;
-  final ValueChanged<int>? onPageChanged;
 
   @override
   State<PageViewSizeAware> createState() => _PageViewSizeAwareState();
@@ -151,7 +149,6 @@ class _PageViewSizeAwareState extends State<PageViewSizeAware> {
             if (resetStartNotification) {
               _scrollStartNotification = null;
             }
-            print('here');
             return false;
           }
         }
@@ -162,7 +159,6 @@ class _PageViewSizeAwareState extends State<PageViewSizeAware> {
       }
 
       final int currentPage = notif.metrics.page.toInt();
-      widget.onPageChanged?.call(currentPage);
       _currentPageHeight = _sizes[currentPage]!;
 
       if (!notif.metrics.hasScrolled &&
