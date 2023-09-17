@@ -19,7 +19,7 @@ class GuidesList extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Nos guides :',
+              'Nos guides :',
               style: TextStyle(
                 fontSize: 19.0,
                 fontWeight: FontWeight.w500,
@@ -33,12 +33,14 @@ class GuidesList extends StatelessWidget {
               child: Ink.image(
                 height: 120.0,
                 width: double.infinity,
-                image: AssetImage('assets/images/guides1.webp'),
+                image: const AssetImage('assets/images/guides1.webp'),
                 fit: BoxFit.contain,
               ),
             ),
             const SizedBox(height: 10.0),
             Image.asset('assets/images/guides2.webp'),
+            const SizedBox(height: 10.0),
+            Image.asset('assets/images/guides3.webp'),
           ],
         ),
       ),

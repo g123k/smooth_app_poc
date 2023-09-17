@@ -39,7 +39,10 @@ class CameraViewStateManager extends ValueNotifier<CameraViewState> {
 
   void reset() {
     value = const CameraViewNoBarcodeState();
+    _barcode = null;
   }
+
+  String? get currentBarcode => _barcode;
 
   static CameraViewStateManager of(BuildContext context) {
     return context.read<CameraViewStateManager>();

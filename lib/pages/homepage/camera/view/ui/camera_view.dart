@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -8,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:smoothapp_poc/navigation.dart';
 import 'package:smoothapp_poc/pages/homepage/camera/view/camera_state_manager.dart';
 import 'package:smoothapp_poc/pages/homepage/camera/view/ui/camera_buttons_bar.dart';
+import 'package:smoothapp_poc/pages/homepage/camera/view/ui/camera_overlay.dart';
 import 'package:smoothapp_poc/pages/homepage/homepage.dart';
 import 'package:smoothapp_poc/pages/product/header/product_compatibility_header.dart';
 import 'package:smoothapp_poc/pages/product/product_page.dart';
@@ -20,7 +22,7 @@ import 'package:smoothapp_poc/utils/widgets/useful_widgets.dart';
 
 import 'camera_message.dart';
 
-class CameraView extends StatelessWidget {
+class CameraView extends StatefulWidget {
   const CameraView({
     required this.controller,
     required this.progress,
@@ -33,11 +35,23 @@ class CameraView extends StatelessWidget {
   final VoidCallback onClosed;
 
   @override
+  State<CameraView> createState() => _CameraViewState();
+}
+
+class _CameraViewState extends State<CameraView> {
+  /// A [Stream] for the [CameraOverlay]
+  final StreamController<DetectedBarcode> _barcodeStream = StreamController();
+
+  /// To notify the user that the barcode is already the current one, we wait
+  /// for 2 seconds, before vibrating
+  DateTime? _lastDetectionOfTheSameBarcode;
+
+  @override
   Widget build(BuildContext context) {
     final bool isCameraFullyVisible = _isCameraFullyVisible();
 
     return Provider.value(
-      value: controller,
+      value: widget.controller,
       child: ValueListener<CameraViewStateManager, CameraViewState>(
         onValueChanged: (CameraViewState state) {
           if (state is CameraViewProductAvailableState) {
@@ -60,15 +74,38 @@ class CameraView extends StatelessWidget {
               children: [
                 Positioned.fill(
                   child: MobileScanner(
-                    controller: controller._controller,
+                    overlay: CameraOverlay(
+                      barcodes: _barcodeStream.stream,
+                    ),
+                    controller: widget.controller._controller,
                     placeholderBuilder: (_, __) => const SizedBox.expand(
                         child: ColoredBox(color: Colors.black)),
                     onDetect: (BarcodeCapture capture) {
-                      if (HomePage.of(context).isCameraFullyVisible) {
+                      // Only pass if the camera is fully visible and the sheet is not visible and/or scrolled
+                      if (HomePage.of(context).isCameraFullyVisible &&
+                          context
+                                  .read<
+                                      DraggableScrollableLockAtTopController?>()
+                                  ?.isScrolled !=
+                              true) {
                         final String barcode = capture.barcodes.first.rawValue!;
+                        _barcodeStream.add(
+                          DetectedBarcode(
+                              barcode: barcode,
+                              corners: capture.barcodes.first.corners!,
+                              width: capture.width!,
+                              height: capture.height!),
+                        );
 
-                        CameraViewStateManager.of(context)
-                            .onBarcodeDetected(barcode);
+                        final CameraViewStateManager stateManager =
+                            CameraViewStateManager.of(context);
+
+                        if (stateManager.currentBarcode != barcode) {
+                          _lastDetectionOfTheSameBarcode = DateTime.now();
+                          stateManager.onBarcodeDetected(barcode);
+                        } else {
+                          _vibrateWithTheSameBarcode();
+                        }
                       }
                     },
                   ),
@@ -80,7 +117,7 @@ class CameraView extends StatelessWidget {
                   child: Offstage(
                     offstage: !isCameraFullyVisible,
                     child: CameraButtonBars(
-                      onClosed: onClosed,
+                      onClosed: widget.onClosed,
                     ),
                   ),
                 ),
@@ -98,7 +135,7 @@ class CameraView extends StatelessWidget {
                 Positioned.fill(
                   child: _OpaqueOverlay(
                     isCameraFullyVisible: isCameraFullyVisible,
-                    progress: progress,
+                    progress: widget.progress,
                   ),
                 ),
                 Positioned(
@@ -118,7 +155,20 @@ class CameraView extends StatelessWidget {
     );
   }
 
-  bool _isCameraFullyVisible() => progress < 0.02;
+  void _vibrateWithTheSameBarcode() async {
+    final DateTime now = DateTime.now();
+    if (now.difference(_lastDetectionOfTheSameBarcode!) >
+        const Duration(seconds: 2)) {
+      _lastDetectionOfTheSameBarcode = now;
+      await HapticFeedback.lightImpact();
+      await Future.delayed(const Duration(milliseconds: 100));
+      await HapticFeedback.lightImpact();
+      await Future.delayed(const Duration(milliseconds: 100));
+      await HapticFeedback.lightImpact();
+    }
+  }
+
+  bool _isCameraFullyVisible() => widget.progress < 0.02;
 
   void showProduct(BuildContext topContext, Product product) {
     HomePage.of(topContext).ignoreAllEvents(true);
@@ -182,6 +232,20 @@ class CameraView extends StatelessWidget {
       },
     );
   }
+}
+
+class DetectedBarcode {
+  final String barcode;
+  final List<Offset> corners;
+  final double width;
+  final double height;
+
+  DetectedBarcode({
+    required this.barcode,
+    required this.corners,
+    required this.width,
+    required this.height,
+  });
 }
 
 class _MagicBackgroundBottomSheet extends StatefulWidget {

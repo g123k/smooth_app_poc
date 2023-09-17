@@ -151,7 +151,9 @@ class HomePageState extends State<HomePage> {
                   }
                 } else if (notification is ScrollEndNotification) {
                   if (notification.metrics.axis != Axis.vertical ||
-                      notification.dragDetails == null) {
+                      notification.dragDetails == null ||
+                      _userInitialScrollMetrics?.extentInside ==
+                          notification.metrics.extentInside) {
                     return false;
                   }
 

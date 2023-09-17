@@ -74,9 +74,9 @@ class _CameraButtonBarsState extends State<CameraButtonBars> {
                     if (NavApp.of(context).hasSheet) {
                       NavApp.of(context).hideSheet();
                       HomePage.of(context).ignoreAllEvents(false);
-                      CameraViewStateManager.of(context).reset();
                     }
 
+                    CameraViewStateManager.of(context).reset();
                     widget.onClosed.call();
                   },
                 ),
@@ -117,7 +117,7 @@ class _TorchIconState extends State<_TorchIcon> {
   @override
   Widget build(BuildContext context) {
     final CustomScannerController controller =
-        context.read<CustomScannerController>();
+        context.watch<CustomScannerController>();
 
     if (!controller.hasTorch) {
       return EMPTY_WIDGET;
