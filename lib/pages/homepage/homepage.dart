@@ -7,7 +7,9 @@ import 'package:smoothapp_poc/navigation.dart';
 import 'package:smoothapp_poc/pages/homepage/camera/expandable_view/expandable_camera.dart';
 import 'package:smoothapp_poc/pages/homepage/camera/view/camera_state_manager.dart';
 import 'package:smoothapp_poc/pages/homepage/camera/view/ui/camera_view.dart';
-import 'package:smoothapp_poc/pages/homepage/list/history_list.dart';
+import 'package:smoothapp_poc/pages/homepage/list/guides_list.dart';
+import 'package:smoothapp_poc/pages/homepage/list/news_list.dart';
+import 'package:smoothapp_poc/pages/homepage/list/product_scanned_list.dart';
 import 'package:smoothapp_poc/pages/search_page/search_page.dart';
 import 'package:smoothapp_poc/utils/physics.dart';
 import 'package:smoothapp_poc/utils/provider_utils.dart';
@@ -89,7 +91,7 @@ class HomePageState extends State<HomePage> {
     onNextFrame(() {
       final double offset = _initialOffset;
 
-      if (offset == 0) {
+      if (offset <= 0) {
         // The MediaQuery is not yet ready (reproducible in production)
         _setInitialScroll();
       } else {
@@ -99,6 +101,7 @@ class HomePageState extends State<HomePage> {
           cameraHeight,
         ]);
         _controller.jumpTo(_initialOffset);
+        setState(() {});
       }
     });
   }
@@ -170,7 +173,9 @@ class HomePageState extends State<HomePage> {
                   slivers: [
                     ExpandableCamera(
                       controller: _cameraController,
-                      height: MediaQuery.of(context).size.height,
+                      height: MediaQuery.sizeOf(context).height -
+                          kBottomNavigationBarHeight -
+                          MediaQuery.viewPaddingOf(context).bottom,
                     ),
                     ExpandableSearchAppBar(
                       onFieldTapped: () {
@@ -192,12 +197,14 @@ class HomePageState extends State<HomePage> {
                         );
                       },
                     ),
-                    const ProductHistoryList(),
-                    const ProductHistoryList(),
-                    const ProductHistoryList(),
-                    const ProductHistoryList(),
-                    const ProductHistoryList(),
-                    const SliverListBldr(),
+                    const MostScannedProducts(),
+                    const GuidesList(),
+                    const NewsList(),
+                    SliverPadding(
+                      padding: EdgeInsets.only(
+                        top: MediaQuery.viewPaddingOf(context).bottom,
+                      ),
+                    ),
                   ],
                 );
               }),
@@ -208,7 +215,10 @@ class HomePageState extends State<HomePage> {
     );
   }
 
-  double get cameraHeight => MediaQuery.of(context).size.height;
+  double get cameraHeight =>
+      MediaQuery.sizeOf(context).height -
+      MediaQuery.viewPaddingOf(context).bottom -
+      kBottomNavigationBarHeight;
 
   double get cameraPeak => _initialOffset;
 
@@ -297,7 +307,7 @@ class HomePageState extends State<HomePage> {
     final double scrollPosition = notification.metrics.pixels;
 
     final List<double> steps = [0.0, cameraPeak, cameraViewHeight];
-    if (steps.contains(scrollPosition)) {
+    if (steps.contains(scrollPosition) && _userInitialScrollMetrics != null) {
       double fixedPosition = VerticalSnapScrollPhysics.fixInconsistency(
         steps,
         scrollPosition,

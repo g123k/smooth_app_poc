@@ -66,6 +66,8 @@ class _IconsFont {
       IconData(0xe828, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData torch_on =
       IconData(0xe829, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData add =
+      IconData(0xe82d, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData outdated =
       IconData(0xe836, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData question_circled =
@@ -94,6 +96,10 @@ class _IconsFont {
       IconData(0xe852, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData clear_text =
       IconData(0xe853, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData help_circled =
+      IconData(0xe858, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData dots_vertical =
+      IconData(0xe859, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData share_cupertino =
       IconData(0xe8a4, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData share_material =

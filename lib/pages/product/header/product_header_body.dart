@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
 import 'package:provider/provider.dart';
 import 'package:smoothapp_poc/pages/product/header/product_header.dart';
+import 'package:smoothapp_poc/pages/product/header/product_tabs.dart';
 import 'package:smoothapp_poc/pages/product/product_page.dart';
 import 'package:smoothapp_poc/resources/app_colors.dart';
 import 'package:smoothapp_poc/resources/app_icons.dart' as icons;
@@ -31,73 +32,18 @@ class ProductHeaderBody extends StatelessWidget {
     ProductHeaderTabs.environment,
     ProductHeaderTabs.photos,
     ProductHeaderTabs.contribute,
-    ProductHeaderTabs.infos,
+    ProductHeaderTabs.info,
   ];
 
   @override
   Widget build(BuildContext context) {
-    final TabController tabController = context.read<TabController>();
-
-    final Widget headerDetails = _ProductHeaderDetails(
+    final Widget headerDetails = ProductHeaderDetails(
       onNutriScoreClicked: () {
         onElementTapped?.call(ElementTappedType.nutriscore);
       },
       onEcoScoreClicked: () {
         onElementTapped?.call(ElementTappedType.ecoscore);
       },
-    );
-
-    final Widget tabBar = DecoratedBox(
-      decoration: const BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: AppColors.orange,
-            width: 1.0,
-          ),
-        ),
-      ),
-      child: TabBar(
-        controller: tabController,
-        tabs: ProductHeaderBody.tabs
-            .map(
-              (ProductHeaderTabs tab) => _ProductHeaderTab(
-                tab: tab,
-                selected:
-                    tabController.index == ProductHeaderBody.tabs.indexOf(tab),
-              ),
-            )
-            .toList(growable: false),
-        isScrollable: true,
-        padding: EdgeInsets.zero,
-        labelPadding: EdgeInsets.zero,
-        overlayColor: MaterialStateProperty.all(AppColors.orangeVeryLight),
-        splashBorderRadius: const BorderRadius.vertical(
-          top: Radius.circular(5.0),
-        ),
-        indicator: const BoxDecoration(
-          border: Border(
-            bottom: BorderSide(
-              color: AppColors.orange,
-              width: 3.0,
-            ),
-            top: BorderSide(
-              color: AppColors.orange,
-              width: 0.0,
-            ),
-            left: BorderSide(
-              color: AppColors.orange,
-              width: 0.0,
-            ),
-            right: BorderSide(
-              color: AppColors.orange,
-              width: 0.0,
-            ),
-          ),
-          borderRadius: BorderRadius.vertical(top: Radius.circular(5.0)),
-          color: AppColors.orangeVeryLight,
-        ),
-        onTap: (int position) => onTabChanged?.call(position),
-      ),
     );
 
     if (shrinkContent == null) {
@@ -109,38 +55,49 @@ class ProductHeaderBody extends StatelessWidget {
             child: Column(
               children: [
                 headerDetails,
-                tabBar,
+                ProductHeaderTabBar(
+                  onTabChanged: onTabChanged,
+                ),
               ],
             ),
           ),
         ),
       );
     } else {
+      final ThemeData theme = Theme.of(context);
       return DynamicMaterial(
         type: MaterialType.canvas,
         elevationThreshold: ProductHeaderConfiguration.of(context).minThreshold,
-        color: Theme.of(context).scaffoldBackgroundColor,
-        child: Align(
-          child: ClipRect(
-            child: Stack(
-              children: [
-                Positioned.fill(
-                  top: shrinkContent!,
-                  bottom: null,
-                  child: Opacity(
-                    opacity: 1 -
-                        (shrinkContent!.progress(
-                          0,
-                          -ProductHeaderConfiguration.of(context).minThreshold,
-                        )).clamp(0.0, 1.0),
-                    child: headerDetails,
+        color: theme.scaffoldBackgroundColor,
+        child: Theme(
+          data: theme.copyWith(
+            textTheme: theme.textTheme.apply(fontFamily: 'OpenSans'),
+          ),
+          child: Align(
+            child: ClipRect(
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    top: shrinkContent!,
+                    bottom: null,
+                    child: Opacity(
+                      opacity: 1 -
+                          (shrinkContent!.progress(
+                            0,
+                            -ProductHeaderConfiguration.of(context)
+                                .minThreshold,
+                          )).clamp(0.0, 1.0),
+                      child: headerDetails,
+                    ),
                   ),
-                ),
-                Positioned.fill(
-                  top: null,
-                  child: tabBar,
-                ),
-              ],
+                  Positioned.fill(
+                    top: null,
+                    child: ProductHeaderTabBar(
+                      onTabChanged: onTabChanged,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -149,11 +106,22 @@ class ProductHeaderBody extends StatelessWidget {
   }
 }
 
-class _ProductHeaderDetails extends StatelessWidget {
-  const _ProductHeaderDetails({
+class ProductHeaderDetails extends StatelessWidget {
+  const ProductHeaderDetails({
     this.onNutriScoreClicked,
     this.onEcoScoreClicked,
+    super.key,
   });
+
+  //ignore_for_file: constant_identifier_names
+  static const int INFO_WIDTH = 82;
+  static const int SCORES_WIDTH = 18;
+  static const EdgeInsetsDirectional PADDING = EdgeInsetsDirectional.only(
+    top: 18.0,
+    start: 20.0,
+    end: 20.0,
+    bottom: 20.0,
+  );
 
   final VoidCallback? onNutriScoreClicked;
   final VoidCallback? onEcoScoreClicked;
@@ -163,29 +131,24 @@ class _ProductHeaderDetails extends StatelessWidget {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsetsDirectional.only(
-            top: 18.0,
-            start: 20.0,
-            end: 20.0,
-            bottom: 10.0,
-          ),
+          padding: PADDING,
           child: Column(
             children: [
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Expanded(
-                    flex: 75,
+                    flex: INFO_WIDTH,
                     child: Semantics(
                       sortKey: const OrdinalSortKey(1.0),
                       child: const _ProductHeaderInfo(),
                     ),
                   ),
                   Expanded(
-                    flex: 15,
+                    flex: SCORES_WIDTH,
                     child: Semantics(
                       sortKey: const OrdinalSortKey(2.0),
-                      child: _ProductHeaderScores(
+                      child: ProductHeaderScores(
                         onNutriScoreClicked: onNutriScoreClicked,
                         onEcoScoreClicked: onEcoScoreClicked,
                       ),
@@ -221,11 +184,14 @@ class _ProductHeaderInfo extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          product.productName ?? '',
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 18.0,
+        Hero(
+          tag: '3274080005003_name',
+          child: Text(
+            product.productName ?? '',
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 18.0,
+            ),
           ),
         ),
         Text(
@@ -241,8 +207,9 @@ class _ProductHeaderInfo extends StatelessWidget {
   }
 }
 
-class _ProductHeaderScores extends StatelessWidget {
-  const _ProductHeaderScores({
+class ProductHeaderScores extends StatelessWidget {
+  const ProductHeaderScores({
+    super.key,
     required this.onNutriScoreClicked,
     required this.onEcoScoreClicked,
   });
@@ -266,18 +233,12 @@ class _ProductHeaderScores extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 10.0),
-            Material(
-              type: MaterialType.transparency,
-              child: InkWell(
-                onTap: onEcoScoreClicked,
-                child: Material(
-                  type: MaterialType.transparency,
-                  child: SvgPicture.asset(
-                    'assets/images/ecoscore-a.svg',
-                    alignment: AlignmentDirectional.topCenter,
-                    width: math.min(80.0, constraints.maxWidth),
-                  ),
-                ),
+            InkWell(
+              onTap: onEcoScoreClicked,
+              child: SvgPicture.asset(
+                'assets/images/ecoscore-a.svg',
+                alignment: AlignmentDirectional.topCenter,
+                width: math.min(80.0, constraints.maxWidth),
               ),
             ),
           ],
@@ -285,6 +246,12 @@ class _ProductHeaderScores extends StatelessWidget {
       },
     );
   }
+
+  static double computeWidth(BuildContext context) => math.min(
+      80.0,
+      (MediaQuery.sizeOf(context).width -
+              ProductHeaderDetails.PADDING.horizontal) *
+          (ProductHeaderDetails.SCORES_WIDTH / 100));
 }
 
 class _ProductHeaderPersonalScores extends StatelessWidget {
@@ -384,7 +351,7 @@ class _ProductHeaderFilledButton extends StatelessWidget {
       onPressed: onTap,
       style: OutlinedButton.styleFrom(
         foregroundColor: AppColors.white,
-        backgroundColor: AppColors.orange,
+        backgroundColor: AppColors.primary,
         side: BorderSide.none,
       ),
       child: Row(
@@ -425,14 +392,14 @@ class _ProductHeaderOutlinedButton extends StatelessWidget {
     return OutlinedButton(
       onPressed: onTap,
       style: OutlinedButton.styleFrom(
-        foregroundColor: AppColors.orange,
+        foregroundColor: AppColors.primary,
         backgroundColor: Colors.transparent,
       ),
       child: Row(
         children: [
           IconTheme(
             data: const IconThemeData(
-              color: AppColors.orange,
+              color: AppColors.primary,
               size: 18.0,
             ),
             child: icon,
@@ -450,47 +417,11 @@ class _ProductHeaderOutlinedButton extends StatelessWidget {
   }
 }
 
-class _ProductHeaderTab extends StatelessWidget {
-  const _ProductHeaderTab({
-    required this.tab,
-    required this.selected,
-  });
-
-  final ProductHeaderTabs tab;
-  final bool selected;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 18.0),
-      child: SizedBox(
-        height: 46.0,
-        child: Center(
-          child: Text(
-            _label(context),
-          ),
-        ),
-      ),
-    );
-  }
-
-  String _label(BuildContext context) {
-    return switch (tab) {
-      ProductHeaderTabs.forMe => 'Pour moi',
-      ProductHeaderTabs.health => 'Santé',
-      ProductHeaderTabs.environment => 'Environnement',
-      ProductHeaderTabs.photos => 'Photos',
-      ProductHeaderTabs.contribute => 'Contribuer',
-      ProductHeaderTabs.infos => 'Infos',
-    };
-  }
-}
-
 enum ProductHeaderTabs {
   forMe,
   health,
   environment,
   photos,
   contribute,
-  infos,
+  info,
 }

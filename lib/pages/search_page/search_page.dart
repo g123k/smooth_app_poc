@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/subjects.dart';
@@ -62,34 +63,38 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SearchBarController(
-      editingController: _searchBarController,
-      keyboardStreamController: _searchBarKeyboardController,
-      child: MultiProvider(
-        providers: [
-          ChangeNotifierProvider(create: (_) => SearchStateManager()),
-          ChangeNotifierProvider(
-              create: (_) => SearchSuggestionsStateManager()),
-          ChangeNotifierProvider(
-            create: (BuildContext context) => SearchUIManager(
-              context,
-            ),
-          ),
-        ],
-        child: PrimaryScrollController(
-          controller: _scrollController,
-          child: Builder(builder: (context) {
-            return Scaffold(
-              extendBodyBehindAppBar: true,
-              body: CustomScrollView(
-                controller: _scrollController,
-                slivers: const [
-                  _SearchAppBar(),
-                  _SearchPageBody(),
-                ],
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.dark,
+      child: SearchBarController(
+        editingController: _searchBarController,
+        keyboardStreamController: _searchBarKeyboardController,
+        child: MultiProvider(
+          providers: [
+            ChangeNotifierProvider(create: (_) => SearchStateManager()),
+            ChangeNotifierProvider(
+                create: (_) => SearchSuggestionsStateManager()),
+            ChangeNotifierProvider(
+              create: (BuildContext context) => SearchUIManager(
+                context,
               ),
-            );
-          }),
+            ),
+          ],
+          child: PrimaryScrollController(
+            controller: _scrollController,
+            child: Builder(builder: (context) {
+              return Scaffold(
+                extendBodyBehindAppBar: true,
+                resizeToAvoidBottomInset: false,
+                body: CustomScrollView(
+                  controller: _scrollController,
+                  slivers: const [
+                    _SearchAppBar(),
+                    _SearchPageBody(),
+                  ],
+                ),
+              );
+            }),
+          ),
         ),
       ),
     );

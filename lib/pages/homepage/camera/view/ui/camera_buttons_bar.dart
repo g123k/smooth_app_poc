@@ -7,11 +7,13 @@ import 'package:smoothapp_poc/pages/homepage/camera/view/ui/camera_view.dart';
 import 'package:smoothapp_poc/pages/homepage/homepage.dart';
 import 'package:smoothapp_poc/resources/app_animations.dart';
 import 'package:smoothapp_poc/resources/app_icons.dart' as icons;
+import 'package:smoothapp_poc/utils/num_utils.dart';
 import 'package:smoothapp_poc/utils/widgets/circled_icon.dart';
+import 'package:smoothapp_poc/utils/widgets/modal_sheet.dart';
 import 'package:smoothapp_poc/utils/widgets/search_bar.dart';
 import 'package:smoothapp_poc/utils/widgets/useful_widgets.dart';
 
-class CameraButtonBars extends StatelessWidget {
+class CameraButtonBars extends StatefulWidget {
   const CameraButtonBars({
     required this.onClosed,
     super.key,
@@ -20,7 +22,27 @@ class CameraButtonBars extends StatelessWidget {
   final VoidCallback onClosed;
 
   @override
+  State<CameraButtonBars> createState() => _CameraButtonBarsState();
+}
+
+class _CameraButtonBarsState extends State<CameraButtonBars> {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final DraggableScrollableLockAtTopController? sheetController =
+        context.watch<DraggableScrollableLockAtTopController?>();
+    final double progress;
+
+    if (sheetController?.isAttached != true) {
+      progress = 0.0;
+    } else {
+      progress = sheetController!.size.progressAndClamp(0.5, 0.8, 1.0);
+    }
+
     return SafeArea(
       child: IconTheme(
         data: IconThemeData(
@@ -40,33 +62,42 @@ class CameraButtonBars extends StatelessWidget {
           ),
           child: Row(
             children: <Widget>[
-              CircledTextIcon(
-                text: const Text('Revenir à l\'accueil'),
-                icon: const icons.Close(
-                  size: 17.0,
-                ),
-                tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
-                onPressed: () {
-                  if (NavApp.of(context).hasSheet) {
-                    NavApp.of(context).hideSheet();
-                    HomePage.of(context).ignoreAllEvents(false);
-                    CameraViewStateManager.of(context).reset();
-                  }
+              Transform.translate(
+                offset: Offset(progress * -200, 0.0),
+                child: CircledTextIcon(
+                  text: const Text('Revenir à l\'accueil'),
+                  icon: const icons.Arrow.down(
+                    size: 17.0,
+                  ),
+                  tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
+                  onPressed: () {
+                    if (NavApp.of(context).hasSheet) {
+                      NavApp.of(context).hideSheet();
+                      HomePage.of(context).ignoreAllEvents(false);
+                      CameraViewStateManager.of(context).reset();
+                    }
 
-                  onClosed.call();
-                },
+                    widget.onClosed.call();
+                  },
+                ),
               ),
               const Spacer(),
-              CircledIcon(
-                icon: const icons.ToggleCamera(
-                  size: 20.0,
+              Transform.translate(
+                offset: Offset(progress * 120, 0.0),
+                child: CircledIcon(
+                  icon: const icons.ToggleCamera(
+                    size: 20.0,
+                  ),
+                  onPressed: () {
+                    context.read<CustomScannerController>().toggleCamera();
+                  },
+                  tooltip: 'Changer de caméra',
                 ),
-                onPressed: () {
-                  context.read<CustomScannerController>().toggleCamera();
-                },
-                tooltip: 'Changer de caméra',
               ),
-              const _TorchIcon(),
+              Transform.translate(
+                offset: Offset(progress * 60, 0.0),
+                child: const _TorchIcon(),
+              ),
             ],
           ),
         ),

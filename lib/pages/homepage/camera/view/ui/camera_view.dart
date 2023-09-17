@@ -9,10 +9,12 @@ import 'package:smoothapp_poc/navigation.dart';
 import 'package:smoothapp_poc/pages/homepage/camera/view/camera_state_manager.dart';
 import 'package:smoothapp_poc/pages/homepage/camera/view/ui/camera_buttons_bar.dart';
 import 'package:smoothapp_poc/pages/homepage/homepage.dart';
+import 'package:smoothapp_poc/pages/product/header/product_compatibility_header.dart';
 import 'package:smoothapp_poc/pages/product/product_page.dart';
 import 'package:smoothapp_poc/resources/app_animations.dart';
 import 'package:smoothapp_poc/utils/num_utils.dart';
 import 'package:smoothapp_poc/utils/provider_utils.dart';
+import 'package:smoothapp_poc/utils/widgets/modal_sheet.dart';
 import 'package:smoothapp_poc/utils/widgets/offline_size_widget.dart';
 import 'package:smoothapp_poc/utils/widgets/useful_widgets.dart';
 
@@ -85,7 +87,7 @@ class CameraView extends StatelessWidget {
                 if (isCameraFullyVisible &&
                     SheetVisibilityNotifier.of(context).isGone)
                   Positioned(
-                    bottom: kBottomNavigationBarHeight + 20.0,
+                    bottom: 20.0,
                     left: 0.0,
                     right: 0.0,
                     child: SafeArea(
@@ -126,31 +128,33 @@ class CameraView extends StatelessWidget {
       context: topContext,
       widget: header,
       onSizeAvailable: (Size size) {
-        final DraggableScrollableController draggableScrollableController =
-            DraggableScrollableController();
+        final DraggableScrollableLockAtTopController
+            draggableScrollableController =
+            DraggableScrollableLockAtTopController();
 
         // The fraction should allow to view the header
         // + the hint (slide up to see details)
         // + a slight padding
         final double fraction =
-            (size.height + _MagicBackgroundBottomSheetState.HINT_SIZE + 70.0) /
+            (size.height + ProductHeaderTopPaddingComputation.MIN_SIZE + 10.0) /
                 (MediaQuery.of(topContext).size.height -
                     NavApp.of(topContext).navBarHeight);
 
         NavApp.of(topContext).showSheet(
-          DraggableScrollableSheet(
+          DraggableScrollableLockAtTopSheet(
             initialChildSize: fraction,
             minChildSize: fraction,
             expand: true,
             snap: true,
             controller: draggableScrollableController,
+            lockAtTop: () => true,
             builder: (
               BuildContext context,
               ScrollController scrollController,
             ) {
-              return ListenableProvider<DraggableScrollableController>(
+              return ListenableProvider<DraggableScrollableLockAtTopController>(
                 create: (_) => draggableScrollableController,
-                child: ChangeListener<DraggableScrollableController>(
+                child: ChangeListener<DraggableScrollableLockAtTopController>(
                   onValueChanged: () {
                     if (draggableScrollableController.size < 0.01) {
                       NavApp.of(topContext).hideSheet();
@@ -158,9 +162,7 @@ class CameraView extends StatelessWidget {
                     }
                   },
                   child: AnnotatedRegion<SystemUiOverlayStyle>(
-                    value: SystemUiOverlayStyle(
-                      statusBarBrightness: Theme.of(context).brightness,
-                    ),
+                    value: SystemUiOverlayStyle.light,
                     child: _MagicBackgroundBottomSheet(
                       scrollController: draggableScrollableController,
                       style: DefaultTextStyle.of(topContext).style,
@@ -190,7 +192,7 @@ class _MagicBackgroundBottomSheet extends StatefulWidget {
     required this.child,
   });
 
-  final DraggableScrollableController scrollController;
+  final DraggableScrollableLockAtTopController scrollController;
   final double minFraction;
   final TextStyle style;
   final Widget child;

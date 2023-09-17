@@ -282,7 +282,7 @@ class _SearchAppBar extends StatelessWidget {
               : 0.0,
           child: DecoratedBox(
             decoration: BoxDecoration(
-                color: AppColors.orangeLight,
+                color: AppColors.primaryLight,
                 borderRadius: const BorderRadius.vertical(
                   bottom: Radius.circular(HomePage.BORDER_RADIUS),
                 ),
@@ -516,11 +516,11 @@ class _SearchBarState extends State<_SearchBar> {
                   fillColor: Colors.white,
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30.0),
-                    borderSide: const BorderSide(color: AppColors.orange),
+                    borderSide: const BorderSide(color: AppColors.primary),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30.0),
-                    borderSide: const BorderSide(color: AppColors.orange),
+                    borderSide: const BorderSide(color: AppColors.primary),
                   ),
                 ),
               ),
@@ -560,7 +560,7 @@ class _SearchBarState extends State<_SearchBar> {
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(Colors.white),
                       side: MaterialStateProperty.all(
-                        const BorderSide(color: AppColors.orange),
+                        const BorderSide(color: AppColors.primary),
                       ),
                       foregroundColor: MaterialStateProperty.all(Colors.black),
                       shape: MaterialStateProperty.all(

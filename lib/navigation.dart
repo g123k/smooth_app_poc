@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:smoothapp_poc/pages/homepage/homepage.dart';
 import 'package:smoothapp_poc/utils/ui_utils.dart';
+import 'package:smoothapp_poc/utils/widgets/modal_sheet.dart';
 
 class NavApp extends StatefulWidget {
   const NavApp({super.key});
@@ -26,7 +27,7 @@ class NavAppState extends State<NavApp> with TickerProviderStateMixin {
 
   Animation<double>? _bottomSheetAndNavBarAnimation;
 
-  DraggableScrollableSheet? _sheet;
+  DraggableScrollableLockAtTopSheet? _sheet;
   double _navBarHeight = kBottomNavigationBarHeight;
   double _navBarTranslation = kBottomNavigationBarHeight;
 
@@ -68,6 +69,9 @@ class NavAppState extends State<NavApp> with TickerProviderStateMixin {
     return MultiProvider(
       providers: [
         Provider.value(value: this),
+        ChangeNotifierProvider<DraggableScrollableLockAtTopController?>.value(
+          value: _sheet?.controller,
+        ),
         ChangeNotifierProvider<SheetVisibilityNotifier>.value(
           value: _sheetVisibility,
         ),
@@ -163,7 +167,7 @@ class NavAppState extends State<NavApp> with TickerProviderStateMixin {
     );
   }
 
-  Future<void> showSheet(DraggableScrollableSheet sheet) async {
+  Future<void> showSheet(DraggableScrollableLockAtTopSheet sheet) async {
     assert(sheet.controller != null, 'A controller is mandatory');
     if (_sheet != null) {
       await hideSheet();
@@ -196,7 +200,6 @@ class NavAppState extends State<NavApp> with TickerProviderStateMixin {
   void _onSheetScrolled() {
     if (_sheet!.controller!.size >= 0.999) {
       if (_navBarTranslation == _navBarHeight) {
-        SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
         _animateBottomBar(0.0);
       }
       if (_sheetVisibility.value != _SheetVisibility.fullyVisible) {

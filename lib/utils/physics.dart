@@ -1,6 +1,134 @@
 import 'dart:math' as math;
 
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
+
+class VerticalClampScroll extends StatefulWidget {
+  const VerticalClampScroll({
+    required this.steps,
+    required this.child,
+    required this.blockBetweenSteps,
+    super.key,
+  }) : assert(steps.length >= 2);
+
+  final List<double> steps;
+  final bool blockBetweenSteps;
+  final Widget child;
+
+  @override
+  State<VerticalClampScroll> createState() => _VerticalClampScrollState();
+}
+
+class _VerticalClampScrollState extends State<VerticalClampScroll> {
+  late final Iterable<double> _reversedSteps;
+  ScrollDirection? _direction;
+  ScrollMetrics? _startMetrics;
+
+  @override
+  void initState() {
+    super.initState();
+    _reversedSteps = widget.steps.reversed;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ScrollConfiguration(
+      behavior: _CustomScrollBehavior(
+        VerticalSnapScrollPhysics(
+          steps: widget.steps,
+        ),
+      ),
+      child: NotificationListener<ScrollNotification>(
+        onNotification: (ScrollNotification notif) {
+          if (notif.metrics.axisDirection == AxisDirection.left ||
+              notif.metrics.axisDirection == AxisDirection.right) {
+            return false;
+          }
+
+          if (notif is UserScrollNotification) {
+            _direction = notif.direction;
+
+            if (notif.direction != ScrollDirection.idle) {
+              _startMetrics = notif.metrics;
+            }
+          } else if (notif is ScrollUpdateNotification) {
+            _onScrollUpdate(notif);
+          } else if (notif is ScrollEndNotification) {
+            _onScrollEnd(notif);
+          }
+
+          return true;
+        },
+        child: widget.child,
+      ),
+    );
+  }
+
+  void _onScrollEnd(ScrollEndNotification notif) {
+    if (notif.dragDetails != null) {
+      var (double? min, double? max) = _getRange(
+        widget.steps,
+        notif.metrics.pixels,
+      );
+
+      double? scrollTo;
+      // Down
+      if (_direction == ScrollDirection.reverse && max != null) {
+        scrollTo = max;
+      } else if (_direction == ScrollDirection.forward && min != null) {
+        scrollTo = min;
+      }
+
+      if (scrollTo != null) {
+        Future.delayed(Duration.zero, () {
+          context.read<ScrollController>().animateTo(
+                scrollTo!,
+                curve: Curves.easeOutCubic,
+                duration: const Duration(milliseconds: 500),
+              );
+        });
+      }
+    }
+  }
+
+  void _onScrollUpdate(ScrollUpdateNotification notif) {
+    if (_direction != ScrollDirection.forward || _startMetrics == null) {
+      return;
+    }
+
+    for (int i = 0; i != _reversedSteps.length; i++) {
+      if (_blockScrollIfNecessary(
+          notif, _reversedSteps.elementAt(i), i == _reversedSteps.length - 1)) {
+        break;
+      }
+    }
+  }
+
+  bool _blockScrollIfNecessary(
+    ScrollUpdateNotification notif,
+    double step,
+    bool isLast,
+  ) {
+    if (!isLast) {
+      if (_startMetrics!.extentBefore > step) {
+        if (notif.metrics.pixels < step) {
+          //context.read<ScrollController>().position.correctPixels(step);
+        }
+        return true;
+      }
+    } else {
+      if (_startMetrics!.extentBefore >= step) {
+        if (notif.metrics.pixels <= step) {
+          context.read<ScrollController>().position.correctPixels(step);
+        }
+        return true;
+      }
+    }
+
+    return false;
+  }
+}
 
 /// A custom [ScrollPhysics] that snaps to specific [steps].
 /// ignore: must_be_immutable
@@ -41,7 +169,7 @@ class VerticalSnapScrollPhysics extends ClampingScrollPhysics {
     double? proposedPixels = simulation?.x(double.infinity);
 
     if (simulation == null || proposedPixels == null) {
-      var (double? min, _) = _getRange(position.pixels);
+      var (double? min, _) = _getRange(steps, position.pixels);
 
       if (min != null && min != steps.last && ignoreNextScroll) {
         return ScrollSpringSimulation(
@@ -56,7 +184,7 @@ class VerticalSnapScrollPhysics extends ClampingScrollPhysics {
       }
     }
 
-    var (double? min, double? max) = _getRange(position.pixels);
+    var (double? min, double? max) = _getRange(steps, position.pixels);
     if (min != null && max == null) {
       if (proposedPixels < min) {
         proposedPixels = min;
@@ -81,21 +209,11 @@ class VerticalSnapScrollPhysics extends ClampingScrollPhysics {
       position.pixels,
       _lastPixels!,
       velocity,
+      tolerance: const Tolerance(
+        distance: 20,
+        velocity: 20,
+      ),
     );
-  }
-
-  (double?, double?) _getRange(double position) {
-    for (int i = steps.length - 1; i >= 0; i--) {
-      final double step = steps[i];
-
-      if (i == steps.length - 1 && position > step) {
-        return (step, null);
-      } else if (position > step && position < steps[i + 1]) {
-        return (step, steps[i + 1]);
-      }
-    }
-
-    return (null, null);
   }
 
   // In some cases, the proposed pixels have a giant space and finding the range
@@ -132,6 +250,29 @@ class VerticalSnapScrollPhysics extends ClampingScrollPhysics {
 
     return 0;
   }
+}
+
+(double?, double?) _getRange(List<double> steps, double position) {
+  for (int i = steps.length - 1; i >= 0; i--) {
+    final double step = steps[i];
+
+    if (i == steps.length - 1 && position > step) {
+      return (step, null);
+    } else if (position > step && position < steps[i + 1]) {
+      return (step, steps[i + 1]);
+    }
+  }
+
+  return (null, null);
+}
+
+class _CustomScrollBehavior extends ScrollBehavior {
+  const _CustomScrollBehavior(this.physics);
+
+  final ScrollPhysics physics;
+
+  @override
+  ScrollPhysics getScrollPhysics(BuildContext context) => physics;
 }
 
 class HorizontalSnapScrollPhysics extends ScrollPhysics {

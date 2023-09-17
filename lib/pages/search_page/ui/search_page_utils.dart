@@ -33,6 +33,13 @@ class SearchQueryItem extends StatelessWidget {
   })  : search = null,
         type = _SearchQueryType.advancedSearch;
 
+  const SearchQueryItem.scanner({
+    required this.value,
+    required this.onTap,
+    super.key,
+  })  : search = null,
+        type = _SearchQueryType.scanner;
+
   final String? search;
   final String value;
   final VoidCallback onTap;
@@ -94,6 +101,7 @@ class SearchQueryItem extends StatelessWidget {
       _SearchQueryType.history => const icons.History(),
       _SearchQueryType.suggestion => const icons.Suggestion(),
       _SearchQueryType.advancedSearch => const icons.Search.advanced(),
+      _SearchQueryType.scanner => const icons.Barcode(),
     };
   }
 
@@ -122,6 +130,9 @@ class SearchQueryItem extends StatelessWidget {
           ),
           const TextSpan(text: '"'),
         ],
+      _SearchQueryType.scanner => <InlineSpan>[
+          const TextSpan(text: 'Scanner un code-barres'),
+        ],
     };
   }
 
@@ -129,6 +140,7 @@ class SearchQueryItem extends StatelessWidget {
     return switch (type) {
       _SearchQueryType.internalSearch ||
       _SearchQueryType.history ||
+      _SearchQueryType.scanner ||
       _SearchQueryType.suggestion =>
         const icons.Arrow.right(),
       _SearchQueryType.advancedSearch => const icons.ExternalLink(),
@@ -159,4 +171,5 @@ enum _SearchQueryType {
   history,
   advancedSearch,
   suggestion,
+  scanner,
 }

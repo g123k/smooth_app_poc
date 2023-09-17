@@ -8,6 +8,7 @@ import 'package:smoothapp_poc/pages/product/header/product_compatibility_header.
 import 'package:smoothapp_poc/pages/product/header/product_header_body.dart';
 import 'package:smoothapp_poc/pages/product/product_page.dart';
 import 'package:smoothapp_poc/utils/provider_utils.dart';
+import 'package:smoothapp_poc/utils/widgets/modal_sheet.dart';
 
 export 'package:smoothapp_poc/pages/product/header/product_appbar.dart';
 export 'package:smoothapp_poc/pages/product/header/product_header_body.dart';
@@ -40,7 +41,7 @@ class _ProductHeaderState extends State<ProductHeader> {
   final ProductHeaderTopPaddingComputation _topPaddingComputation =
       ProductHeaderTopPaddingComputation();
 
-  DraggableScrollableController? _sheetController;
+  DraggableScrollableLockAtTopController? _sheetController;
   ProductHeaderType? _headerType;
 
   @override
@@ -50,10 +51,11 @@ class _ProductHeaderState extends State<ProductHeader> {
     _headerType = ProductHeaderConfiguration.of(context).type;
 
     try {
-      _sheetController = context.read<DraggableScrollableController>()
+      _sheetController = context.read<DraggableScrollableLockAtTopController>()
         ..replaceListener(_onScrollModalSheet);
       _onScrollModalSheet();
     } catch (_) {
+      _topPaddingComputation.forceStatusBar(context);
       _appBarComputation.forceVisibility();
     }
   }
@@ -141,7 +143,7 @@ class _ProductHeaderDelegate extends SliverPersistentHeaderDelegate {
       children: [
         const Positioned.fill(
           bottom: null,
-          child: ProductCompatibilityHeader(),
+          child: ProductCompatibilityHeaderAndStatusBar(),
         ),
         Positioned.fill(
           top: topPadding,
@@ -186,7 +188,7 @@ class _ProductHeaderDelegate extends SliverPersistentHeaderDelegate {
 abstract class ProductHeaderComputation extends ChangeNotifier {
   void onSheetScrolled(
     BuildContext context,
-    DraggableScrollableController controller,
+    DraggableScrollableLockAtTopController controller,
     ProductHeaderType productHeaderType,
   ) {}
 }

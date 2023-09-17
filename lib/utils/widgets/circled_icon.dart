@@ -41,10 +41,10 @@ class CircledIcon extends StatelessWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
-                color: borderColor ?? AppColors.orange,
+                color: borderColor ?? AppColors.primary,
                 width: 1.0,
               ),
-              color: backgroundColor ?? AppColors.orangeVeryLight,
+              color: backgroundColor ?? AppColors.primaryVeryLight,
             ),
             padding: padding ?? const EdgeInsets.all(12.0),
             child: icon,
@@ -113,10 +113,10 @@ class CircledTextIcon extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20.0),
               border: Border.all(
-                color: borderColor ?? AppColors.orange,
+                color: borderColor ?? AppColors.primary,
                 width: 1.0,
               ),
-              color: backgroundColor ?? AppColors.orangeVeryLight,
+              color: backgroundColor ?? AppColors.primaryVeryLight,
             ),
             padding: padding ??
                 const EdgeInsets.symmetric(

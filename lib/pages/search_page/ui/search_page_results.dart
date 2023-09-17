@@ -7,6 +7,7 @@ import 'package:smoothapp_poc/pages/product/product_page.dart';
 import 'package:smoothapp_poc/pages/search_page/search_state_manager.dart';
 import 'package:smoothapp_poc/resources/app_colors.dart';
 import 'package:smoothapp_poc/resources/app_icons.dart' as icons;
+import 'package:smoothapp_poc/utils/num_utils.dart';
 import 'package:smoothapp_poc/utils/widgets/app_widget.dart';
 import 'package:smoothapp_poc/utils/widgets/list.dart';
 import 'package:smoothapp_poc/utils/widgets/search_bar.dart';
@@ -66,9 +67,6 @@ class _SearchBodyWithResults extends StatefulWidget {
 }
 
 class _SearchBodyWithResultsState extends State<_SearchBodyWithResults> {
-  // TODO
-  bool _showHelpBanner = true;
-
   @override
   Widget build(BuildContext context) {
     return SliverList.separated(
@@ -77,12 +75,11 @@ class _SearchBodyWithResultsState extends State<_SearchBodyWithResults> {
 
         return InkWell(
           onTap: () {
-            Navigator.of(context).push(
+            Navigator.of(context, rootNavigator: true).push(
               MaterialPageRoute(
                 builder: (context) => ProductPage(product: product),
               ),
             );
-            // TODO Open product page
           },
           child: Padding(
             padding: const EdgeInsetsDirectional.symmetric(
@@ -101,10 +98,13 @@ class _SearchBodyWithResultsState extends State<_SearchBodyWithResults> {
                         child: IntrinsicWidth(
                           child: Column(
                             children: [
-                              const SizedBox(
+                              SizedBox(
                                 height: 36.0,
                                 child: CompatibilityScore(
-                                  level: 100,
+                                  level: 100 *
+                                      (1 -
+                                          position.progress(
+                                              0, widget.products.length)),
                                 ),
                               ),
                               ClipRRect(
@@ -238,7 +238,7 @@ class CompatibilityScore extends StatelessWidget {
     super.key,
   });
 
-  final int level;
+  final double level;
   final double size;
 
   @override
@@ -247,15 +247,15 @@ class CompatibilityScore extends StatelessWidget {
       width: double.infinity,
       decoration: BoxDecoration(
         color: switch (level) {
-          >= 0 && < 33 => AppColors.compatibilityHigh,
-          >= 33 && < 6 => AppColors.compatibilityMedium,
+          >= 66 => AppColors.compatibilityHigh,
+          >= 33 && < 66 => AppColors.compatibilityMedium,
           _ => AppColors.compatibilityLow,
         },
         borderRadius: const BorderRadius.vertical(top: Radius.circular(10.0)),
       ),
       padding: const EdgeInsets.all(8.0),
       child: Text(
-        '$level %',
+        '${level.toInt()} %',
         textAlign: TextAlign.center,
         style: const TextStyle(
           color: AppColors.white,
@@ -409,5 +409,5 @@ class SearchFooterResults extends StatelessWidget
   double get height => 50.0 + (HomePage.BORDER_RADIUS / 2);
 
   @override
-  Color get color => AppColors.orangeVeryLight;
+  Color get color => AppColors.primaryVeryLight;
 }

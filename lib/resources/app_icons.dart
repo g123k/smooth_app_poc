@@ -5,6 +5,15 @@ import 'package:smoothapp_poc/utils/widgets/useful_widgets.dart';
 
 part 'app_icons_font.dart';
 
+class Add extends AppIcon {
+  const Add({
+    super.color,
+    super.size,
+    super.shadow,
+    super.key,
+  }) : super._(_IconsFont.add);
+}
+
 class AddToList extends AppIcon {
   const AddToList({
     super.color,
@@ -315,6 +324,15 @@ class History extends AppIcon {
   }) : super._(_IconsFont.history);
 }
 
+class Help extends AppIcon {
+  const Help({
+    super.color,
+    super.size,
+    super.shadow,
+    super.key,
+  }) : super._(_IconsFont.help_circled);
+}
+
 class Ingredients extends AppIcon {
   const Ingredients({
     super.color,
@@ -479,6 +497,15 @@ class Suggestion extends AppIcon {
     super.shadow,
     super.key,
   }) : super._(_IconsFont.suggestion);
+}
+
+class ThreeDots extends AppIcon {
+  const ThreeDots.vertical({
+    super.color,
+    super.size,
+    super.shadow,
+    super.key,
+  }) : super._(_IconsFont.dots_vertical);
 }
 
 class ToggleCamera extends AppIcon {

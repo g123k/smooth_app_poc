@@ -61,7 +61,10 @@ class _HorizontalListState extends State<HorizontalList> {
                 ? widget.endPadding
                 : 0.0;
 
-            child = widget.itemBuilder(context, position - 1);
+            child = widget.itemBuilder(
+              context,
+              position,
+            );
           }
 
           return SizedBox(

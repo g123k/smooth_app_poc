@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: 'OpenSans',
-        colorScheme: ColorScheme.fromSeed(seedColor: AppColors.orangeLight),
+        colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primaryLight),
         scaffoldBackgroundColor: AppColors.white,
         useMaterial3: true,
         dividerColor: AppColors.grey,

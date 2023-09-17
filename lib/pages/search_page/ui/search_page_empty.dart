@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_custom_tabs/flutter_custom_tabs.dart';
 import 'package:provider/provider.dart';
 import 'package:sliver_tools/sliver_tools.dart';
+import 'package:smoothapp_poc/pages/search_page/search_page.dart';
 import 'package:smoothapp_poc/pages/search_page/search_state_manager.dart';
 import 'package:smoothapp_poc/pages/search_page/search_suggestions_state_manager.dart';
 import 'package:smoothapp_poc/pages/search_page/ui/search_page_utils.dart';
@@ -42,11 +43,13 @@ class SearchBodySuggestions extends StatelessWidget {
           count = 0;
         } else if (_isInitialState(search)) {
           // No search = only suggestions
-          count = suggestions!.length;
+          count = suggestions!.length + 1;
         } else {
-          // Search = Show the first element as the search query +
-          // add the external link
-          count = suggestions!.length + 2;
+          // Search =
+          // First element as the search query +
+          // External link to advanced search +
+          // Shortcut to scan a barcode
+          count = suggestions!.length + 3;
         }
 
         return MultiSliver(children: [
@@ -64,6 +67,8 @@ class SearchBodySuggestions extends StatelessWidget {
                       },
                     );
                   } else if (index == count - 1) {
+                    return _scannerEntry(search, context);
+                  } else if (index == count - 2) {
                     return SearchQueryItem.advancedSearch(
                       value: search!,
                       onTap: () {
@@ -72,13 +77,13 @@ class SearchBodySuggestions extends StatelessWidget {
                         );
                       },
                     );
-                  } else {
-                    index -= 1;
                   }
+                } else if (index == 0) {
+                  return _scannerEntry(search, context);
                 }
 
                 final SearchSuggestion suggestion =
-                    suggestions!.elementAt(index);
+                    suggestions!.elementAt(index - 1);
                 return switch (suggestion.type) {
                   SearchSuggestionType.history => SearchQueryItem.history(
                       value: suggestion.term,
@@ -113,6 +118,15 @@ class SearchBodySuggestions extends StatelessWidget {
             ),
           )
         ]);
+      },
+    );
+  }
+
+  SearchQueryItem _scannerEntry(String? search, BuildContext context) {
+    return SearchQueryItem.scanner(
+      value: search ?? '',
+      onTap: () {
+        Navigator.of(context).pop(SearchPageResult.openCamera);
       },
     );
   }

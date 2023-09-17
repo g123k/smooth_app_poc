@@ -29,7 +29,6 @@ class ExpandableCamera extends StatelessWidget {
           return false;
         }
 
-
         if (screenController.isExpanded) {
           screenController.collapseCamera();
           return false;
@@ -64,7 +63,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
     return ColoredBox(
       color: borderRadius.bottomLeft.x == 0
           ? Colors.transparent
-          : AppColors.orangeLight,
+          : AppColors.primaryLight,
       child: ClipRRect(
         borderRadius: borderRadius,
         child: Stack(
@@ -88,6 +87,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
               left: 0.0,
               right: 0.0,
               child: CameraPeakView(
+                progress: progress,
                 opacity: _computePeakOpacity(progress),
                 onTap: () {
                   HomePage.of(context).expandCamera();
