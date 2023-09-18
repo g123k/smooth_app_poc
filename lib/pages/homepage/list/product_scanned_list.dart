@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:openfoodfacts/openfoodfacts.dart';
 import 'package:smoothapp_poc/pages/homepage/list/horizontal_list.dart';
+import 'package:smoothapp_poc/pages/product/product_page.dart';
 import 'package:smoothapp_poc/resources/app_colors.dart';
 import 'package:smoothapp_poc/resources/app_icons.dart';
 
@@ -46,9 +48,21 @@ class MostScannedProducts extends StatelessWidget {
               itemWidth: 200.0,
               itemHeight: 130.0,
               itemBuilder: (BuildContext context, int position) {
+                final _HistoryItemData product = _history[position];
                 return _HistoryItem(
-                  product: _history[position],
-                  onTap: () {},
+                  product: product,
+                  onTap: () {
+                    Navigator.of(context, rootNavigator: true).push(
+                      MaterialPageRoute(
+                        builder: (context) => ProductPage(
+                          product: Product(
+                            productName: product.name,
+                            brands: product.brand,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 );
               },
               lastItemBuilder: (BuildContext context) {
@@ -121,7 +135,7 @@ class _HistoryItemData {
   });
 }
 
-class _HistoryItem extends StatelessWidget {
+class _HistoryItem extends StatefulWidget {
   const _HistoryItem({
     required this.product,
     required this.onTap,
@@ -131,21 +145,43 @@ class _HistoryItem extends StatelessWidget {
   final VoidCallback onTap;
 
   @override
+  State<_HistoryItem> createState() => _HistoryItemState();
+}
+
+class _HistoryItemState extends State<_HistoryItem> {
+  late final ImageProvider _provider;
+  Color? _imageColor;
+
+  @override
+  void initState() {
+    super.initState();
+    _provider = NetworkImage(widget.product.picture);
+    _detectColor();
+  }
+
+  void _detectColor() async {
+    _imageColor = await ColorScheme.fromImageProvider(provider: _provider)
+        .then((value) => value.primaryContainer);
+    setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Card(
+      color: _imageColor,
       margin: EdgeInsets.zero,
       shape: const RoundedRectangleBorder(
         borderRadius: MostScannedProducts._RADIUS,
       ),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
-        onTap: onTap,
+        onTap: widget.onTap,
         borderRadius: MostScannedProducts._RADIUS,
         child: Stack(
           children: [
             Positioned.fill(
               child: Ink.image(
-                image: NetworkImage(product.picture),
+                image: _provider,
                 fit: BoxFit.contain,
               ),
             ),
@@ -177,7 +213,7 @@ class _HistoryItem extends StatelessWidget {
               left: 10.0,
               right: 10.0,
               child: Text(
-                '${product.name}\n${product.brand}',
+                '${widget.product.name}\n${widget.product.brand}',
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(

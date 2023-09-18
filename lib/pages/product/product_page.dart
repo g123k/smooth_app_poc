@@ -132,6 +132,7 @@ class ProductPageState extends State<ProductPage>
           value: SystemUiOverlayStyle.light,
           child: SafeArea(
             top: false,
+            bottom: false,
             child: _buildChild(context),
           ),
         ),

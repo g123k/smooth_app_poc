@@ -23,12 +23,15 @@ class SearchStateManager extends ValueNotifier<SearchState> {
       final ProductSearchQueryConfiguration queryConfig =
           ProductSearchQueryConfiguration(
         fields: [ProductField.ALL],
-        parametersList: [],
+        parametersList: [
+          SearchTerms(terms: [search])
+        ],
         version: ProductQueryVersion.v3,
       );
       final SearchResult results = await OpenFoodAPIClient.searchProducts(
         null,
         queryConfig,
+        queryType: QueryType.PROD,
       );
 
       if (results.products?.isEmpty ?? true) {

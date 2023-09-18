@@ -116,35 +116,38 @@ class _TorchIcon extends StatefulWidget {
 class _TorchIconState extends State<_TorchIcon> {
   @override
   Widget build(BuildContext context) {
-    final CustomScannerController controller =
-        context.watch<CustomScannerController>();
-
-    if (!controller.hasTorch) {
-      return EMPTY_WIDGET;
-    }
-
-    final bool isTorchOn = controller.isTorchOn;
-
-    return Padding(
-      padding: const EdgeInsetsDirectional.only(start: 10.0),
-      child: CircledIcon(
-        icon: switch (isTorchOn) {
-          true => const TorchAnimation.on(),
-          false => const TorchAnimation.off(),
-        },
-        padding: const EdgeInsets.all(6.0),
-        onPressed: () {
-          if (isTorchOn) {
-            controller.turnTorchOff();
-          } else {
-            controller.turnTorchOn();
+    return ValueListenableBuilder(
+        valueListenable: context.watch<CustomScannerController>().hasTorchState,
+        builder: (BuildContext context, bool? hasTorch, _) {
+          if (hasTorch != true) {
+            return EMPTY_WIDGET;
           }
-          HapticFeedback.selectionClick();
-          setState(() {});
-        },
-        tooltip: _getLabel(controller.isTorchOn),
-      ),
-    );
+
+          final CustomScannerController controller =
+              context.watch<CustomScannerController>();
+          final bool isTorchOn = controller.isTorchOn;
+
+          return Padding(
+            padding: const EdgeInsetsDirectional.only(start: 10.0),
+            child: CircledIcon(
+              icon: switch (isTorchOn) {
+                true => const TorchAnimation.on(),
+                false => const TorchAnimation.off(),
+              },
+              padding: const EdgeInsets.all(6.0),
+              onPressed: () {
+                if (isTorchOn) {
+                  controller.turnTorchOff();
+                } else {
+                  controller.turnTorchOn();
+                }
+                HapticFeedback.selectionClick();
+                setState(() {});
+              },
+              tooltip: _getLabel(controller.isTorchOn),
+            ),
+          );
+        });
   }
 
   String _getLabel(bool isTorchOn) {
