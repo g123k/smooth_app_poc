@@ -69,7 +69,7 @@ class _ProductHeaderTabBarState extends State<ProductHeaderTabBar> {
               fontSize: 15.0,
             ),
             unselectedLabelStyle: const TextStyle(
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.bold,
               fontSize: 15.0,
             ),
             indicator: const BoxDecoration(

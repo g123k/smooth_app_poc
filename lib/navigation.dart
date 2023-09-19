@@ -198,7 +198,7 @@ class NavAppState extends State<NavApp> with TickerProviderStateMixin {
       _sheetVisibility.value == _SheetVisibility.fullyVisible;
 
   void _onSheetScrolled() {
-    if (_sheet!.controller!.size >= 0.999) {
+    if (_sheet!.controller!.isExpanded) {
       if (_navBarTranslation == _navBarHeight) {
         _animateBottomBar(0.0);
       }

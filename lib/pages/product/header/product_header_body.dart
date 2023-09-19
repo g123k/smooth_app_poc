@@ -8,8 +8,6 @@ import 'package:provider/provider.dart';
 import 'package:smoothapp_poc/pages/product/header/product_header.dart';
 import 'package:smoothapp_poc/pages/product/header/product_tabs.dart';
 import 'package:smoothapp_poc/pages/product/product_page.dart';
-import 'package:smoothapp_poc/resources/app_colors.dart';
-import 'package:smoothapp_poc/resources/app_icons.dart' as icons;
 import 'package:smoothapp_poc/utils/num_utils.dart';
 import 'package:smoothapp_poc/utils/widgets/list.dart';
 import 'package:smoothapp_poc/utils/widgets/material.dart';
@@ -164,10 +162,6 @@ class ProductHeaderDetails extends StatelessWidget {
             ],
           ),
         ),
-        Semantics(
-          sortKey: const OrdinalSortKey(4.0),
-          child: const _ProductHeaderButtonsBar(),
-        ),
       ],
     );
   }
@@ -273,146 +267,6 @@ class _ProductHeaderPersonalScores extends StatelessWidget {
           leading: const ListItemLeadingScore.low(),
         ),
       ],
-    );
-  }
-}
-
-class _ProductHeaderButtonsBar extends StatelessWidget {
-  const _ProductHeaderButtonsBar();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
-      child: SizedBox(
-        height: 50.0,
-        child: OutlinedButtonTheme(
-          data: OutlinedButtonThemeData(
-            style: OutlinedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0),
-              ),
-              side: const BorderSide(color: AppColors.grey),
-              padding: const EdgeInsetsDirectional.symmetric(
-                horizontal: 19.0,
-                vertical: 14.0,
-              ),
-            ),
-          ),
-          child: ListView(
-            padding: const EdgeInsetsDirectional.symmetric(horizontal: 20.0),
-            scrollDirection: Axis.horizontal,
-            children: [
-              _ProductHeaderFilledButton(
-                label: 'Comparer',
-                icon: const icons.Compare(),
-                onTap: () {},
-              ),
-              const SizedBox(width: 10.0),
-              _ProductHeaderOutlinedButton(
-                label: 'Ajouter à une liste',
-                icon: const icons.AddToList(),
-                onTap: () {},
-              ),
-              const SizedBox(width: 10.0),
-              _ProductHeaderOutlinedButton(
-                label: 'Modifier',
-                icon: const icons.Edit(),
-                onTap: () {},
-              ),
-              const SizedBox(width: 10.0),
-              _ProductHeaderOutlinedButton(
-                label: 'Partager',
-                icon: icons.Share(),
-                onTap: () {},
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ProductHeaderFilledButton extends StatelessWidget {
-  const _ProductHeaderFilledButton({
-    required this.label,
-    required this.icon,
-    required this.onTap,
-  });
-
-  final String label;
-  final icons.AppIcon icon;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return OutlinedButton(
-      onPressed: onTap,
-      style: OutlinedButton.styleFrom(
-        foregroundColor: AppColors.white,
-        backgroundColor: AppColors.primary,
-        side: BorderSide.none,
-      ),
-      child: Row(
-        children: [
-          IconTheme(
-            data: const IconThemeData(
-              color: AppColors.white,
-              size: 18.0,
-            ),
-            child: icon,
-          ),
-          const SizedBox(width: 8.0),
-          Text(
-            label,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ProductHeaderOutlinedButton extends StatelessWidget {
-  const _ProductHeaderOutlinedButton({
-    required this.label,
-    required this.icon,
-    required this.onTap,
-  });
-
-  final String label;
-  final icons.AppIcon icon;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return OutlinedButton(
-      onPressed: onTap,
-      style: OutlinedButton.styleFrom(
-        foregroundColor: AppColors.primary,
-        backgroundColor: Colors.transparent,
-      ),
-      child: Row(
-        children: [
-          IconTheme(
-            data: const IconThemeData(
-              color: AppColors.primary,
-              size: 18.0,
-            ),
-            child: icon,
-          ),
-          const SizedBox(width: 8.0),
-          Text(
-            label,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

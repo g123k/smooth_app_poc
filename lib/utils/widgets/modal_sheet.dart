@@ -982,6 +982,8 @@ class DraggableScrollableLockAtTopController extends ChangeNotifier {
       : _attachedController?.extent.initialSize !=
           _attachedController?.extent.currentSize;
 
+  bool get isExpanded => size > 0.999;
+
   /// Get the current pixel height of the attached sheet.
   double get pixels {
     _assertAttached();

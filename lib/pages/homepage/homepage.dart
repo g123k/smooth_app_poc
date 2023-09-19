@@ -48,6 +48,7 @@ class HomePageState extends State<HomePage> {
   late final AppLifecycleListener _lifecycleListener;
 
   bool _ignoreAllEvents = false;
+  ScrollStartNotification? _scrollStartNotification;
   ScrollMetrics? _userInitialScrollMetrics;
   VerticalSnapScrollPhysics? _physics;
   ScrollDirection _direction = ScrollDirection.forward;
@@ -143,17 +144,21 @@ class HomePageState extends State<HomePage> {
                   return false;
                 }
 
-                if (notification is UserScrollNotification) {
+                if (notification is ScrollStartNotification) {
+                  _scrollStartNotification = notification;
+                } else if (notification is UserScrollNotification) {
                   _direction = notification.direction;
 
                   if (notification.direction != ScrollDirection.idle) {
                     _userInitialScrollMetrics = notification.metrics;
                   }
                 } else if (notification is ScrollEndNotification) {
+                  // Ignore if this is just a tap or a non-user event
+                  // (drag detail == null)
                   if (notification.metrics.axis != Axis.vertical ||
                       notification.dragDetails == null ||
-                      _userInitialScrollMetrics?.extentInside ==
-                          notification.metrics.extentInside) {
+                      _scrollStartNotification?.metrics ==
+                          notification.metrics) {
                     return false;
                   }
 

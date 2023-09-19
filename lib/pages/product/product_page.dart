@@ -5,6 +5,7 @@ import 'package:openfoodfacts/openfoodfacts.dart';
 import 'package:provider/provider.dart';
 import 'package:smoothapp_poc/pages/product/contribute/product_contribute_tab.dart';
 import 'package:smoothapp_poc/pages/product/environment/product_environment_tab.dart';
+import 'package:smoothapp_poc/pages/product/footer/product_footer.dart';
 import 'package:smoothapp_poc/pages/product/forme/product_for_me_tab.dart';
 import 'package:smoothapp_poc/pages/product/header/product_header.dart';
 import 'package:smoothapp_poc/pages/product/header/product_tabs.dart';
@@ -125,7 +126,15 @@ class ProductPageState extends State<ProductPage>
   @override
   Widget build(BuildContext context) {
     if (widget.forModalSheet) {
-      return _buildChild(context);
+      return Stack(
+        children: [
+          Positioned.fill(child: _buildChild(context)),
+          const Positioned.fill(
+            top: null,
+            child: ProductFooter(),
+          )
+        ],
+      );
     } else {
       return Scaffold(
         body: AnnotatedRegion<SystemUiOverlayStyle>(
@@ -136,6 +145,7 @@ class ProductPageState extends State<ProductPage>
             child: _buildChild(context),
           ),
         ),
+        bottomNavigationBar: const ProductFooter(),
       );
     }
   }

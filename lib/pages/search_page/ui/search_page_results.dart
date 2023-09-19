@@ -238,15 +238,19 @@ class CompatibilityScore extends StatelessWidget {
     super.key,
   });
 
-  final double level;
+  final double? level;
   final double size;
 
   @override
   Widget build(BuildContext context) {
+    if (level == null) {
+      return EMPTY_WIDGET;
+    }
+
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: switch (level) {
+        color: switch (level!) {
           >= 66 => AppColors.compatibilityHigh,
           >= 33 && < 66 => AppColors.compatibilityMedium,
           _ => AppColors.compatibilityLow,
@@ -255,7 +259,7 @@ class CompatibilityScore extends StatelessWidget {
       ),
       padding: const EdgeInsets.all(8.0),
       child: Text(
-        '${level.toInt()} %',
+        '${level!.toInt()} %',
         textAlign: TextAlign.center,
         style: const TextStyle(
           color: AppColors.white,

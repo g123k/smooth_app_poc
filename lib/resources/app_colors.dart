@@ -16,6 +16,7 @@ class AppColors {
   static const Color red = Color(0xFFD44C29);
   static const Color redDark = Color(0xFFB3261E);
   static const Color green = Color(0xFF91BA48);
+  static const Color compatibilityUnknown = Color(0xFF6C6C6C);
   static const Color compatibilityHigh = Color(0xFF219653);
   static const Color compatibilityMedium = Color(0xFFE5843D);
   static const Color compatibilityLow = Color(0xFFEB5757);
