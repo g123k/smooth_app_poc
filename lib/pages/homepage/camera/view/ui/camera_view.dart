@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:smoothapp_poc/navigation.dart';
 import 'package:smoothapp_poc/pages/homepage/camera/view/camera_state_manager.dart';
 import 'package:smoothapp_poc/pages/homepage/camera/view/ui/camera_buttons_bar.dart';
+import 'package:smoothapp_poc/pages/homepage/camera/view/ui/camera_message.dart';
 import 'package:smoothapp_poc/pages/homepage/camera/view/ui/camera_overlay.dart';
 import 'package:smoothapp_poc/pages/homepage/homepage.dart';
 import 'package:smoothapp_poc/pages/product/header/product_compatibility_header.dart';
@@ -19,8 +20,6 @@ import 'package:smoothapp_poc/utils/provider_utils.dart';
 import 'package:smoothapp_poc/utils/widgets/modal_sheet.dart';
 import 'package:smoothapp_poc/utils/widgets/offline_size_widget.dart';
 import 'package:smoothapp_poc/utils/widgets/useful_widgets.dart';
-
-import 'camera_message.dart';
 
 class CameraView extends StatefulWidget {
   const CameraView({
@@ -423,9 +422,21 @@ class _MagicHint extends StatelessWidget {
       return EMPTY_WIDGET;
     }
 
-    final DoubleChevronAnimation chevronAnimation;
+    final Widget chevronAnimation;
     if (opacity == 1.0) {
-      chevronAnimation = const DoubleChevronAnimation.animate();
+      chevronAnimation = DecoratedBox(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: const <BoxShadow>[
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 10.0,
+              offset: Offset.zero,
+            ),
+          ],
+        ),
+        child: const DoubleChevronAnimation.animate(),
+      );
     } else {
       chevronAnimation = const DoubleChevronAnimation.stopped();
     }
@@ -449,7 +460,13 @@ class _MagicHint extends StatelessWidget {
                       child: Text(
                         'Glissez vers le haut pour voir les détails',
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontWeight: FontWeight.w500),
+                        style: TextStyle(fontWeight: FontWeight.w500, shadows: [
+                          Shadow(
+                            color: Colors.black,
+                            blurRadius: 10.0,
+                            offset: Offset(0.0, 2.0),
+                          )
+                        ]),
                       ),
                     ),
                     chevronAnimation,

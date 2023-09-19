@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
@@ -8,6 +10,10 @@ class ComputeOfflineSize {
   final Widget widget;
   final Function(Size) onSizeAvailable;
   late OverlayEntry _overlayEntry;
+
+  // The first time the app is launched, the size is incorrect, that's why we
+  // will wait for the second frame
+  Timer? _timer;
 
   ComputeOfflineSize({
     required BuildContext context,
@@ -33,8 +39,18 @@ class ComputeOfflineSize {
   }
 
   void _onSizeChanged(Size size) {
-    _overlayEntry.remove();
+    // We ignore the first call because it's not accurate
+    if (_timer == null) {
+      _timer = Timer(const Duration(milliseconds: 1000 ~/ 30), () {
+        _onSizeChanged(size);
+      });
+      return;
+    } else {
+      _timer?.cancel();
+    }
+
     onSizeAvailable(size);
+    _overlayEntry.remove();
   }
 }
 
