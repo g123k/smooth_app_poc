@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:smoothapp_poc/pages/food_preferences/food_preferences.dart';
 import 'package:smoothapp_poc/pages/product/header/product_header_body.dart';
 import 'package:smoothapp_poc/pages/product/product_page.dart';
 import 'package:smoothapp_poc/pages/product/product_page_fab.dart';
+import 'package:smoothapp_poc/resources/app_colors.dart';
 import 'package:smoothapp_poc/resources/app_icons.dart' as icons;
 
 class ProductForMeTab extends StatefulWidget {
@@ -31,15 +33,28 @@ class _ProductForMeTabState extends State<ProductForMeTab> {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
-      return SizedBox(
-        width: constraints.maxWidth,
-        height: (constraints.maxWidth / 428) * 808,
-        child: Image.asset(
-          'assets/images/product_forme.webp',
-          // 428 x 808
+      return GestureDetector(
+        onTapDown: (TapDownDetails details) async {
+          if (!foodPreferencesDefined || details.localPosition.dy < 50) {
+            if (await Navigator.of(context, rootNavigator: true)
+                    .push(MaterialPageRoute(
+                  builder: (context) => const FoodPreferencesPage(),
+                )) ==
+                true) {
+              ProductPage.of(context).forceReload();
+            }
+          }
+        },
+        child: SizedBox(
           width: constraints.maxWidth,
           height: (constraints.maxWidth / 428) * 808,
-          alignment: AlignmentDirectional.topCenter,
+          child: Image.asset(
+            'assets/images/${foodPreferencesDefined ? 'product_forme' : 'product_forme_empty'}.webp',
+            // 428 x 808
+            width: constraints.maxWidth,
+            height: (constraints.maxWidth / 428) * 808,
+            alignment: AlignmentDirectional.topCenter,
+          ),
         ),
       );
     });

@@ -3,6 +3,7 @@ import 'package:smoothapp_poc/resources/app_colors.dart';
 import 'package:smoothapp_poc/resources/app_icons.dart' as icons;
 import 'package:smoothapp_poc/utils/barcode_utils.dart';
 import 'package:smoothapp_poc/utils/text_utils.dart';
+import 'package:smoothapp_poc/utils/widgets/useful_widgets.dart';
 
 class SearchQueryItem extends StatelessWidget {
   const SearchQueryItem.search({
@@ -172,4 +173,30 @@ enum _SearchQueryType {
   advancedSearch,
   suggestion,
   scanner,
+}
+
+class SearchQueryBanner extends StatelessWidget {
+  const SearchQueryBanner({required this.search, super.key});
+
+  final String? search;
+
+  @override
+  Widget build(BuildContext context) {
+    final String search = this.search?.toLowerCase() ?? '';
+    if (search == 'cristaline') {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: Image.asset(
+          'assets/images/guides3.webp',
+          fit: BoxFit.cover,
+        ),
+      );
+    } else if (search == 'nesquik') {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: Image.asset('assets/images/guides1.webp'),
+      );
+    }
+    return EMPTY_WIDGET;
+  }
 }

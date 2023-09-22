@@ -58,6 +58,7 @@ class MostScannedProducts extends StatelessWidget {
                           product: Product(
                             productName: product.name,
                             brands: product.brand,
+                            imageFrontUrl: product.picture,
                           ),
                         ),
                       ),

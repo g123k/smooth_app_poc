@@ -3,6 +3,8 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
 import 'package:provider/provider.dart';
+import 'package:smoothapp_poc/data/product_compatibility.dart';
+import 'package:smoothapp_poc/navigation.dart';
 import 'package:smoothapp_poc/pages/product/contribute/product_contribute_tab.dart';
 import 'package:smoothapp_poc/pages/product/environment/product_environment_tab.dart';
 import 'package:smoothapp_poc/pages/product/footer/product_footer.dart';
@@ -24,6 +26,7 @@ class ProductPage extends StatefulWidget {
   const ProductPage({
     required this.product,
     this.scrollController,
+    this.compatibility,
     super.key,
   })  : topSliverHeight = null,
         forModalSheet = false;
@@ -32,6 +35,7 @@ class ProductPage extends StatefulWidget {
     required this.product,
     this.scrollController,
     this.topSliverHeight,
+    this.compatibility,
     super.key,
   }) : forModalSheet = true;
 
@@ -40,6 +44,9 @@ class ProductPage extends StatefulWidget {
   final ScrollController? scrollController;
 
   final Product product;
+
+  // TODO REMOVE WHEN THE POC IS DONE
+  final ProductCompatibility? compatibility;
 
   @override
   State<ProductPage> createState() => ProductPageState();
@@ -64,11 +71,13 @@ class ProductPageState extends State<ProductPage>
   void initState() {
     super.initState();
     _tabController = TabController(
+      initialIndex: 1,
       length: ProductHeaderBody.tabs.length,
       vsync: this,
     );
 
     _horizontalScrollController = PageController(
+      initialPage: 1,
       keepPage: true,
     )..addListener(_onPageHorizontallyScrolled);
 
@@ -159,6 +168,9 @@ class ProductPageState extends State<ProductPage>
       providers: [
         Provider<ProductPageState>.value(value: this),
         Provider<Product>.value(value: widget.product),
+        Provider<ProductCompatibility>.value(
+          value: widget.compatibility ?? ProductCompatibility(100),
+        ),
         Provider<ProductHeaderConfiguration>.value(
           value: _productHeaderConfiguration,
         ),
@@ -188,14 +200,20 @@ class ProductPageState extends State<ProductPage>
                   ElementTappedType type,
                   double scrollExpectedPosition,
                 ) async {
-                  switch (type) {
-                    case ElementTappedType.nutriscore:
-                      _tabController.animateTo(1);
-                    case ElementTappedType.ecoscore:
-                      _tabController.animateTo(2);
-                  }
+                  if (!NavApp.of(context).isSheetFullyVisible) {
+                    _openSheet(context);
+                  } else {
+                    switch (type) {
+                      case ElementTappedType.nutriscore:
+                        _tabController.animateTo(1);
+                      case ElementTappedType.ecoscore:
+                        _tabController.animateTo(2);
+                      case ElementTappedType.picture:
+                        _tabController.animateTo(3);
+                    }
 
-                  await _onTabChanged(scrollExpectedPosition);
+                    await _onTabChanged(scrollExpectedPosition);
+                  }
                 },
                 onTabChanged: (
                   int position,
@@ -328,6 +346,10 @@ class ProductPageState extends State<ProductPage>
         curve: Curves.ease,
       );
     }
+  }
+
+  void forceReload() {
+    setState(() {});
   }
 }
 

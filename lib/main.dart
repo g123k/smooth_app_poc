@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:smoothapp_poc/navigation.dart';
+import 'package:smoothapp_poc/pages/onboarding/onboarding.dart';
 import 'package:smoothapp_poc/resources/app_colors.dart';
 
 void main() {
@@ -29,8 +29,15 @@ class MyApp extends StatelessWidget {
           labelStyle: TextStyle(fontWeight: FontWeight.bold),
           unselectedLabelStyle: TextStyle(fontWeight: FontWeight.w500),
         ),
+        textTheme: const TextTheme(
+          titleLarge: TextStyle(
+            fontSize: 17.0,
+            fontWeight: FontWeight.bold,
+            decoration: TextDecoration.underline,
+          ),
+        ),
       ),
-      home: const NavApp(),
+      home: const OnboardingPage(),
     );
   }
 }

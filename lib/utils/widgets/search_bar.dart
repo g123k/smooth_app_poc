@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -33,10 +32,12 @@ class ExpandableSearchAppBar extends StatelessWidget {
     Key? key,
     required this.onFieldTapped,
     required this.onCameraTapped,
+    this.footer,
   }) : super(key: key);
 
   final VoidCallback onFieldTapped;
   final VoidCallback onCameraTapped;
+  final SearchBarFooterWidget? footer;
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +47,7 @@ class ExpandableSearchAppBar extends StatelessWidget {
         fixed: false,
         onFieldTapped: onFieldTapped,
         onCameraTapped: onCameraTapped,
+        footer: footer,
       ),
       pinned: true,
     );
@@ -199,14 +201,10 @@ class _SliverSearchAppBar extends SliverPersistentHeaderDelegate {
     );
   }
 
-  double computeLogoProgress(double shrinkOffset) {
-    return ((shrinkOffset / minExtent) / 0.13).clamp(0.0, 1.0);
-  }
-
   @override
   double get maxExtent =>
       minExtent +
-      (footer == null ? 0 : (footer!.height + (HomePage.BORDER_RADIUS / 2)));
+      (footer == null ? 0 : (footer!.height + HomePage.BORDER_RADIUS));
 
   @override
   double get minExtent => ExpandableSearchAppBar.HEIGHT + (topPadding * 1.5);
@@ -278,7 +276,7 @@ class _SearchAppBar extends StatelessWidget {
         Positioned.fill(
           top: 0.0,
           bottom: footer != null && footerOffset! < footerMaxOffset!
-              ? footer!.height - footerOffset! + (HomePage.BORDER_RADIUS / 2)
+              ? footer!.height - footerOffset! + HomePage.BORDER_RADIUS
               : 0.0,
           child: DecoratedBox(
             decoration: BoxDecoration(
@@ -296,27 +294,76 @@ class _SearchAppBar extends StatelessWidget {
                         ),
                       ]
                     : null),
-            child: SafeArea(
-              bottom: false,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _Logo(
-                    progress: progress,
-                    actionWidget: actionWidget,
-                  ),
-                  _SearchBar(
-                    progress: progress,
-                    autofocus: autofocus,
-                    onFieldTapped: onFieldTapped,
-                    onCameraTapped: onCameraTapped,
-                    onSearchEntered: onSearchEntered,
-                    onSearchChanged: onSearchChanged,
-                    onFocusGained: onFocusGained,
-                    onFocusLost: onFocusLost,
-                  ),
-                ],
-              ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                SizedBox(
+                  height: MediaQuery.viewPaddingOf(context).top /
+                      progress.progress2(2, 1),
+                ),
+                Stack(
+                  children: [
+                    _Logo(
+                      progress: progress,
+                      actionWidget: actionWidget,
+                    ),
+                    Positioned.directional(
+                      top: 0.0,
+                      bottom: 0.0,
+                      end: ExpandableSearchAppBar.CONTENT_PADDING.end + 2.0,
+                      textDirection: Directionality.of(context),
+                      child: SizedBox.square(
+                        dimension: 48.0 *
+                            progress.progressAndClamp(
+                              // Those values are clearly hand-crafted
+                              0.55,
+                              0.90,
+                              1.0,
+                            ),
+                        child: IconButton(
+                          icon: LayoutBuilder(
+                              builder: (context, BoxConstraints constraints) {
+                            return icons.Barcode(
+                              color: AppColors.blackPrimary,
+                              size: math.min(28.0, constraints.minSide),
+                            );
+                          }),
+                          onPressed: onCameraTapped,
+                          style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all(Colors.white),
+                            side: MaterialStateProperty.all(
+                              const BorderSide(color: AppColors.primary),
+                            ),
+                            foregroundColor:
+                                MaterialStateProperty.all(Colors.black),
+                            shape: MaterialStateProperty.all(
+                              const CircleBorder(),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: (1 - progress) *
+                      (MediaQuery.viewPaddingOf(context).top / 6),
+                ),
+                _SearchBar(
+                  progress: progress,
+                  autofocus: autofocus,
+                  onFieldTapped: onFieldTapped,
+                  onSearchEntered: onSearchEntered,
+                  onSearchChanged: onSearchChanged,
+                  onFocusGained: onFocusGained,
+                  onFocusLost: onFocusLost,
+                ),
+                SizedBox(
+                  height: (1 - progress) *
+                      (MediaQuery.viewPaddingOf(context).top / 2),
+                ),
+              ],
             ),
           ),
         ),
@@ -351,46 +398,26 @@ class _Logo extends StatelessWidget {
         double width = constraints.maxWidth;
         double imageWidth = FULL_WIDTH;
 
-        if (imageWidth > width * 0.7) {
-          imageWidth = width * 0.7;
+        if (imageWidth > width * 0.8) {
+          imageWidth = width * 0.8;
         }
 
         return Container(
           width: imageWidth,
           height: math.max(MAX_HEIGHT * (1 - progress), MIN_HEIGHT),
           margin: EdgeInsetsDirectional.only(
-            start: math.max((1 - progress) * ((width - imageWidth) / 4), 10.0),
+            start: math.max((1 - progress) * ((width - imageWidth) / 2), 10.0),
             bottom: 5.0,
           ),
           alignment: AlignmentDirectional.centerStart,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: SizedBox(
-                  width: imageWidth,
-                  child: SvgPicture.asset(
-                    'assets/images/logo.svg',
-                    width: 346.0,
-                    height: 61.0,
-                    alignment: AlignmentDirectional.centerStart,
-                  ),
-                ),
-              ),
-              if (actionWidget != null)
-                LayoutBuilder(builder: (context, constraints) {
-                  return Padding(
-                    padding: EdgeInsets.only(
-                      // TODO This fix is not perfect
-                      top: Platform.isIOS ? 0.5 : 3.0,
-                    ),
-                    child: IconTheme(
-                      data: const IconThemeData(size: 17.0),
-                      child: actionWidget!,
-                    ),
-                  );
-                }),
-            ],
+          child: SizedBox(
+            width: imageWidth * progress.progress2(1.0, 1.0),
+            child: SvgPicture.asset(
+              'assets/images/logo.svg',
+              width: 346.0,
+              height: 61.0,
+              alignment: AlignmentDirectional.centerStart,
+            ),
           ),
         );
       }),
@@ -402,7 +429,6 @@ class _SearchBar extends StatefulWidget {
   const _SearchBar({
     required this.progress,
     required this.autofocus,
-    required this.onCameraTapped,
     required this.onSearchEntered,
     required this.onSearchChanged,
     required this.onFieldTapped,
@@ -413,7 +439,6 @@ class _SearchBar extends StatefulWidget {
   static const SEARCH_BAR_HEIGHT = 55.0;
   final double progress;
   final bool autofocus;
-  final VoidCallback onCameraTapped;
   final Function(String)? onSearchEntered;
   final Function(String)? onSearchChanged;
   final VoidCallback? onFieldTapped;
@@ -481,97 +506,87 @@ class _SearchBarState extends State<_SearchBar> {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsetsDirectional.symmetric(
-        horizontal: (1 - widget.progress).progress2(
-          ExpandableSearchAppBar.MIN_CONTENT_PADDING.start,
-          ExpandableSearchAppBar.CONTENT_PADDING.start,
-        ),
+        horizontal: ExpandableSearchAppBar.CONTENT_PADDING.start,
       ),
       child: SizedBox(
         height: _SearchBar.SEARCH_BAR_HEIGHT,
-        child: Row(
-          children: [
-            Expanded(
-              child: TextFormField(
-                controller: _searchController,
-                autofocus: widget.autofocus
-                    ? SearchBarController.of(context).isKeyboardVisible
-                    : false,
-                textAlignVertical: TextAlignVertical.center,
-                onTap: _manageOnTap ? () => widget.onFieldTapped?.call() : null,
-                focusNode: _searchFocusNode,
-                readOnly: _manageOnTap ? true : false,
-                onChanged: (String value) {
-                  widget.onSearchChanged?.call(
-                    value.trim(),
-                  );
-                },
-                onFieldSubmitted: (String value) {
-                  widget.onSearchEntered?.call(
-                    value.trim(),
-                  );
-                },
-                decoration: InputDecoration(
-                  hintText: 'Rechercher un produit ou un code-barres',
-                  filled: true,
-                  fillColor: Colors.white,
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                    borderSide: const BorderSide(color: AppColors.primary),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(30.0),
+            color: Colors.white,
+            border: Border.all(color: AppColors.primary),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsetsDirectional.only(
+                    start: 20.0,
+                    end: 10.0,
+                    bottom: 3.0,
                   ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                    borderSide: const BorderSide(color: AppColors.primary),
+                  child: TextFormField(
+                    controller: _searchController,
+                    autofocus: widget.autofocus
+                        ? SearchBarController.of(context).isKeyboardVisible
+                        : false,
+                    onTap: _manageOnTap
+                        ? () => widget.onFieldTapped?.call()
+                        : null,
+                    focusNode: _searchFocusNode,
+                    readOnly: _manageOnTap ? true : false,
+                    onChanged: (String value) {
+                      widget.onSearchChanged?.call(
+                        value.trim(),
+                      );
+                    },
+                    onFieldSubmitted: (String value) {
+                      widget.onSearchEntered?.call(
+                        value.trim(),
+                      );
+                    },
+                    decoration: const InputDecoration(
+                      hintText: 'Rechercher un produit ou un code-barres',
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.zero,
+                    ),
                   ),
                 ),
               ),
-            ),
-            SizedBox.square(
-              dimension: (55.0 + 8.0) * widget.progress,
-              child: Focus(
-                focusNode: _buttonFocusNode,
-                canRequestFocus: false,
-                child: Padding(
-                  padding: const EdgeInsetsDirectional.only(start: 8.0),
-                  child: IconButton(
-                    tooltip: _hasText ? 'Effacer' : 'Scanner un code-barres',
-                    onPressed: () {
-                      if (_hasText) {
-                        _searchController.clear();
-                        _searchFocusNode.requestFocus();
-                        widget.onSearchChanged?.call('');
-                      } else {
-                        widget.onCameraTapped.call();
-                      }
-                    },
-                    icon: LayoutBuilder(
-                      builder:
-                          (BuildContext context, BoxConstraints constraints) {
-                        if (_hasText) {
-                          return icons.ClearText(
-                            size: math.min(28.0, constraints.minSide),
-                          );
-                        } else {
-                          return icons.Barcode(
-                            size: math.min(30.0, constraints.minSide),
+              AspectRatio(
+                aspectRatio: 1.0,
+                child: Material(
+                  type: MaterialType.transparency,
+                  child: Tooltip(
+                    message: 'Lancer la recherche',
+                    enableFeedback: true,
+                    child: InkWell(
+                      customBorder: const CircleBorder(),
+                      onTap: () {
+                        if (_manageOnTap) {
+                          widget.onFieldTapped?.call();
+                        } else if (_searchController.text.trim().isNotEmpty) {
+                          widget.onSearchEntered?.call(
+                            _searchController.text.trim(),
                           );
                         }
                       },
-                    ),
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Colors.white),
-                      side: MaterialStateProperty.all(
-                        const BorderSide(color: AppColors.primary),
-                      ),
-                      foregroundColor: MaterialStateProperty.all(Colors.black),
-                      shape: MaterialStateProperty.all(
-                        const CircleBorder(),
+                      child: Ink(
+                        decoration: const BoxDecoration(
+                          color: AppColors.primary,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const icons.Search(
+                          color: AppColors.white,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ),
-          ],
+              )
+            ],
+          ),
         ),
       ),
     );

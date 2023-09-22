@@ -13,6 +13,7 @@ import 'package:smoothapp_poc/pages/homepage/camera/view/ui/camera_message.dart'
 import 'package:smoothapp_poc/pages/homepage/camera/view/ui/camera_overlay.dart';
 import 'package:smoothapp_poc/pages/homepage/homepage.dart';
 import 'package:smoothapp_poc/pages/product/header/product_compatibility_header.dart';
+import 'package:smoothapp_poc/pages/product/header/product_tabs.dart';
 import 'package:smoothapp_poc/pages/product/product_page.dart';
 import 'package:smoothapp_poc/resources/app_animations.dart';
 import 'package:smoothapp_poc/utils/num_utils.dart';
@@ -184,10 +185,11 @@ class _CameraViewState extends State<CameraView> {
         // The fraction should allow to view the header
         // + the hint (slide up to see details)
         // + a slight padding
-        final double fraction =
-            (size.height + ProductHeaderTopPaddingComputation.MIN_SIZE + 10.0) /
-                (MediaQuery.of(topContext).size.height -
-                    NavApp.of(topContext).navBarHeight);
+        final double fraction = (size.height +
+                ProductHeaderTopPaddingComputation.computeMinSize(context) +
+                (ProductHeaderTabBar.TAB_BAR_HEIGHT * 1.35)) /
+            (MediaQuery.of(topContext).size.height -
+                NavApp.of(topContext).navBarHeight);
 
         NavApp.of(topContext).showSheet(
           DraggableScrollableLockAtTopSheet(

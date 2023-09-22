@@ -31,6 +31,7 @@ class ProductHeader extends StatefulWidget {
 }
 
 enum ElementTappedType {
+  picture,
   nutriscore,
   ecoscore,
 }

@@ -1,3 +1,4 @@
+import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:smoothapp_poc/navigation.dart';
@@ -15,6 +16,7 @@ class _ProductFooterState extends State<ProductFooter>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _animation;
+  CancelableOperation? _cancelableAnimation;
 
   @override
   void initState() {
@@ -23,7 +25,9 @@ class _ProductFooterState extends State<ProductFooter>
       vsync: this,
       duration: const Duration(milliseconds: 250),
     );
-    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(_controller);
+    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInQuart),
+    )..addListener(() => setState(() {}));
   }
 
   @override
@@ -33,22 +37,37 @@ class _ProductFooterState extends State<ProductFooter>
     SheetVisibilityNotifier? sheetController =
         context.watch<SheetVisibilityNotifier?>();
 
+    _cancelableAnimation?.cancel();
     if (sheetController == null) {
       _controller.value = 0.0;
-    } else if (sheetController.isFullyVisible) {
+    } else if (sheetController.isFullyVisible && _controller.value > 0.0) {
+      // Slight delay due to the bottom tabs animation
+      _cancelableAnimation = CancelableOperation.fromFuture(
+        Future.delayed(
+          const Duration(milliseconds: 250),
+          () {
+            if (_cancelableAnimation?.isCanceled == false) {
+              _controller.reverse();
+            }
+          },
+        ),
+      );
+    } else if (!sheetController.isFullyVisible && _controller.value <= 1.0) {
       _controller.forward();
-    } else {
-      _controller.reverse();
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    double bottomPadding = MediaQuery.viewPaddingOf(context).bottom;
+    if (bottomPadding == 0.0) {
+      bottomPadding = 16.0;
+    }
+
     return Transform.translate(
       offset: Offset(
         0.0,
-        _animation.value *
-            (16.0 + 46.0 + MediaQuery.viewPaddingOf(context).bottom),
+        _animation.value * (16.0 + 46.0 + bottomPadding),
       ),
       child: DecoratedBox(
         decoration: BoxDecoration(
@@ -63,7 +82,7 @@ class _ProductFooterState extends State<ProductFooter>
         child: Padding(
           padding: EdgeInsetsDirectional.only(
             top: 16.0,
-            bottom: MediaQuery.viewPaddingOf(context).bottom,
+            bottom: bottomPadding,
           ),
           child: const _ProductFooterButtonsBar(),
         ),
@@ -74,12 +93,13 @@ class _ProductFooterState extends State<ProductFooter>
   @override
   void dispose() {
     _controller.dispose();
+    _cancelableAnimation?.cancel();
     super.dispose();
   }
 }
 
 class _ProductFooterButtonsBar extends StatelessWidget {
-  const _ProductFooterButtonsBar({super.key});
+  const _ProductFooterButtonsBar();
 
   @override
   Widget build(BuildContext context) {

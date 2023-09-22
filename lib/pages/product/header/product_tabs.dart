@@ -128,7 +128,7 @@ class _ProductHeaderTab extends StatelessWidget {
       ProductHeaderTabs.environment => 'Environnement',
       ProductHeaderTabs.photos => 'Photos',
       ProductHeaderTabs.contribute => 'Contribuer',
-      ProductHeaderTabs.info => 'Infos',
+      ProductHeaderTabs.info => 'Infos. supplémentaires',
     };
   }
 }

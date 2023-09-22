@@ -2,7 +2,8 @@ import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
+import 'package:smoothapp_poc/utils/num_utils.dart';
 
 /// The signature of a method that provides a [BuildContext] and
 /// [ScrollController] for building a widget that may overflow the draggable
@@ -450,7 +451,17 @@ class _DraggableScrollableLockAtTopSheetState
             alignment: Alignment.bottomCenter,
             child: child,
           );
-          return widget.expand ? SizedBox.expand(child: sheet) : sheet;
+
+          return CustomPaint(
+              foregroundPainter: _ShadowPainter(
+                opacity: 1 -
+                    currentSize.progressAndClamp(
+                      widget.minChildSize,
+                      widget.minChildSize + 0.05,
+                      1.0,
+                    ),
+              ),
+              child: widget.expand ? SizedBox.expand(child: sheet) : sheet);
         },
       ),
       child: widget.builder(context, _scrollController),
@@ -517,6 +528,38 @@ class _DraggableScrollableLockAtTopSheetState
     return "Invalid snapSize '${widget.snapSizes![invalidIndex]}' at index $invalidIndex of:\n"
         '  $snapSizesWithIndicator';
   }
+}
+
+class _ShadowPainter extends CustomPainter {
+  _ShadowPainter({required this.opacity});
+
+  final double opacity;
+
+  final Paint _paint = Paint()
+    ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10.0);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (opacity >= 0.0) {
+      _paint.color = Colors.black12.withOpacity(opacity * 0.12);
+      canvas.drawRect(
+        Rect.fromLTWH(
+          0,
+          size.height - 10.0,
+          size.width,
+          size.height,
+        ),
+        _paint,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(_ShadowPainter oldDelegate) =>
+      opacity != oldDelegate.opacity;
+
+  @override
+  bool shouldRebuildSemantics(_ShadowPainter oldDelegate) => false;
 }
 
 /// A [ScrollController] suitable for use in a [ScrollableWidgetBuilder] created

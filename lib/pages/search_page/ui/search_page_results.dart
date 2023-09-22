@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
 import 'package:provider/provider.dart';
-import 'package:smoothapp_poc/pages/homepage/homepage.dart';
+import 'package:smoothapp_poc/data/product_compatibility.dart';
 import 'package:smoothapp_poc/pages/product/product_page.dart';
 import 'package:smoothapp_poc/pages/search_page/search_state_manager.dart';
 import 'package:smoothapp_poc/resources/app_colors.dart';
 import 'package:smoothapp_poc/resources/app_icons.dart' as icons;
 import 'package:smoothapp_poc/utils/num_utils.dart';
-import 'package:smoothapp_poc/utils/widgets/app_widget.dart';
 import 'package:smoothapp_poc/utils/widgets/list.dart';
+import 'package:smoothapp_poc/utils/widgets/network_image.dart';
 import 'package:smoothapp_poc/utils/widgets/search_bar.dart';
 import 'package:smoothapp_poc/utils/widgets/useful_widgets.dart';
 
@@ -72,12 +72,17 @@ class _SearchBodyWithResultsState extends State<_SearchBodyWithResults> {
     return SliverList.separated(
       itemBuilder: (BuildContext context, int position) {
         final Product product = widget.products[position];
+        final ProductCompatibility score = ProductCompatibility(
+            100 * (1 - position.progress(0, widget.products.length)));
 
         return InkWell(
           onTap: () {
             Navigator.of(context, rootNavigator: true).push(
               MaterialPageRoute(
-                builder: (context) => ProductPage(product: product),
+                builder: (context) => ProductPage(
+                  product: product,
+                  compatibility: score,
+                ),
               ),
             );
           },
@@ -100,12 +105,7 @@ class _SearchBodyWithResultsState extends State<_SearchBodyWithResults> {
                             children: [
                               SizedBox(
                                 height: 36.0,
-                                child: CompatibilityScore(
-                                  level: 100 *
-                                      (1 -
-                                          position.progress(
-                                              0, widget.products.length)),
-                                ),
+                                child: CompatibilityScore(level: score),
                               ),
                               ClipRRect(
                                 borderRadius: const BorderRadius.vertical(
@@ -120,25 +120,16 @@ class _SearchBodyWithResultsState extends State<_SearchBodyWithResults> {
                                     ),
                                     child: AspectRatio(
                                       aspectRatio: 1.0,
-                                      child: Image.network(
-                                        product.imageFrontUrl ?? '',
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.26,
-                                        errorBuilder: (_, __, ___) =>
-                                            const ImagePlaceholder(),
-                                        loadingBuilder: (
-                                          BuildContext context,
-                                          Widget child,
-                                          ImageChunkEvent? loadingProgress,
-                                        ) =>
-                                            loadingProgress == null ||
-                                                    loadingProgress
-                                                            .cumulativeBytesLoaded ==
-                                                        loadingProgress
-                                                            .expectedTotalBytes
-                                                ? child
-                                                : const ImagePlaceholder(),
+                                      child: Hero(
+                                        tag: product.imageFrontUrl ?? '',
+                                        child: NetworkAppImage(
+                                          url: product.imageFrontUrl ?? '',
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.26,
+                                          topRadius: false,
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -238,28 +229,20 @@ class CompatibilityScore extends StatelessWidget {
     super.key,
   });
 
-  final double? level;
+  final ProductCompatibility level;
   final double size;
 
   @override
   Widget build(BuildContext context) {
-    if (level == null) {
-      return EMPTY_WIDGET;
-    }
-
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: switch (level!) {
-          >= 66 => AppColors.compatibilityHigh,
-          >= 33 && < 66 => AppColors.compatibilityMedium,
-          _ => AppColors.compatibilityLow,
-        },
+        color: level.color,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(10.0)),
       ),
       padding: const EdgeInsets.all(8.0),
       child: Text(
-        '${level!.toInt()} %',
+        '${level.level?.toInt() ?? '-'} %',
         textAlign: TextAlign.center,
         style: const TextStyle(
           color: AppColors.white,
@@ -410,7 +393,7 @@ class SearchFooterResults extends StatelessWidget
   }
 
   @override
-  double get height => 50.0 + (HomePage.BORDER_RADIUS / 2);
+  double get height => 50.0;
 
   @override
   Color get color => AppColors.primaryVeryLight;

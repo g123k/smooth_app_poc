@@ -218,6 +218,7 @@ class NavAppState extends State<NavApp> with TickerProviderStateMixin {
   }
 
   void _animateBottomBar(double end) {
+    print('Animate to $end');
     _bottomSheetAndNavBarController.stop();
 
     _bottomSheetAndNavBarAnimation =
@@ -279,9 +280,9 @@ class OnTabChangedNotifier extends ValueNotifier<HomeTabs> {
 }
 
 enum HomeTabs {
-  profile(Icon(Icons.account_circle), 'My profile'),
+  profile(Icon(Icons.account_circle), 'Mon profil'),
   scanner(Icon(Icons.camera_alt), 'Scan'),
-  lists(Icon(Icons.list), 'My lists');
+  lists(Icon(Icons.list), 'Mes listes');
 
   const HomeTabs(this.icon, this.label);
 

@@ -163,9 +163,12 @@ class ImagePlaceholder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(12.0),
-      child: SvgPicture.asset('assets/images/placeholder.svg'),
+    return ColoredBox(
+      color: AppColors.primaryVeryLight,
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: SvgPicture.asset('assets/images/placeholder.svg'),
+      ),
     );
   }
 }

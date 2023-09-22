@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:smoothapp_poc/pages/news/news_page.dart';
+import 'package:smoothapp_poc/resources/app_colors.dart';
 
 //ignore_for_file: constant_identifier_names
 class GuidesList extends StatelessWidget {
@@ -27,21 +29,88 @@ class GuidesList extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 15.0),
-            InkWell(
-              borderRadius: BorderRadius.circular(20.0),
-              onTap: () {},
-              child: Ink.image(
-                height: 120.0,
-                width: double.infinity,
-                image: const AssetImage('assets/images/guides1.webp'),
-                fit: BoxFit.contain,
-              ),
+            const _GuideItem(
+              title: 'Pourquoi le Nesquik a-t-il un Nutri-Score A ?',
+              image: 'assets/images/guides1.webp',
             ),
             const SizedBox(height: 10.0),
             Image.asset('assets/images/guides2.webp'),
             const SizedBox(height: 10.0),
             Image.asset('assets/images/guides3.webp'),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _GuideItem extends StatelessWidget {
+  const _GuideItem({
+    required this.title,
+    required this.image,
+  });
+
+  final String title;
+  final String image;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        NewsPage.open(
+          context,
+          title: title,
+          image: image,
+          backgroundColor: AppColors.blackPrimary,
+        );
+      },
+      borderRadius: BorderRadius.circular(20.0),
+      child: SizedBox(
+        width: double.infinity,
+        height: 120.0,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20.0),
+          child: Ink(
+            decoration: BoxDecoration(
+              color: AppColors.blackPrimary,
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 48,
+                  child: Padding(
+                    padding: const EdgeInsetsDirectional.only(
+                      start: 25.0,
+                      end: 10.0,
+                    ),
+                    child: Hero(
+                      tag: 'news_title',
+                      child: Text(
+                        title,
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              color: AppColors.white,
+                            ),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 52,
+                  child: Align(
+                    alignment: AlignmentDirectional.centerEnd,
+                    child: Padding(
+                      padding: const EdgeInsetsDirectional.only(end: 10.0),
+                      child: Hero(
+                        tag: 'news_image',
+                        child: Image.asset('assets/images/guides1.webp'),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );

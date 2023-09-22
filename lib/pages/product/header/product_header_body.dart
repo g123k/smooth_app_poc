@@ -1,7 +1,6 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
 import 'package:provider/provider.dart';
@@ -11,6 +10,7 @@ import 'package:smoothapp_poc/pages/product/product_page.dart';
 import 'package:smoothapp_poc/utils/num_utils.dart';
 import 'package:smoothapp_poc/utils/widgets/list.dart';
 import 'package:smoothapp_poc/utils/widgets/material.dart';
+import 'package:smoothapp_poc/utils/widgets/network_image.dart';
 
 class ProductHeaderBody extends StatelessWidget {
   const ProductHeaderBody({
@@ -36,6 +36,9 @@ class ProductHeaderBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Widget headerDetails = ProductHeaderDetails(
+      onPictureClicked: () {
+        onElementTapped?.call(ElementTappedType.picture);
+      },
       onNutriScoreClicked: () {
         onElementTapped?.call(ElementTappedType.nutriscore);
       },
@@ -106,6 +109,7 @@ class ProductHeaderBody extends StatelessWidget {
 
 class ProductHeaderDetails extends StatelessWidget {
   const ProductHeaderDetails({
+    this.onPictureClicked,
     this.onNutriScoreClicked,
     this.onEcoScoreClicked,
     super.key,
@@ -118,9 +122,10 @@ class ProductHeaderDetails extends StatelessWidget {
     top: 18.0,
     start: 20.0,
     end: 20.0,
-    bottom: 20.0,
+    bottom: 18.0,
   );
 
+  final VoidCallback? onPictureClicked;
   final VoidCallback? onNutriScoreClicked;
   final VoidCallback? onEcoScoreClicked;
 
@@ -132,33 +137,12 @@ class ProductHeaderDetails extends StatelessWidget {
           padding: PADDING,
           child: Column(
             children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Expanded(
-                    flex: INFO_WIDTH,
-                    child: Semantics(
-                      sortKey: const OrdinalSortKey(1.0),
-                      child: const _ProductHeaderInfo(),
-                    ),
-                  ),
-                  Expanded(
-                    flex: SCORES_WIDTH,
-                    child: Semantics(
-                      sortKey: const OrdinalSortKey(2.0),
-                      child: ProductHeaderScores(
-                        onNutriScoreClicked: onNutriScoreClicked,
-                        onEcoScoreClicked: onEcoScoreClicked,
-                      ),
-                    ),
-                  ),
-                ],
+              _ProductHeaderInfo(
+                onPictureClicked: onPictureClicked,
+                onNutriScoreClicked: onNutriScoreClicked,
+                onEcoScoreClicked: onEcoScoreClicked,
               ),
-              Semantics(
-                sortKey: const OrdinalSortKey(3.0),
-                explicitChildNodes: true,
-                child: const _ProductHeaderPersonalScores(),
-              ),
+              const _ProductHeaderPersonalScores(),
             ],
           ),
         ),
@@ -168,35 +152,78 @@ class ProductHeaderDetails extends StatelessWidget {
 }
 
 class _ProductHeaderInfo extends StatelessWidget {
-  const _ProductHeaderInfo();
+  const _ProductHeaderInfo({
+    this.onPictureClicked,
+    this.onNutriScoreClicked,
+    this.onEcoScoreClicked,
+  });
+
+  final VoidCallback? onPictureClicked;
+  final VoidCallback? onNutriScoreClicked;
+  final VoidCallback? onEcoScoreClicked;
 
   @override
   Widget build(BuildContext context) {
     final Product product = context.read<Product>();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Hero(
-          tag: '3274080005003_name',
-          child: Text(
-            product.productName ?? '',
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 18.0,
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 27,
+            child: AspectRatio(
+              aspectRatio: 1.0,
+              child: SizedBox(
+                height: double.infinity,
+                child: Material(
+                  type: MaterialType.transparency,
+                  child: InkWell(
+                    onTap: onPictureClicked,
+                    child: Material(
+                      type: MaterialType.transparency,
+                      child: NetworkAppImage(
+                        url: product.imageFrontUrl ?? '',
+                        backgroundColor: Colors.transparent,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
-        ),
-        Text(
-          product.brands ?? '',
-          style: const TextStyle(fontSize: 16.5),
-        ),
-        Text(
-          product.quantity ?? '',
-          style: const TextStyle(fontSize: 16.5),
-        ),
-      ],
+          const SizedBox(width: 15.0),
+          Expanded(
+            flex: 73,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  product.productName ?? '',
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18.0,
+                  ),
+                ),
+                Text(
+                  product.brands ?? '',
+                  style: const TextStyle(fontSize: 16.5),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 10.0),
+                ProductHeaderScores(
+                  onNutriScoreClicked: onNutriScoreClicked,
+                  onEcoScoreClicked: onEcoScoreClicked,
+                )
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -213,31 +240,29 @@ class ProductHeaderScores extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            InkWell(
-              onTap: onNutriScoreClicked,
-              child: SvgPicture.asset(
-                'assets/images/nutriscore-a.svg',
-                alignment: AlignmentDirectional.topCenter,
-                width: math.min(80.0, constraints.maxWidth),
-              ),
+    return SizedBox(
+      height: 36.0,
+      child: Row(
+        children: [
+          InkWell(
+            onTap: onNutriScoreClicked,
+            child: SvgPicture.asset(
+              'assets/images/nutriscore-a.svg',
+              alignment: AlignmentDirectional.topCenter,
+              height: 36.0,
             ),
-            const SizedBox(height: 10.0),
-            InkWell(
-              onTap: onEcoScoreClicked,
-              child: SvgPicture.asset(
-                'assets/images/ecoscore-a.svg',
-                alignment: AlignmentDirectional.topCenter,
-                width: math.min(80.0, constraints.maxWidth),
-              ),
+          ),
+          const SizedBox(width: 16.0),
+          InkWell(
+            onTap: onEcoScoreClicked,
+            child: SvgPicture.asset(
+              'assets/images/ecoscore-a.svg',
+              alignment: AlignmentDirectional.topCenter,
+              height: 36.0,
             ),
-          ],
-        );
-      },
+          ),
+        ],
+      ),
     );
   }
 
@@ -253,20 +278,23 @@ class _ProductHeaderPersonalScores extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        ListItem.text(
-          'Pas de moutarde',
-          padding: const EdgeInsets.only(top: 10.0),
-          leading: const ListItemLeadingScore.high(),
-        ),
-        ListItem.text(
-          'Aliment ultra-transformé (NOVA 4)',
-          padding: const EdgeInsets.only(top: 10.0),
-          leading: const ListItemLeadingScore.low(),
-        ),
-      ],
+    return Padding(
+      padding: const EdgeInsetsDirectional.only(top: 10.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListItem.text(
+            'Pas de moutarde',
+            padding: const EdgeInsets.only(top: 10.0),
+            leading: const ListItemLeadingScore.high(),
+          ),
+          ListItem.text(
+            'Aliment ultra-transformé (NOVA 4)',
+            padding: const EdgeInsets.only(top: 10.0),
+            leading: const ListItemLeadingScore.low(),
+          ),
+        ],
+      ),
     );
   }
 }

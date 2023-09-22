@@ -3,11 +3,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:smoothapp_poc/data/product_compatibility.dart';
 import 'package:smoothapp_poc/pages/product/header/product_header.dart';
 import 'package:smoothapp_poc/pages/product/product_page.dart';
 import 'package:smoothapp_poc/resources/app_colors.dart';
 import 'package:smoothapp_poc/utils/num_utils.dart';
 import 'package:smoothapp_poc/utils/widgets/modal_sheet.dart';
+import 'package:smoothapp_poc/utils/widgets/useful_widgets.dart';
 
 /// When the product is minimized as a bottom sheet, it will show the
 /// compatibility score.
@@ -21,6 +23,14 @@ class ProductCompatibilityHeaderAndStatusBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final ProductHeaderTopPaddingComputation computation =
         ProductHeaderTopPaddingComputation.watch(context);
+
+    if (computation.topPadding == 0.0) {
+      return EMPTY_WIDGET;
+    }
+
+    final ProductCompatibility compatibility =
+        context.watch<ProductCompatibility>();
+
     return GestureDetector(
       onTap: () =>
           context.read<DraggableScrollableLockAtTopController>().animateTo(
@@ -29,7 +39,7 @@ class ProductCompatibilityHeaderAndStatusBar extends StatelessWidget {
                 curve: Curves.easeInExpo,
               ),
       child: ColoredBox(
-        color: AppColors.compatibilityHigh,
+        color: compatibility.color,
         child: SizedBox(
           height: computation.topPadding,
           child: Center(
@@ -37,9 +47,9 @@ class ProductCompatibilityHeaderAndStatusBar extends StatelessWidget {
               offstage: computation.contentOpacity == 0.0,
               child: Opacity(
                 opacity: computation.contentOpacity,
-                child: const Text(
-                  'Ce produit est 100% compatible',
-                  style: TextStyle(
+                child: Text(
+                  'Ce produit est ${compatibility.level?.toInt()}% compatible',
+                  style: const TextStyle(
                     fontSize: 15.5,
                     fontWeight: FontWeight.bold,
                     color: AppColors.white,
@@ -55,9 +65,10 @@ class ProductCompatibilityHeaderAndStatusBar extends StatelessWidget {
 }
 
 class ProductHeaderTopPaddingComputation extends ProductHeaderComputation {
-  //ignore: constant_identifier_names
-  static const double MIN_SIZE = 45.0;
-  double topPadding = MIN_SIZE;
+  //ignore_for_file: constant_identifier_names
+  static const double MIN_SIZE_COMPATIBLE = 45.0;
+  static const double MIN_SIZE_UNSET = 0.0;
+  double topPadding = MIN_SIZE_COMPATIBLE;
   double contentOpacity = 1.0;
   bool statusBarMode = false;
 
@@ -65,7 +76,8 @@ class ProductHeaderTopPaddingComputation extends ProductHeaderComputation {
     final MediaQueryData mediaQueryData = MediaQuery.of(context);
     final double screenTopPadding = mediaQueryData.viewPadding.top;
 
-    topPadding = screenTopPadding > 0 ? screenTopPadding : MIN_SIZE;
+    topPadding =
+        screenTopPadding > 0 ? screenTopPadding : computeMinSize(context);
     contentOpacity = 0.0;
     statusBarMode = true;
   }
@@ -81,6 +93,7 @@ class ProductHeaderTopPaddingComputation extends ProductHeaderComputation {
 
     final double screenHeight = controller.pixels / controller.size;
     final double startPoint = screenHeight - screenTopPadding;
+    final double minSize = computeMinSize(context);
     final double padding, opacity;
 
     opacity = controller.pixels
@@ -90,12 +103,12 @@ class ProductHeaderTopPaddingComputation extends ProductHeaderComputation {
         .clamp(0.0, 1.0);
 
     if (controller.pixels < startPoint) {
-      padding = MIN_SIZE;
+      padding = minSize;
     } else {
       final double progress =
           controller.pixels.progress(startPoint, controller.sizeToPixels(1.0));
 
-      padding = MIN_SIZE - (MIN_SIZE - screenTopPadding) * progress;
+      padding = minSize - (minSize - screenTopPadding) * progress;
     }
 
     if (topPadding != padding || opacity != contentOpacity) {
@@ -130,5 +143,13 @@ class ProductHeaderTopPaddingComputation extends ProductHeaderComputation {
 
   static ProductHeaderTopPaddingComputation watch(BuildContext context) {
     return context.watch<ProductHeaderTopPaddingComputation>();
+  }
+
+  static double computeMinSize(BuildContext context) {
+    return (context.read<ProductCompatibility?>()?.type ??
+                ProductCompatibilityType.unset) ==
+            ProductCompatibilityType.unset
+        ? MIN_SIZE_UNSET
+        : MIN_SIZE_COMPATIBLE;
   }
 }

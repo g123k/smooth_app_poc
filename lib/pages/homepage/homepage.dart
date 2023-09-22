@@ -7,6 +7,7 @@ import 'package:smoothapp_poc/navigation.dart';
 import 'package:smoothapp_poc/pages/homepage/camera/expandable_view/expandable_camera.dart';
 import 'package:smoothapp_poc/pages/homepage/camera/view/camera_state_manager.dart';
 import 'package:smoothapp_poc/pages/homepage/camera/view/ui/camera_view.dart';
+import 'package:smoothapp_poc/pages/homepage/homepage_products_counter.dart';
 import 'package:smoothapp_poc/pages/homepage/list/guides_list.dart';
 import 'package:smoothapp_poc/pages/homepage/list/news_list.dart';
 import 'package:smoothapp_poc/pages/homepage/list/product_scanned_list.dart';
@@ -49,6 +50,7 @@ class HomePageState extends State<HomePage> {
 
   bool _ignoreAllEvents = false;
   ScrollStartNotification? _scrollStartNotification;
+  ScrollStartNotification? _scrollInitialStartNotification;
   ScrollMetrics? _userInitialScrollMetrics;
   VerticalSnapScrollPhysics? _physics;
   ScrollDirection _direction = ScrollDirection.forward;
@@ -145,6 +147,12 @@ class HomePageState extends State<HomePage> {
                 }
 
                 if (notification is ScrollStartNotification) {
+                  if (notification.dragDetails != null) {
+                    _scrollInitialStartNotification = _scrollStartNotification;
+                  } else {
+                    _scrollInitialStartNotification = null;
+                  }
+
                   _scrollStartNotification = notification;
                 } else if (notification is UserScrollNotification) {
                   _direction = notification.direction;
@@ -157,8 +165,9 @@ class HomePageState extends State<HomePage> {
                   // (drag detail == null)
                   if (notification.metrics.axis != Axis.vertical ||
                       notification.dragDetails == null ||
-                      _scrollStartNotification?.metrics ==
-                          notification.metrics) {
+                      (_scrollInitialStartNotification == null &&
+                          _scrollStartNotification?.metrics ==
+                              notification.metrics)) {
                     return false;
                   }
 
@@ -203,9 +212,12 @@ class HomePageState extends State<HomePage> {
                           duration: const Duration(milliseconds: 1500),
                         );
                       },
+                      footer: HomePageProductCounter(
+                        textScaleFactor: MediaQuery.textScaleFactorOf(context),
+                      ),
                     ),
-                    const MostScannedProducts(),
                     const GuidesList(),
+                    const MostScannedProducts(),
                     const NewsList(),
                     SliverPadding(
                       padding: EdgeInsets.only(
@@ -321,7 +333,8 @@ class HomePageState extends State<HomePage> {
         _userInitialScrollMetrics!.pixels,
       );
 
-      if (fixedPosition != scrollPosition) {
+      if (fixedPosition != scrollPosition &&
+          _scrollInitialStartNotification == null) {
         // If the user scrolls really quickly, he/she can miss a step
         Future.delayed(Duration.zero, () {
           _controller.jumpTo(fixedPosition);
@@ -329,7 +342,8 @@ class HomePageState extends State<HomePage> {
       }
       return;
     } else if (scrollPosition.roundToDouble() >= cameraViewHeight ||
-        _direction == ScrollDirection.idle) {
+        (_direction == ScrollDirection.idle &&
+            _scrollInitialStartNotification == null)) {
       return;
     }
 

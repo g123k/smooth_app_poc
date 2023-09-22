@@ -10,32 +10,50 @@ class SearchSuggestionsStateManager
   }
 
   Future<void> onSearchModified(String? search, {bool force = false}) async {
+    Iterable<SearchSuggestion> suggestions;
     if (search?.isEmpty ?? true) {
       if (fakeSearchHistory.isEmpty) {
-        value = SearchSuggestionsWithResultsState._(
-          search: search,
-          suggestions: fakeSearchSuggestions.map(
-            (e) => SearchSuggestion._(e, SearchSuggestionType.suggestion),
-          ),
+        suggestions = fakeSearchSuggestions.map(
+          (e) => SearchSuggestion._(e, SearchSuggestionType.suggestion),
         );
       } else {
-        value = SearchSuggestionsWithResultsState._(
-          search: search,
-          suggestions: fakeSearchHistory.map(
-            (e) => SearchSuggestion._(e, SearchSuggestionType.history),
-          ),
+        suggestions = fakeSearchHistory.map(
+          (e) => SearchSuggestion._(e, SearchSuggestionType.history),
         );
       }
     } else {
-      value = SearchSuggestionsWithResultsState._(
-        search: search,
-        suggestions: fakeSearchHistory.where((element) {
-          return element.toLowerCase().contains(search!.toLowerCase());
-        }).map(
-          (e) => SearchSuggestion._(e, SearchSuggestionType.history),
-        ),
+      suggestions = fakeSearchHistory.where((element) {
+        return element.toLowerCase().contains(search!.toLowerCase());
+      }).map(
+        (e) => SearchSuggestion._(e, SearchSuggestionType.history),
       );
     }
+
+    // TODO: Improve this
+    if (search?.toLowerCase().startsWith('casso') == true) {
+      suggestions = suggestions.toList()
+        ..insert(
+          0,
+          const SearchSuggestion._(
+            'Cassoulet',
+            SearchSuggestionType.suggestion,
+          ),
+        );
+    } else if (search?.toLowerCase().startsWith('crist') == true) {
+      suggestions = suggestions.toList()
+        ..insert(
+          0,
+          const SearchSuggestion._(
+            'Cristaline',
+            SearchSuggestionType.banner,
+          ),
+        );
+    }
+
+    value = SearchSuggestionsWithResultsState._(
+      search: search,
+      suggestions: suggestions,
+    );
   }
 
   static SearchSuggestionsStateManager of(BuildContext context) {
@@ -65,6 +83,7 @@ class SearchSuggestionsWithResultsState extends SearchSuggestionsState {
 enum SearchSuggestionType {
   history,
   suggestion,
+  banner,
 }
 
 class SearchSuggestion {

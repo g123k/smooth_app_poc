@@ -53,7 +53,7 @@ class SearchBodySuggestions extends StatelessWidget {
         }
 
         return MultiSliver(children: [
-          SliverFixedExtentList(
+          SliverList(
             delegate: SliverChildBuilderDelegate(
               (BuildContext context, int index) {
                 // When search is not null, we have two more items
@@ -92,6 +92,9 @@ class SearchBodySuggestions extends StatelessWidget {
                         SearchStateManager.of(context).search(suggestion.term);
                       },
                     ),
+                  SearchSuggestionType.banner => SearchQueryBanner(
+                      search: suggestion.term,
+                    ),
                   SearchSuggestionType.suggestion =>
                     SearchQueryItem.suggestions(
                       value: suggestion.term,
@@ -103,7 +106,6 @@ class SearchBodySuggestions extends StatelessWidget {
               },
               childCount: count,
             ),
-            itemExtent: 60,
           ),
           SliverFillRemaining(
             hasScrollBody: false,
