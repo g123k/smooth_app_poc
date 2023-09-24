@@ -127,3 +127,96 @@ class _DoubleChevronAnimationState extends State<DoubleChevronAnimation> {
     super.dispose();
   }
 }
+
+class SearchEyeAnimation extends StatelessWidget {
+  const SearchEyeAnimation({
+    this.size,
+    super.key,
+  });
+
+  final double? size;
+
+  @override
+  Widget build(BuildContext context) {
+    final double size = this.size ?? IconTheme.of(context).size ?? 24.0;
+
+    return SizedBox(
+      width: size,
+      height: (80 / 87) * size,
+      child: const RiveAnimation.asset(
+        'assets/animations/off.riv',
+        artboard: 'Search eye',
+        stateMachines: <String>['LoopMachine'],
+      ),
+    );
+  }
+}
+
+class SearchAnimation extends StatefulWidget {
+  const SearchAnimation({
+    super.key,
+    this.type = SearchAnimationType.search,
+    this.size,
+  });
+
+  final double? size;
+  final SearchAnimationType type;
+
+  @override
+  State<SearchAnimation> createState() => _SearchAnimationState();
+}
+
+class _SearchAnimationState extends State<SearchAnimation> {
+  StateMachineController? _controller;
+
+  @override
+  void didUpdateWidget(SearchAnimation oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _changeAnimation(widget.type);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final double size = widget.size ?? IconTheme.of(context).size ?? 24.0;
+
+    return SizedBox.square(
+      dimension: size,
+      child: RiveAnimation.asset(
+        'assets/animations/off.riv',
+        artboard: 'Search icon',
+        onInit: (Artboard artboard) {
+          _controller = StateMachineController.fromArtboard(
+            artboard,
+            'StateMachine',
+          );
+
+          artboard.addController(_controller!);
+          if (widget.type != SearchAnimationType.search) {
+            _changeAnimation(widget.type);
+          }
+        },
+      ),
+    );
+  }
+
+  void _changeAnimation(SearchAnimationType type) {
+    SMINumber step = _controller?.findInput<double>('step') as SMINumber;
+    step.change(type.step.toDouble());
+  }
+
+  @override
+  void dispose() {
+    _controller?.dispose();
+    super.dispose();
+  }
+}
+
+enum SearchAnimationType {
+  search(0),
+  cancel(1),
+  edit(2);
+
+  const SearchAnimationType(this.step);
+
+  final int step;
+}

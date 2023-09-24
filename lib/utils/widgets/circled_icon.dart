@@ -66,7 +66,9 @@ class CloseCircledIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CircledIcon(
-      icon: const Close(),
+      icon: const Close(
+        size: 20.0,
+      ),
       onPressed: onPressed ??
           () {
             Navigator.of(context).maybePop();

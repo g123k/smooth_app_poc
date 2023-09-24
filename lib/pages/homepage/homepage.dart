@@ -12,10 +12,11 @@ import 'package:smoothapp_poc/pages/homepage/list/guides_list.dart';
 import 'package:smoothapp_poc/pages/homepage/list/news_list.dart';
 import 'package:smoothapp_poc/pages/homepage/list/product_scanned_list.dart';
 import 'package:smoothapp_poc/pages/search_page/search_page.dart';
+import 'package:smoothapp_poc/resources/app_icons.dart' as icons;
 import 'package:smoothapp_poc/utils/physics.dart';
 import 'package:smoothapp_poc/utils/provider_utils.dart';
 import 'package:smoothapp_poc/utils/ui_utils.dart';
-import 'package:smoothapp_poc/utils/widgets/search_bar.dart';
+import 'package:smoothapp_poc/utils/widgets/search_bar/search_bar.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 //ignore_for_file: constant_identifier_names
@@ -207,7 +208,9 @@ class HomePageState extends State<HomePage> {
                           }
                         });
                       },
-                      onCameraTapped: () {
+                      actionIcon: icons.Barcode(),
+                      actionSemantics: 'Afficher le lecteur de code-barres',
+                      onActionButtonClicked: () {
                         HomePage.of(context).expandCamera(
                           duration: const Duration(milliseconds: 1500),
                         );
@@ -288,7 +291,9 @@ class HomePageState extends State<HomePage> {
   void showAppBar({VoidCallback? onAppBarVisible}) {
     const Duration duration = Duration(milliseconds: 200);
     _controller.animateTo(
-      MediaQuery.sizeOf(context).height,
+      MediaQuery.sizeOf(context).height -
+          MediaQuery.viewPaddingOf(context).bottom -
+          kBottomNavigationBarHeight,
       duration: duration,
       curve: Curves.easeOutCubic,
     );

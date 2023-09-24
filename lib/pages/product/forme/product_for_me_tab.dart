@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:smoothapp_poc/data/product_compatibility.dart';
 import 'package:smoothapp_poc/pages/food_preferences/food_preferences.dart';
 import 'package:smoothapp_poc/pages/product/header/product_header_body.dart';
 import 'package:smoothapp_poc/pages/product/product_page.dart';
 import 'package:smoothapp_poc/pages/product/product_page_fab.dart';
-import 'package:smoothapp_poc/resources/app_colors.dart';
 import 'package:smoothapp_poc/resources/app_icons.dart' as icons;
 
 class ProductForMeTab extends StatefulWidget {
@@ -32,6 +33,9 @@ class _ProductForMeTabState extends State<ProductForMeTab> {
 
   @override
   Widget build(BuildContext context) {
+    // Force the tab the reload
+    context.watch<ProductCompatibility>();
+
     return LayoutBuilder(builder: (context, constraints) {
       return GestureDetector(
         onTapDown: (TapDownDetails details) async {

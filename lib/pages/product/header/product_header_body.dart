@@ -176,18 +176,10 @@ class _ProductHeaderInfo extends StatelessWidget {
               aspectRatio: 1.0,
               child: SizedBox(
                 height: double.infinity,
-                child: Material(
-                  type: MaterialType.transparency,
-                  child: InkWell(
-                    onTap: onPictureClicked,
-                    child: Material(
-                      type: MaterialType.transparency,
-                      child: NetworkAppImage(
-                        url: product.imageFrontUrl ?? '',
-                        backgroundColor: Colors.transparent,
-                      ),
-                    ),
-                  ),
+                child: NetworkAppImage(
+                  onTap: onPictureClicked,
+                  url: product.imageFrontUrl ?? '',
+                  backgroundColor: Colors.transparent,
                 ),
               ),
             ),

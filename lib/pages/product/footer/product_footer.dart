@@ -1,6 +1,7 @@
 import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:smoothapp_poc/data/product_compatibility.dart';
 import 'package:smoothapp_poc/navigation.dart';
 import 'package:smoothapp_poc/resources/app_colors.dart';
 import 'package:smoothapp_poc/resources/app_icons.dart' as icons;
@@ -10,6 +11,8 @@ class ProductFooter extends StatefulWidget {
 
   @override
   State<ProductFooter> createState() => _ProductFooterState();
+
+  static const double HEIGHT = 46.0;
 }
 
 class _ProductFooterState extends State<ProductFooter>
@@ -67,7 +70,7 @@ class _ProductFooterState extends State<ProductFooter>
     return Transform.translate(
       offset: Offset(
         0.0,
-        _animation.value * (16.0 + 46.0 + bottomPadding),
+        _animation.value * (16.0 + ProductFooter.HEIGHT + bottomPadding),
       ),
       child: DecoratedBox(
         decoration: BoxDecoration(
@@ -104,7 +107,7 @@ class _ProductFooterButtonsBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 46.0,
+      height: ProductFooter.HEIGHT,
       child: OutlinedButtonTheme(
         data: OutlinedButtonThemeData(
           style: OutlinedButton.styleFrom(
@@ -169,7 +172,8 @@ class _ProductFooterFilledButton extends StatelessWidget {
       onPressed: onTap,
       style: OutlinedButton.styleFrom(
         foregroundColor: AppColors.white,
-        backgroundColor: AppColors.primary,
+        backgroundColor: context.watch<ProductCompatibility>().colorWithValue ??
+            AppColors.primary,
         side: BorderSide.none,
       ),
       child: Row(

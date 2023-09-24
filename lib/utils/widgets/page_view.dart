@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
+import 'package:smoothapp_poc/pages/product/footer/product_footer.dart';
 import 'package:smoothapp_poc/pages/product/product_page.dart';
 import 'package:smoothapp_poc/utils/num_utils.dart';
 import 'package:smoothapp_poc/utils/ui_utils.dart';
@@ -58,9 +59,10 @@ class _PageViewSizeAwareState extends State<PageViewSizeAware> {
       onNotification: onScrollEvent,
       child: SizedBox(
         height: math.max(
-          widget.minHeight,
-          _currentPageHeight,
-        ),
+              widget.minHeight,
+              _currentPageHeight,
+            ) +
+            ProductFooter.HEIGHT,
         child: Transform.translate(
           offset: Offset(0.0, _horizontalTranslation),
           child: PageView.builder(

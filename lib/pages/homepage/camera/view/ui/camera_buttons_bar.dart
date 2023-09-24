@@ -10,7 +10,7 @@ import 'package:smoothapp_poc/resources/app_icons.dart' as icons;
 import 'package:smoothapp_poc/utils/num_utils.dart';
 import 'package:smoothapp_poc/utils/widgets/circled_icon.dart';
 import 'package:smoothapp_poc/utils/widgets/modal_sheet.dart';
-import 'package:smoothapp_poc/utils/widgets/search_bar.dart';
+import 'package:smoothapp_poc/utils/widgets/search_bar/search_bar.dart';
 import 'package:smoothapp_poc/utils/widgets/useful_widgets.dart';
 
 class CameraButtonBars extends StatefulWidget {

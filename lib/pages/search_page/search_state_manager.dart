@@ -53,6 +53,8 @@ class SearchStateManager extends ValueNotifier<SearchState> {
 
   bool get hasASearch => value is! SearchInitialState;
 
+  bool get isLoading => value is SearchLoadingSearchState;
+
   bool get hasResults => value is SearchResultsState;
 
   void cancelSearch() {
@@ -80,6 +82,10 @@ class SearchStateManager extends ValueNotifier<SearchState> {
 
   static SearchStateManager of(BuildContext context) {
     return context.read<SearchStateManager>();
+  }
+
+  static SearchStateManager watch(BuildContext context) {
+    return context.watch<SearchStateManager>();
   }
 }
 

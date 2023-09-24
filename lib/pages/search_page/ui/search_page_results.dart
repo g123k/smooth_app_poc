@@ -3,14 +3,16 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
 import 'package:provider/provider.dart';
 import 'package:smoothapp_poc/data/product_compatibility.dart';
+import 'package:smoothapp_poc/pages/food_preferences/food_preferences.dart';
 import 'package:smoothapp_poc/pages/product/product_page.dart';
 import 'package:smoothapp_poc/pages/search_page/search_state_manager.dart';
+import 'package:smoothapp_poc/pages/search_page/ui/search_page_loading.dart';
 import 'package:smoothapp_poc/resources/app_colors.dart';
 import 'package:smoothapp_poc/resources/app_icons.dart' as icons;
 import 'package:smoothapp_poc/utils/num_utils.dart';
 import 'package:smoothapp_poc/utils/widgets/list.dart';
 import 'package:smoothapp_poc/utils/widgets/network_image.dart';
-import 'package:smoothapp_poc/utils/widgets/search_bar.dart';
+import 'package:smoothapp_poc/utils/widgets/search_bar/search_bar.dart';
 import 'package:smoothapp_poc/utils/widgets/useful_widgets.dart';
 
 class SearchBodyResults extends StatefulWidget {
@@ -35,11 +37,11 @@ class _SearchBodyResultsState extends State<SearchBodyResults>
         return switch (state.value) {
           SearchInitialState() ||
           SearchLoadingSearchState() =>
-            _SearchBodyLoadingResults(
-              search: state.value.search,
+            SearchPageLoading(
+              search: state.value.search!,
             ),
-          SearchErrorState() => _SearchBodyLoadingResults(
-              search: state.value.search,
+          SearchErrorState() => SearchPageLoading(
+              search: state.value.search!,
             ),
           SearchResultsState(products: final List<Product> products) =>
             _SearchBodyWithResults(
@@ -155,6 +157,8 @@ class _SearchBodyWithResultsState extends State<_SearchBodyWithResults> {
                                 alignment: AlignmentDirectional.centerStart,
                                 child: Text(
                                   product.productName ?? '',
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 3,
                                   style: const TextStyle(
                                     fontSize: 18.0,
                                     fontWeight: FontWeight.bold,
@@ -164,7 +168,9 @@ class _SearchBodyWithResultsState extends State<_SearchBodyWithResults> {
                             ),
                             const SizedBox(height: 6.0),
                             Text(
-                              product.brands ?? '',
+                              product.brands?.isNotEmpty == true
+                                  ? product.brands!
+                                  : 'Marque non spécifiée',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
@@ -242,56 +248,11 @@ class CompatibilityScore extends StatelessWidget {
       ),
       padding: const EdgeInsets.all(8.0),
       child: Text(
-        '${level.level?.toInt() ?? '-'} %',
+        foodPreferencesDefined ? '${level.level?.toInt() ?? '-'} %' : '-',
         textAlign: TextAlign.center,
         style: const TextStyle(
           color: AppColors.white,
           fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-  }
-}
-
-class _SearchBodyLoadingResults extends StatelessWidget {
-  const _SearchBodyLoadingResults({required this.search});
-
-  final String? search;
-
-  @override
-  Widget build(BuildContext context) {
-    return SliverFillRemaining(
-      hasScrollBody: false,
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SvgPicture.asset(
-              'assets/images/eye.svg',
-              width: 87.0,
-            ),
-            if (search != null) ...[
-              const SizedBox(height: 60.0),
-              RichText(
-                text: TextSpan(
-                  children: <TextSpan>[
-                    const TextSpan(text: 'Votre recherche de "'),
-                    TextSpan(
-                        text: search!,
-                        style: const TextStyle(fontWeight: FontWeight.bold)),
-                    const TextSpan(
-                      text:
-                          '"est en cours.\nMerci de patienter quelques instants…',
-                    ),
-                  ],
-                  style: DefaultTextStyle.of(context).style.copyWith(
-                        height: 1.6,
-                      ),
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ],
         ),
       ),
     );

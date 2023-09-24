@@ -612,7 +612,7 @@ class _DraggableScrollableSheetLockAtTopScrollController
   _DraggableScrollableSheetScrollAtTopPosition get position =>
       super.position as _DraggableScrollableSheetScrollAtTopPosition;
 
-  void reset() {
+  Future<void> reset() async {
     extent._cancelActivity?.call();
     extent.hasDragged = false;
     extent.hasChanged = false;
@@ -620,14 +620,16 @@ class _DraggableScrollableSheetLockAtTopScrollController
     // Just animate really fast.
     // Avoid doing it at all if the offset is already 0.0.
     if (offset != 0.0) {
-      animateTo(
+      await animateTo(
         0.0,
         duration: const Duration(milliseconds: 1),
         curve: Curves.linear,
       );
     }
     extent.updateSize(
-        extent.initialSize, position.context.notificationContext!);
+      extent.initialSize,
+      position.context.notificationContext!,
+    );
   }
 
   @override
@@ -1138,9 +1140,9 @@ class DraggableScrollableLockAtTopController extends ChangeNotifier {
   }
 
   /// Reset the attached sheet to its initial size (see: [DraggableScrollableSheet.initialChildSize]).
-  void reset() {
+  Future<void> reset() async {
     _assertAttached();
-    _attachedController!.reset();
+    await _attachedController!.reset();
   }
 
   void _assertAttached() {

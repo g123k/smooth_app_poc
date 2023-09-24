@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:smoothapp_poc/pages/search_page/search_state_manager.dart';
 import 'package:smoothapp_poc/pages/search_page/search_suggestions_state_manager.dart';
 import 'package:smoothapp_poc/utils/provider_utils.dart';
-import 'package:smoothapp_poc/utils/widgets/search_bar.dart';
+import 'package:smoothapp_poc/utils/widgets/search_bar/search_bar.dart';
 
 class SearchUIManager extends DistinctValueNotifier<SearchUIType> {
   SearchUIManager(BuildContext context)

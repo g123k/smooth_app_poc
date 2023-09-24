@@ -33,7 +33,6 @@ class MyApp extends StatelessWidget {
           titleLarge: TextStyle(
             fontSize: 17.0,
             fontWeight: FontWeight.bold,
-            decoration: TextDecoration.underline,
           ),
         ),
       ),

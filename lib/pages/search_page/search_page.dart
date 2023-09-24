@@ -11,9 +11,9 @@ import 'package:smoothapp_poc/pages/search_page/search_suggestions_state_manager
 import 'package:smoothapp_poc/pages/search_page/search_ui_manager.dart';
 import 'package:smoothapp_poc/pages/search_page/ui/search_page_empty.dart';
 import 'package:smoothapp_poc/pages/search_page/ui/search_page_results.dart';
+import 'package:smoothapp_poc/resources/app_icons.dart' as icons;
 import 'package:smoothapp_poc/utils/provider_utils.dart';
-import 'package:smoothapp_poc/utils/widgets/circled_icon.dart';
-import 'package:smoothapp_poc/utils/widgets/search_bar.dart';
+import 'package:smoothapp_poc/utils/widgets/search_bar/search_bar.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({
@@ -115,42 +115,103 @@ class _SearchAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Selector3<SearchUIManager, SearchStateManager, TextEditingController,
-        SearchBarFooterWidget?>(
+        (SearchBarFooterWidget?, SearchBarType?)>(
       selector: (
         _,
         SearchUIManager searchUIManager,
         SearchStateManager searchStateManager,
         TextEditingController controller,
       ) {
+        final SearchBarFooterWidget? footer;
+
         if (searchUIManager.isShowingResults &&
             searchStateManager.hasResults &&
             controller.text ==
                 (searchStateManager.value as SearchResultsState).search) {
-          return const SearchFooterResults();
+          footer = const SearchFooterResults();
         } else {
-          return null;
+          footer = null;
         }
+        return (
+          footer,
+          _getSearchBarType(searchUIManager, searchStateManager,
+              SearchSuggestionsStateManager.of(context))
+        );
       },
-      builder: (BuildContext context, SearchBarFooterWidget? footer, _) {
+      builder: (
+        BuildContext context,
+        (SearchBarFooterWidget?, SearchBarType?) data,
+        _,
+      ) {
+        final SearchStateManager searchManager = SearchStateManager.of(context);
+
         return FixedSearchAppBar(
-          onCameraTapped: () {
-            Navigator.of(context).pop(SearchPageResult.openCamera);
-          },
-          actionWidget: const CloseCircledIcon(),
-          onSearchChanged: (String query) {
-            SearchStateManager.of(context).cancelSearch();
-            SearchSuggestionsStateManager.of(context).onSearchModified(query);
-          },
-          onSearchEntered: (String query) {
-            SearchStateManager.of(context).search(query);
-            SearchBarController.of(context).hideKeyboard();
-          },
+          backButton: true,
+          onSearchChanged: searchManager.isLoading
+              ? null
+              : (String query) {
+                  SearchStateManager.of(context).cancelSearch();
+                  SearchSuggestionsStateManager.of(context)
+                      .onSearchModified(query);
+                },
+          onSearchEntered: searchManager.isLoading
+              ? null
+              : (String query) {
+                  final SearchUIManager uiManager =
+                      SearchUIManager.read(context);
+                  final SearchBarController searchBarController =
+                      SearchBarController.of(context);
+                  if (uiManager.isShowingSuggestions) {
+                    final SearchStateManager searchManager =
+                        SearchStateManager.of(context);
+                    if (searchManager.value.search ==
+                        SearchSuggestionsStateManager.of(context)
+                            .currentSearch) {
+                      uiManager.showSearchResults();
+                    } else {
+                      searchManager.search(query);
+                    }
+
+                    searchBarController.hideKeyboard();
+                  } else {
+                    uiManager.showSuggestions();
+                    searchBarController.showKeyboard();
+                  }
+                },
           onFocusGained: () {},
           onFocusLost: () {},
-          footer: footer,
+          footer: data.$1,
+          searchBarType: data.$2,
+          actionIcon:
+              data.$1 != null ? const icons.ThreeDots.horizontal() : null,
+          actionSemantics: data.$1 != null
+              ? MaterialLocalizations.of(context).moreButtonTooltip
+              : null,
         );
       },
     );
+  }
+
+  SearchBarType? _getSearchBarType(
+    SearchUIManager searchUIManager,
+    SearchStateManager searchStateManager,
+    SearchSuggestionsStateManager suggestionsManager,
+  ) {
+    if (searchStateManager.isLoading) {
+      return SearchBarType.loading;
+    } else if (!searchStateManager.hasResults) {
+      return SearchBarType.search;
+    } else if (searchUIManager.isShowingSuggestions) {
+      if (suggestionsManager.currentSearch != searchStateManager.value.search) {
+        return SearchBarType.search;
+      } else {
+        return SearchBarType.loading;
+      }
+    } else if (searchUIManager.isShowingResults) {
+      return SearchBarType.edit;
+    }
+
+    return null;
   }
 }
 

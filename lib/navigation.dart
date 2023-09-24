@@ -14,6 +14,10 @@ class NavApp extends StatefulWidget {
   static NavAppState of(BuildContext context) {
     return context.read<NavAppState>();
   }
+
+  static NavAppState? maybeOf(BuildContext context) {
+    return context.read<NavAppState?>();
+  }
 }
 
 class NavAppState extends State<NavApp> with TickerProviderStateMixin {
@@ -182,12 +186,13 @@ class NavAppState extends State<NavApp> with TickerProviderStateMixin {
 
   Future<void> hideSheet() async {
     if ((_sheet?.controller?.size ?? 0.0) >= 0.99) {
-      _sheet!.controller!.reset();
-    } else {
-      _sheet?.controller?.removeListener(_onSheetScrolled);
-      _sheetVisibility.value = _SheetVisibility.gone;
-      return _bottomSheetAnimationController.reverse();
+      await _sheet!.controller!.reset();
     }
+
+    _sheet?.controller?.removeListener(_onSheetScrolled);
+    _sheet?.controller?.dispose();
+    _sheetVisibility.value = _SheetVisibility.gone;
+    await _bottomSheetAnimationController.reverse();
   }
 
   bool get hasSheet => _sheet != null;
@@ -218,7 +223,6 @@ class NavAppState extends State<NavApp> with TickerProviderStateMixin {
   }
 
   void _animateBottomBar(double end) {
-    print('Animate to $end');
     _bottomSheetAndNavBarController.stop();
 
     _bottomSheetAndNavBarAnimation =

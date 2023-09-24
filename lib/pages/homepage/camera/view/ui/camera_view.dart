@@ -193,6 +193,7 @@ class _CameraViewState extends State<CameraView> {
 
         NavApp.of(topContext).showSheet(
           DraggableScrollableLockAtTopSheet(
+            key: Key('product_${DateTime.now().millisecondsSinceEpoch}'),
             initialChildSize: fraction,
             minChildSize: fraction,
             expand: true,
@@ -203,8 +204,9 @@ class _CameraViewState extends State<CameraView> {
               BuildContext context,
               ScrollController scrollController,
             ) {
-              return ListenableProvider<DraggableScrollableLockAtTopController>(
-                create: (_) => draggableScrollableController,
+              return ListenableProvider<
+                  DraggableScrollableLockAtTopController>.value(
+                value: draggableScrollableController,
                 child: ChangeListener<DraggableScrollableLockAtTopController>(
                   onValueChanged: () {
                     if (draggableScrollableController.size < 0.01) {

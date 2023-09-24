@@ -114,10 +114,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_custom_tabs
-      sha256: f74d1eba7f28a4d87bc8e9e123a398ca196af080428fd951268dbbf7a9ec4ae2
+      sha256: e90e5b7cad5648aeb0e1ed04aa3c0cada62d86f3b5d4aaef488ab7de61ec2a9f
       url: "https://pub.dev"
     source: hosted
-    version: "1.2.0"
+    version: "1.2.1"
   flutter_custom_tabs_platform_interface:
     dependency: transitive
     description:
@@ -356,10 +356,10 @@ packages:
     dependency: "direct main"
     description:
       name: rive
-      sha256: "5fbb92f9f880cddbb9181342dc24099eee323ca43339e2c8e1ae6fad85df915e"
+      sha256: f2117a96a189758bc79bf7933865625c7a44a420ae537d2a8f6c492900136a71
       url: "https://pub.dev"
     source: hosted
-    version: "0.11.16"
+    version: "0.11.17"
   rive_common:
     dependency: transitive
     description:

@@ -33,6 +33,13 @@ class ProductCompatibility {
         ProductCompatibilityType.unset => AppColors.compatibilityUnknown,
         ProductCompatibilityType.unknown => AppColors.compatibilityUnknown,
       };
+
+  Color? get colorWithValue => switch (type) {
+        ProductCompatibilityType.high => AppColors.compatibilityHigh,
+        ProductCompatibilityType.medium => AppColors.compatibilityMedium,
+        ProductCompatibilityType.low => AppColors.compatibilityLow,
+        _ => null,
+      };
 }
 
 enum ProductCompatibilityType {

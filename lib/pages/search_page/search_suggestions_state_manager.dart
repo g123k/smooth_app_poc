@@ -56,6 +56,8 @@ class SearchSuggestionsStateManager
     );
   }
 
+  String? get currentSearch => value.search;
+
   static SearchSuggestionsStateManager of(BuildContext context) {
     return context.read<SearchSuggestionsStateManager>();
   }

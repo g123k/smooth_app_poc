@@ -505,7 +505,26 @@ class ThreeDots extends AppIcon {
     super.size,
     super.shadow,
     super.key,
-  }) : super._(_IconsFont.dots_vertical);
+  })  : turns = 0,
+        super._(_IconsFont.dots_vertical);
+
+  const ThreeDots.horizontal({
+    super.color,
+    super.size,
+    super.shadow,
+    super.key,
+  })  : turns = 1,
+        super._(_IconsFont.dots_vertical);
+
+  final int turns;
+
+  @override
+  Widget build(BuildContext context) {
+    return RotatedBox(
+      quarterTurns: turns,
+      child: super.build(context),
+    );
+  }
 }
 
 class ToggleCamera extends AppIcon {

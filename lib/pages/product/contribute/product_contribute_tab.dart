@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class ProductContributeTab extends StatelessWidget {
   const ProductContributeTab({super.key});
@@ -10,8 +9,8 @@ class ProductContributeTab extends StatelessWidget {
       return SizedBox(
         width: constraints.maxWidth,
         height: (constraints.maxWidth / 428) * 808,
-        child: SvgPicture.asset(
-          'assets/images/product_contribute.svg',
+        child: Image.asset(
+          'assets/images/product_contribute.webp',
           // 428 x 808
           width: constraints.maxWidth,
           height: (constraints.maxWidth / 428) * 808,

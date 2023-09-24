@@ -1,19 +1,20 @@
 import 'dart:async';
-import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:smoothapp_poc/pages/homepage/homepage.dart';
+import 'package:smoothapp_poc/resources/app_animations.dart';
 import 'package:smoothapp_poc/resources/app_colors.dart';
 import 'package:smoothapp_poc/resources/app_icons.dart' as icons;
 import 'package:smoothapp_poc/utils/num_utils.dart';
-import 'package:smoothapp_poc/utils/ui_utils.dart';
+import 'package:smoothapp_poc/utils/widgets/search_bar/search_bar_top.dart';
+import 'package:smoothapp_poc/utils/widgets/useful_widgets.dart';
 
 //ignore_for_file: constant_identifier_names
 class ExpandableSearchAppBar extends StatelessWidget {
-  static const double HEIGHT = _Logo.MAX_HEIGHT + _SearchBar.SEARCH_BAR_HEIGHT;
+  static const double HEIGHT =
+      AppBarLogo.MAX_HEIGHT + _SearchBar.SEARCH_BAR_HEIGHT;
   static const EdgeInsetsDirectional CONTENT_PADDING =
       EdgeInsetsDirectional.symmetric(
     horizontal: HomePage.HORIZONTAL_PADDING - 4.0,
@@ -24,78 +25,146 @@ class ExpandableSearchAppBar extends StatelessWidget {
   );
   static const EdgeInsetsDirectional LOGO_CONTENT_PADDING =
       EdgeInsetsDirectional.only(
-    start: HomePage.HORIZONTAL_PADDING - 4.0,
+    start: 4.0,
     end: 10.0,
   );
 
   const ExpandableSearchAppBar({
     Key? key,
     required this.onFieldTapped,
-    required this.onCameraTapped,
     this.footer,
+    this.actionIcon,
+    this.actionSemantics,
+    this.onActionButtonClicked,
   }) : super(key: key);
 
   final VoidCallback onFieldTapped;
-  final VoidCallback onCameraTapped;
   final SearchBarFooterWidget? footer;
+  final icons.AppIcon? actionIcon;
+  final String? actionSemantics;
+  final VoidCallback? onActionButtonClicked;
 
   @override
   Widget build(BuildContext context) {
-    return SliverPersistentHeader(
-      delegate: _SliverSearchAppBar(
-        topPadding: MediaQuery.paddingOf(context).top,
-        fixed: false,
-        onFieldTapped: onFieldTapped,
-        onCameraTapped: onCameraTapped,
-        footer: footer,
+    return SearchAppBarData(
+      onFieldTapped: onFieldTapped,
+      actionIcon: actionIcon,
+      actionSemantics: actionSemantics,
+      onActionButtonClicked: onActionButtonClicked,
+      fixed: false,
+      child: SliverPersistentHeader(
+        delegate: _SliverSearchAppBar(
+          topPadding: MediaQuery.paddingOf(context).top,
+          fixed: false,
+          footer: footer,
+        ),
+        pinned: true,
       ),
-      pinned: true,
     );
   }
 }
 
 class FixedSearchAppBar extends StatelessWidget {
-  static const double HEIGHT = _Logo.MAX_HEIGHT + _SearchBar.SEARCH_BAR_HEIGHT;
+  static const double HEIGHT =
+      AppBarLogo.MAX_HEIGHT + _SearchBar.SEARCH_BAR_HEIGHT;
   static const EdgeInsetsDirectional CONTENT_PADDING =
       EdgeInsetsDirectional.symmetric(
     horizontal: HomePage.HORIZONTAL_PADDING - 4.0,
   );
 
   const FixedSearchAppBar({
-    required this.onCameraTapped,
     required this.onSearchEntered,
     required this.onSearchChanged,
     required this.onFocusGained,
     required this.onFocusLost,
-    this.actionWidget,
+    this.backButton,
+    this.actionIcon,
+    this.actionSemantics,
+    this.onActionButtonClicked,
     this.footer,
+    this.searchBarType,
     Key? key,
   }) : super(key: key);
 
-  final VoidCallback onCameraTapped;
   final Function(String)? onSearchEntered;
   final Function(String)? onSearchChanged;
   final VoidCallback onFocusGained;
   final VoidCallback onFocusLost;
-  final Widget? actionWidget;
+  final bool? backButton;
+  final icons.AppIcon? actionIcon;
+  final String? actionSemantics;
+  final VoidCallback? onActionButtonClicked;
   final SearchBarFooterWidget? footer;
+  final SearchBarType? searchBarType;
 
   @override
   Widget build(BuildContext context) {
-    return SliverPersistentHeader(
-      delegate: _SliverSearchAppBar(
-        topPadding: MediaQuery.paddingOf(context).top,
-        fixed: true,
-        onCameraTapped: onCameraTapped,
-        onSearchEntered: onSearchEntered,
-        onSearchChanged: onSearchChanged,
-        onFocusGained: onFocusGained,
-        onFocusLost: onFocusLost,
-        actionWidget: actionWidget,
-        footer: footer,
+    return SearchAppBarData(
+      onSearchEntered: onSearchEntered,
+      onSearchChanged: onSearchChanged,
+      onFocusGained: onFocusGained,
+      onFocusLost: onFocusLost,
+      actionIcon: actionIcon,
+      actionSemantics: actionSemantics,
+      onActionButtonClicked: onActionButtonClicked,
+      searchBarType: searchBarType,
+      backButton: backButton ?? false,
+      fixed: true,
+      child: SliverPersistentHeader(
+        delegate: _SliverSearchAppBar(
+          topPadding: MediaQuery.paddingOf(context).top,
+          fixed: true,
+          footer: footer,
+        ),
+        pinned: true,
       ),
-      pinned: true,
     );
+  }
+}
+
+class SearchAppBarData extends InheritedWidget {
+  const SearchAppBarData({
+    super.key,
+    required this.fixed,
+    this.onFieldTapped,
+    this.onSearchEntered,
+    this.onSearchChanged,
+    this.onFocusGained,
+    this.onFocusLost,
+    this.backButton = false,
+    this.actionIcon,
+    this.actionSemantics,
+    this.onActionButtonClicked,
+    this.searchBarType,
+    required Widget child,
+  }) : super(child: child);
+
+  final VoidCallback? onFieldTapped;
+  final Function(String)? onSearchEntered;
+  final Function(String)? onSearchChanged;
+  final VoidCallback? onFocusGained;
+  final VoidCallback? onFocusLost;
+  final bool backButton;
+
+  final VoidCallback? onActionButtonClicked;
+  final icons.AppIcon? actionIcon;
+  final String? actionSemantics;
+
+  final SearchBarType? searchBarType;
+  final bool fixed;
+
+  static SearchAppBarData of(BuildContext context) {
+    final SearchAppBarData? result =
+        context.dependOnInheritedWidgetOfExactType<SearchAppBarData>();
+    assert(result != null, 'No _SearchAppBarData found in context');
+    return result!;
+  }
+
+  @override
+  bool updateShouldNotify(SearchAppBarData old) {
+    return old.searchBarType != searchBarType ||
+        old.actionIcon != actionIcon ||
+        old.backButton != backButton;
   }
 }
 
@@ -103,26 +172,11 @@ class _SliverSearchAppBar extends SliverPersistentHeaderDelegate {
   const _SliverSearchAppBar({
     required this.topPadding,
     required this.fixed,
-    required this.onCameraTapped,
-    this.onSearchEntered,
-    this.onSearchChanged,
-    this.onFieldTapped,
-    this.onFocusGained,
-    this.onFocusLost,
-    this.actionWidget,
     this.footer,
   });
 
   final double topPadding;
   final bool fixed;
-
-  final VoidCallback onCameraTapped;
-  final Function(String)? onSearchEntered;
-  final Function(String)? onSearchChanged;
-  final VoidCallback? onFieldTapped;
-  final VoidCallback? onFocusGained;
-  final VoidCallback? onFocusLost;
-  final Widget? actionWidget;
   final SearchBarFooterWidget? footer;
 
   @override
@@ -160,7 +214,7 @@ class _SliverSearchAppBar extends SliverPersistentHeaderDelegate {
       },
       shouldRebuild: ((double, double) previous, (double, double) next) {
         return previous.$1 != next.$1 ||
-            (footer != null && previous.$2 != next.$2);
+            footer != null && previous.$2 != next.$2;
       },
       builder: (BuildContext context, (double, double) progress, _) {
         return _build(
@@ -186,13 +240,6 @@ class _SliverSearchAppBar extends SliverPersistentHeaderDelegate {
       topPadding: topPadding,
       minExtent: minExtent,
       autofocus: autofocus,
-      onFieldTapped: onFieldTapped,
-      onCameraTapped: onCameraTapped,
-      onFocusGained: onFocusGained,
-      onFocusLost: onFocusLost,
-      actionWidget: actionWidget,
-      onSearchChanged: onSearchChanged,
-      onSearchEntered: onSearchEntered,
       footer: shrinkOffset < max ? footer : null,
       footerOffset: footer == null || shrinkOffset >= max
           ? null
@@ -220,25 +267,11 @@ class _SearchAppBar extends StatelessWidget {
     required this.autofocus,
     required this.minExtent,
     required this.topPadding,
-    required this.onCameraTapped,
-    required this.onFieldTapped,
-    required this.onFocusGained,
-    required this.onFocusLost,
-    this.actionWidget,
     this.footer,
     this.footerOffset,
     this.footerMaxOffset,
-    this.onSearchChanged,
-    this.onSearchEntered,
   });
 
-  final VoidCallback onCameraTapped;
-  final Function(String)? onSearchEntered;
-  final Function(String)? onSearchChanged;
-  final VoidCallback? onFieldTapped;
-  final VoidCallback? onFocusGained;
-  final VoidCallback? onFocusLost;
-  final Widget? actionWidget;
   final SearchBarFooterWidget? footer;
   final double topPadding;
   final double? footerOffset;
@@ -255,24 +288,22 @@ class _SearchAppBar extends StatelessWidget {
 
     return Stack(
       children: [
-        if (footer != null)
-          Positioned.fill(
-            top: minExtent -
-                topPadding -
-                (HomePage.BORDER_RADIUS / 2) -
-                footerOffset!,
-            bottom: 0.0,
-            child: Offstage(
-              offstage: footerInvisible,
-              child: SafeArea(
-                bottom: false,
-                child: _SearchBarFooterWidgetWrapper(
-                  child: footer!,
-                  progress: footerOffset!,
-                ),
+        Positioned.fill(
+          top: minExtent -
+              topPadding -
+              (HomePage.BORDER_RADIUS / 2) -
+              (footerOffset ?? 0.0),
+          bottom: 0.0,
+          child: Offstage(
+            offstage: footerInvisible,
+            child: SafeArea(
+              bottom: false,
+              child: _SearchBarFooterWidgetWrapper(
+                child: footer,
               ),
             ),
           ),
+        ),
         Positioned.fill(
           top: 0.0,
           bottom: footer != null && footerOffset! < footerMaxOffset!
@@ -301,51 +332,7 @@ class _SearchAppBar extends StatelessWidget {
                   height: MediaQuery.viewPaddingOf(context).top /
                       progress.progress2(2, 1),
                 ),
-                Stack(
-                  children: [
-                    _Logo(
-                      progress: progress,
-                      actionWidget: actionWidget,
-                    ),
-                    Positioned.directional(
-                      top: 0.0,
-                      bottom: 0.0,
-                      end: ExpandableSearchAppBar.CONTENT_PADDING.end + 2.0,
-                      textDirection: Directionality.of(context),
-                      child: SizedBox.square(
-                        dimension: 48.0 *
-                            progress.progressAndClamp(
-                              // Those values are clearly hand-crafted
-                              0.55,
-                              0.90,
-                              1.0,
-                            ),
-                        child: IconButton(
-                          icon: LayoutBuilder(
-                              builder: (context, BoxConstraints constraints) {
-                            return icons.Barcode(
-                              color: AppColors.blackPrimary,
-                              size: math.min(28.0, constraints.minSide),
-                            );
-                          }),
-                          onPressed: onCameraTapped,
-                          style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all(Colors.white),
-                            side: MaterialStateProperty.all(
-                              const BorderSide(color: AppColors.primary),
-                            ),
-                            foregroundColor:
-                                MaterialStateProperty.all(Colors.black),
-                            shape: MaterialStateProperty.all(
-                              const CircleBorder(),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                Expanded(child: SearchBarTop(progress: progress)),
                 SizedBox(
                   height: (1 - progress) *
                       (MediaQuery.viewPaddingOf(context).top / 6),
@@ -353,14 +340,9 @@ class _SearchAppBar extends StatelessWidget {
                 _SearchBar(
                   progress: progress,
                   autofocus: autofocus,
-                  onFieldTapped: onFieldTapped,
-                  onSearchEntered: onSearchEntered,
-                  onSearchChanged: onSearchChanged,
-                  onFocusGained: onFocusGained,
-                  onFocusLost: onFocusLost,
                 ),
                 SizedBox(
-                  height: (1 - progress) *
+                  height: (1 - progress.clamp(0.0, 0.7)) *
                       (MediaQuery.viewPaddingOf(context).top / 2),
                 ),
               ],
@@ -372,78 +354,15 @@ class _SearchAppBar extends StatelessWidget {
   }
 }
 
-class _Logo extends StatelessWidget {
-  const _Logo({
-    required this.progress,
-    this.actionWidget,
-  });
-
-  static const double FULL_WIDTH = 345.0;
-  static const double MIN_HEIGHT = 35.0;
-  static const double MAX_HEIGHT = 60.0;
-
-  final double progress;
-  final Widget? actionWidget;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: 60.0,
-      padding: ExpandableSearchAppBar.LOGO_CONTENT_PADDING,
-      child: LayoutBuilder(builder: (
-        BuildContext context,
-        BoxConstraints constraints,
-      ) {
-        double width = constraints.maxWidth;
-        double imageWidth = FULL_WIDTH;
-
-        if (imageWidth > width * 0.8) {
-          imageWidth = width * 0.8;
-        }
-
-        return Container(
-          width: imageWidth,
-          height: math.max(MAX_HEIGHT * (1 - progress), MIN_HEIGHT),
-          margin: EdgeInsetsDirectional.only(
-            start: math.max((1 - progress) * ((width - imageWidth) / 2), 10.0),
-            bottom: 5.0,
-          ),
-          alignment: AlignmentDirectional.centerStart,
-          child: SizedBox(
-            width: imageWidth * progress.progress2(1.0, 1.0),
-            child: SvgPicture.asset(
-              'assets/images/logo.svg',
-              width: 346.0,
-              height: 61.0,
-              alignment: AlignmentDirectional.centerStart,
-            ),
-          ),
-        );
-      }),
-    );
-  }
-}
-
 class _SearchBar extends StatefulWidget {
   const _SearchBar({
     required this.progress,
     required this.autofocus,
-    required this.onSearchEntered,
-    required this.onSearchChanged,
-    required this.onFieldTapped,
-    required this.onFocusGained,
-    required this.onFocusLost,
   });
 
   static const SEARCH_BAR_HEIGHT = 55.0;
   final double progress;
   final bool autofocus;
-  final Function(String)? onSearchEntered;
-  final Function(String)? onSearchChanged;
-  final VoidCallback? onFieldTapped;
-  final VoidCallback? onFocusGained;
-  final VoidCallback? onFocusLost;
 
   @override
   State<_SearchBar> createState() => _SearchBarState();
@@ -458,6 +377,7 @@ class _SearchBarState extends State<_SearchBar> {
   @override
   void initState() {
     super.initState();
+
     _searchFocusNode.addListener(() {
       if (!mounted) {
         return;
@@ -468,11 +388,13 @@ class _SearchBarState extends State<_SearchBar> {
       } else {
         SearchBarController.maybeOf(context)?.hideKeyboard();
       }
-      if (widget.onFocusGained != null || widget.onFocusLost != null) {
+
+      final SearchAppBarData appBarData = SearchAppBarData.of(context);
+      if (appBarData.onFocusGained != null || appBarData.onFocusLost != null) {
         if (_searchFocusNode.hasFocus) {
-          widget.onFocusGained?.call();
+          appBarData.onFocusGained?.call();
         } else {
-          widget.onFocusLost?.call();
+          appBarData.onFocusLost?.call();
         }
       }
     });
@@ -504,6 +426,9 @@ class _SearchBarState extends State<_SearchBar> {
 
   @override
   Widget build(BuildContext context) {
+    final SearchAppBarData appBarData = SearchAppBarData.of(context);
+    final bool manageOnTap = appBarData.onFieldTapped != null;
+
     return Padding(
       padding: EdgeInsetsDirectional.symmetric(
         horizontal: ExpandableSearchAppBar.CONTENT_PADDING.start,
@@ -531,18 +456,18 @@ class _SearchBarState extends State<_SearchBar> {
                     autofocus: widget.autofocus
                         ? SearchBarController.of(context).isKeyboardVisible
                         : false,
-                    onTap: _manageOnTap
-                        ? () => widget.onFieldTapped?.call()
+                    onTap: manageOnTap
+                        ? () => appBarData.onFieldTapped?.call()
                         : null,
                     focusNode: _searchFocusNode,
-                    readOnly: _manageOnTap ? true : false,
+                    readOnly: manageOnTap ? true : false,
                     onChanged: (String value) {
-                      widget.onSearchChanged?.call(
+                      appBarData.onSearchChanged?.call(
                         value.trim(),
                       );
                     },
                     onFieldSubmitted: (String value) {
-                      widget.onSearchEntered?.call(
+                      appBarData.onSearchEntered?.call(
                         value.trim(),
                       );
                     },
@@ -564,10 +489,10 @@ class _SearchBarState extends State<_SearchBar> {
                     child: InkWell(
                       customBorder: const CircleBorder(),
                       onTap: () {
-                        if (_manageOnTap) {
-                          widget.onFieldTapped?.call();
+                        if (manageOnTap) {
+                          appBarData.onFieldTapped?.call();
                         } else if (_searchController.text.trim().isNotEmpty) {
-                          widget.onSearchEntered?.call(
+                          appBarData.onSearchEntered?.call(
                             _searchController.text.trim(),
                           );
                         }
@@ -577,8 +502,12 @@ class _SearchBarState extends State<_SearchBar> {
                           color: AppColors.primary,
                           shape: BoxShape.circle,
                         ),
-                        child: const icons.Search(
-                          color: AppColors.white,
+                        child: Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: SearchAnimation(
+                            type: _getSearchAnimation(appBarData.searchBarType),
+                            size: 20.0,
+                          ),
                         ),
                       ),
                     ),
@@ -592,9 +521,14 @@ class _SearchBarState extends State<_SearchBar> {
     );
   }
 
-  bool get _manageOnTap => widget.onFieldTapped != null;
-
-  bool get _hasText => _searchController.text.trim().isNotEmpty;
+  SearchAnimationType _getSearchAnimation(SearchBarType? searchBarType) {
+    return switch (searchBarType) {
+      SearchBarType.edit => SearchAnimationType.edit,
+      SearchBarType.loading => SearchAnimationType.cancel,
+      SearchBarType.search => SearchAnimationType.search,
+      _ => SearchAnimationType.search,
+    };
+  }
 
   @override
   void dispose() {
@@ -632,11 +566,15 @@ class SearchBarController extends InheritedWidget {
   }
 
   void showKeyboard() {
-    _keyboardController.add(true);
+    if (_keyboardController.value == false) {
+      _keyboardController.add(true);
+    }
   }
 
   void hideKeyboard() {
-    _keyboardController.add(false);
+    if (_keyboardController.value == true) {
+      _keyboardController.add(false);
+    }
   }
 
   bool get isKeyboardVisible => _keyboardController.value;
@@ -665,31 +603,39 @@ class SearchBarController extends InheritedWidget {
   }
 }
 
+enum SearchBarType {
+  search,
+  loading,
+  edit,
+}
+
 class _SearchBarFooterWidgetWrapper extends StatelessWidget {
   const _SearchBarFooterWidgetWrapper({
     required this.child,
-    required this.progress,
   });
 
-  final SearchBarFooterWidget child;
-  final double progress;
+  final SearchBarFooterWidget? child;
 
   @override
   Widget build(BuildContext context) {
+    if (child == null) {
+      return EMPTY_WIDGET;
+    }
+
     return ClipRRect(
       borderRadius: const BorderRadius.vertical(
         bottom: Radius.circular(HomePage.BORDER_RADIUS),
       ),
       child: DecoratedBox(
         decoration: BoxDecoration(
-          color: child.color,
+          color: child!.color,
           borderRadius: const BorderRadius.vertical(
             bottom: Radius.circular(HomePage.BORDER_RADIUS),
           ),
         ),
         child: Padding(
           padding: const EdgeInsets.only(top: HomePage.BORDER_RADIUS * 0.5),
-          child: SizedBox.expand(child: child.build(context)),
+          child: SizedBox.expand(child: child!.build(context)),
         ),
       ),
     );

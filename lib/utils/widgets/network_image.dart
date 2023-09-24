@@ -12,6 +12,7 @@ class NetworkAppImage extends StatefulWidget {
     this.topRadius = true,
     this.bottomRadius = true,
     this.backgroundColor,
+    this.onTap,
   });
 
   final String url;
@@ -20,6 +21,7 @@ class NetworkAppImage extends StatefulWidget {
   final bool bottomRadius;
   final bool topRadius;
   final Color? backgroundColor;
+  final VoidCallback? onTap;
 
   @override
   State<NetworkAppImage> createState() => _NetworkAppImageState();
@@ -27,35 +29,43 @@ class NetworkAppImage extends StatefulWidget {
 
 class _NetworkAppImageState extends State<NetworkAppImage> {
   late final ImageProvider _provider;
-  Color? _imageColor;
+  Color? _imageBackgroundColor;
+  Color? _imagePrimaryColor;
 
   @override
   void initState() {
     super.initState();
 
     if (widget.backgroundColor != null) {
-      _imageColor = widget.backgroundColor;
-    } else {
-      _provider = NetworkImage(widget.url);
-      _detectColor();
+      _imageBackgroundColor = widget.backgroundColor;
     }
+
+    _provider = NetworkImage(widget.url);
+    _detectColor();
   }
 
   void _detectColor() async {
-    _imageColor = await ColorScheme.fromImageProvider(provider: _provider)
-        .then((value) => value.primaryContainer);
-    setState(() {});
+    await ColorScheme.fromImageProvider(provider: _provider).then((value) {
+      if (_imageBackgroundColor == null) {
+        _imageBackgroundColor = value.primaryContainer;
+      }
+      _imagePrimaryColor = value.primary;
+    });
+
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
+    final Widget child = ClipRRect(
       borderRadius: BorderRadius.vertical(
         top: widget.topRadius ? const Radius.circular(10.0) : Radius.zero,
         bottom: widget.bottomRadius ? const Radius.circular(10.0) : Radius.zero,
       ),
       child: ColoredBox(
-        color: _imageColor ?? AppColors.greyLight2,
+        color: _imageBackgroundColor ?? AppColors.greyLight2,
         child: Image.network(
           widget.url,
           width: widget.width,
@@ -74,5 +84,21 @@ class _NetworkAppImageState extends State<NetworkAppImage> {
         ),
       ),
     );
+
+    if (widget.onTap != null) {
+      return InkWell(
+        onTap: widget.onTap,
+        highlightColor: _imagePrimaryColor?.withOpacity(0.2),
+        borderRadius: const BorderRadius.all(
+          Radius.circular(10.0),
+        ),
+        child: Material(
+          type: MaterialType.transparency,
+          child: child,
+        ),
+      );
+    } else {
+      return child;
+    }
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smoothapp_poc/resources/app_colors.dart';
 import 'package:smoothapp_poc/resources/app_icons.dart' as icons;
-import 'package:smoothapp_poc/utils/widgets/search_bar.dart';
+import 'package:smoothapp_poc/utils/widgets/search_bar/search_bar.dart';
 
 class HomePageProductCounter extends StatelessWidget
     implements SearchBarFooterWidget {

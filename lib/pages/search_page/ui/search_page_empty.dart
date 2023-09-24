@@ -6,7 +6,7 @@ import 'package:smoothapp_poc/pages/search_page/search_page.dart';
 import 'package:smoothapp_poc/pages/search_page/search_state_manager.dart';
 import 'package:smoothapp_poc/pages/search_page/search_suggestions_state_manager.dart';
 import 'package:smoothapp_poc/pages/search_page/ui/search_page_utils.dart';
-import 'package:smoothapp_poc/utils/widgets/search_bar.dart';
+import 'package:smoothapp_poc/utils/widgets/search_bar/search_bar.dart';
 
 class SearchBodySuggestions extends StatelessWidget {
   const SearchBodySuggestions({

@@ -55,10 +55,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
               ),
             );
           } else {
-            setState(() => _currentPage++);
+            setState(
+              () => _currentPage++,
+            );
           }
         },
-        child: child,
+        child: SizedBox.expand(child: child),
       ),
     );
   }
@@ -73,6 +75,7 @@ class _ImageOnboarding extends StatelessWidget {
   Widget build(BuildContext context) {
     return Image.asset(
       'assets/onboarding/$position.PNG',
+      fit: BoxFit.cover,
     );
   }
 }

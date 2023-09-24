@@ -5,6 +5,7 @@ import 'package:openfoodfacts/openfoodfacts.dart';
 import 'package:provider/provider.dart';
 import 'package:smoothapp_poc/data/product_compatibility.dart';
 import 'package:smoothapp_poc/navigation.dart';
+import 'package:smoothapp_poc/pages/food_preferences/food_preferences.dart';
 import 'package:smoothapp_poc/pages/product/contribute/product_contribute_tab.dart';
 import 'package:smoothapp_poc/pages/product/environment/product_environment_tab.dart';
 import 'package:smoothapp_poc/pages/product/footer/product_footer.dart';
@@ -71,7 +72,7 @@ class ProductPageState extends State<ProductPage>
   void initState() {
     super.initState();
     _tabController = TabController(
-      initialIndex: 1,
+      initialIndex: foodPreferencesDefined ? 0 : 1,
       length: ProductHeaderBody.tabs.length,
       vsync: this,
     );
@@ -134,8 +135,9 @@ class ProductPageState extends State<ProductPage>
 
   @override
   Widget build(BuildContext context) {
+    final Widget child;
     if (widget.forModalSheet) {
-      return Stack(
+      child = Stack(
         children: [
           Positioned.fill(child: _buildChild(context)),
           const Positioned.fill(
@@ -145,7 +147,7 @@ class ProductPageState extends State<ProductPage>
         ],
       );
     } else {
-      return Scaffold(
+      child = Scaffold(
         body: AnnotatedRegion<SystemUiOverlayStyle>(
           value: SystemUiOverlayStyle.light,
           child: SafeArea(
@@ -157,6 +159,17 @@ class ProductPageState extends State<ProductPage>
         bottomNavigationBar: const ProductFooter(),
       );
     }
+
+    return MultiProvider(
+      providers: [
+        Provider<ProductPageState>.value(value: this),
+        Provider<Product>.value(value: widget.product),
+        Provider<ProductCompatibility>.value(
+          value: widget.compatibility ?? ProductCompatibility(100),
+        ),
+      ],
+      child: child,
+    );
   }
 
   Widget _buildChild(BuildContext context) {
@@ -166,11 +179,6 @@ class ProductPageState extends State<ProductPage>
 
     return MultiProvider(
       providers: [
-        Provider<ProductPageState>.value(value: this),
-        Provider<Product>.value(value: widget.product),
-        Provider<ProductCompatibility>.value(
-          value: widget.compatibility ?? ProductCompatibility(100),
-        ),
         Provider<ProductHeaderConfiguration>.value(
           value: _productHeaderConfiguration,
         ),
@@ -200,7 +208,7 @@ class ProductPageState extends State<ProductPage>
                   ElementTappedType type,
                   double scrollExpectedPosition,
                 ) async {
-                  if (!NavApp.of(context).isSheetFullyVisible) {
+                  if (NavApp.maybeOf(context)?.isSheetFullyVisible == false) {
                     _openSheet(context);
                   } else {
                     switch (type) {
@@ -230,10 +238,17 @@ class ProductPageState extends State<ProductPage>
               SliverLayoutBuilder(
                 builder: (BuildContext context, SliverConstraints constraints) {
                   final MediaQueryData mediaQuery = MediaQuery.of(context);
-                  final double min = mediaQuery.size.height +
-                      mediaQuery.viewPadding.top -
+
+                  final EdgeInsets screenPadding =
+                      MediaQuery.viewPaddingOf(context);
+                  final double min = mediaQuery.size.height -
                       kToolbarHeight -
-                      48;
+                      ProductHeaderTabBar.TAB_BAR_HEIGHT -
+                      ProductFooter.HEIGHT -
+                      screenPadding.top -
+                      (screenPadding.bottom == 0.0
+                          ? 16.0
+                          : screenPadding.bottom);
 
                   return SliverToBoxAdapter(
                     child: PageViewSizeAware(
