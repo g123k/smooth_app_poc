@@ -9,16 +9,17 @@ import 'package:smoothapp_poc/resources/app_icons.dart' as icons;
 class ProductFooter extends StatefulWidget {
   const ProductFooter({super.key});
 
+  static const double HEIGHT = 46.0;
+
   @override
   State<ProductFooter> createState() => _ProductFooterState();
-
-  static const double HEIGHT = 46.0;
 }
 
 class _ProductFooterState extends State<ProductFooter>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _animation;
+  final ScrollController _scrollController = ScrollController();
   CancelableOperation? _cancelableAnimation;
 
   @override
@@ -44,6 +45,10 @@ class _ProductFooterState extends State<ProductFooter>
     if (sheetController == null) {
       _controller.value = 0.0;
     } else if (sheetController.isFullyVisible && _controller.value > 0.0) {
+      if (_scrollController.offset > 0) {
+        _scrollController.jumpTo(0.0);
+      }
+
       // Slight delay due to the bottom tabs animation
       _cancelableAnimation = CancelableOperation.fromFuture(
         Future.delayed(
@@ -63,6 +68,7 @@ class _ProductFooterState extends State<ProductFooter>
   @override
   Widget build(BuildContext context) {
     double bottomPadding = MediaQuery.viewPaddingOf(context).bottom;
+    // Add an extra padding (for Android)
     if (bottomPadding == 0.0) {
       bottomPadding = 16.0;
     }
@@ -87,7 +93,9 @@ class _ProductFooterState extends State<ProductFooter>
             top: 16.0,
             bottom: bottomPadding,
           ),
-          child: const _ProductFooterButtonsBar(),
+          child: _ProductFooterButtonsBar(
+            controller: _scrollController,
+          ),
         ),
       ),
     );
@@ -96,13 +104,18 @@ class _ProductFooterState extends State<ProductFooter>
   @override
   void dispose() {
     _controller.dispose();
+    _scrollController.dispose();
     _cancelableAnimation?.cancel();
     super.dispose();
   }
 }
 
 class _ProductFooterButtonsBar extends StatelessWidget {
-  const _ProductFooterButtonsBar();
+  const _ProductFooterButtonsBar({
+    required this.controller,
+  });
+
+  final ScrollController controller;
 
   @override
   Widget build(BuildContext context) {
@@ -124,6 +137,7 @@ class _ProductFooterButtonsBar extends StatelessWidget {
         child: ListView(
           padding: const EdgeInsetsDirectional.symmetric(horizontal: 20.0),
           scrollDirection: Axis.horizontal,
+          controller: controller,
           children: [
             _ProductFooterFilledButton(
               label: 'Comparer',

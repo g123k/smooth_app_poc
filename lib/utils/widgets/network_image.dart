@@ -46,9 +46,7 @@ class _NetworkAppImageState extends State<NetworkAppImage> {
 
   void _detectColor() async {
     await ColorScheme.fromImageProvider(provider: _provider).then((value) {
-      if (_imageBackgroundColor == null) {
-        _imageBackgroundColor = value.primaryContainer;
-      }
+      _imageBackgroundColor ??= value.primaryContainer;
       _imagePrimaryColor = value.primary;
     });
 

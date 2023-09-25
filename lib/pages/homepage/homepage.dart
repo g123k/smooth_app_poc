@@ -208,7 +208,7 @@ class HomePageState extends State<HomePage> {
                           }
                         });
                       },
-                      actionIcon: icons.Barcode(),
+                      actionIcon: const icons.Barcode(),
                       actionSemantics: 'Afficher le lecteur de code-barres',
                       onActionButtonClicked: () {
                         HomePage.of(context).expandCamera(

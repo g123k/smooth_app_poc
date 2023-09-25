@@ -198,7 +198,6 @@ class ProductPageState extends State<ProductPage>
             0.0,
             ProductHeaderConfiguration.of(context).minThreshold,
           ],
-          blockBetweenSteps: !widget.forModalSheet,
           child: CustomScrollView(
             controller: _verticalScrollController,
             slivers: [
@@ -245,6 +244,7 @@ class ProductPageState extends State<ProductPage>
                       kToolbarHeight -
                       ProductHeaderTabBar.TAB_BAR_HEIGHT -
                       ProductFooter.HEIGHT -
+                      16.0 -
                       screenPadding.top -
                       (screenPadding.bottom == 0.0
                           ? 16.0

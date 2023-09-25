@@ -8,12 +8,10 @@ class VerticalClampScroll extends StatefulWidget {
   const VerticalClampScroll({
     required this.steps,
     required this.child,
-    required this.blockBetweenSteps,
     super.key,
   }) : assert(steps.length >= 2);
 
   final List<double> steps;
-  final bool blockBetweenSteps;
   final Widget child;
 
   @override
@@ -22,6 +20,7 @@ class VerticalClampScroll extends StatefulWidget {
 
 class _VerticalClampScrollState extends State<VerticalClampScroll> {
   late final Iterable<double> _reversedSteps;
+  final VerticalClampScrollLimiter _limiter = VerticalClampScrollLimiter();
   ScrollDirection? _direction;
   ScrollMetrics? _startMetrics;
 
@@ -60,7 +59,10 @@ class _VerticalClampScrollState extends State<VerticalClampScroll> {
 
           return true;
         },
-        child: widget.child,
+        child: ChangeNotifierProvider(
+          create: (_) => _limiter,
+          child: widget.child,
+        ),
       ),
     );
   }
@@ -97,6 +99,11 @@ class _VerticalClampScrollState extends State<VerticalClampScroll> {
       return;
     }
 
+    if (_limiter.value != null && notif.metrics.pixels > _limiter.value!) {
+      context.read<ScrollController>().position.correctPixels(_limiter.value!);
+      return;
+    }
+
     for (int i = 0; i != _reversedSteps.length; i++) {
       if (_blockScrollIfNecessary(
           notif, _reversedSteps.elementAt(i), i == _reversedSteps.length - 1)) {
@@ -110,14 +117,7 @@ class _VerticalClampScrollState extends State<VerticalClampScroll> {
     double step,
     bool isLast,
   ) {
-    if (!isLast) {
-      if (_startMetrics!.extentBefore > step) {
-        if (notif.metrics.pixels < step) {
-          //context.read<ScrollController>().position.correctPixels(step);
-        }
-        return true;
-      }
-    } else {
+    if (isLast) {
       if (_startMetrics!.extentBefore >= step) {
         if (notif.metrics.pixels <= step) {
           context.read<ScrollController>().position.correctPixels(step);
@@ -127,6 +127,14 @@ class _VerticalClampScrollState extends State<VerticalClampScroll> {
     }
 
     return false;
+  }
+}
+
+class VerticalClampScrollLimiter extends ValueNotifier<double?> {
+  VerticalClampScrollLimiter() : super(null);
+
+  void limitScroll(double height) {
+    value = height;
   }
 }
 
@@ -145,7 +153,9 @@ class VerticalSnapScrollPhysics extends ClampingScrollPhysics {
   @override
   ClampingScrollPhysics applyTo(ScrollPhysics? ancestor) {
     return VerticalSnapScrollPhysics(
-        parent: buildParent(ancestor), steps: steps);
+      parent: buildParent(ancestor),
+      steps: steps,
+    );
   }
 
   double? _lastPixels;

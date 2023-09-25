@@ -82,15 +82,21 @@ class _SearchPageState extends State<SearchPage> {
           child: PrimaryScrollController(
             controller: _scrollController,
             child: Builder(builder: (context) {
-              return Scaffold(
-                extendBodyBehindAppBar: true,
-                resizeToAvoidBottomInset: false,
-                body: CustomScrollView(
-                  controller: _scrollController,
-                  slivers: const [
-                    _SearchAppBar(),
-                    _SearchPageBody(),
-                  ],
+              return WillPopScope(
+                onWillPop: () async {
+                  SearchBarController.of(context).hideKeyboard();
+                  return false;
+                },
+                child: Scaffold(
+                  extendBodyBehindAppBar: true,
+                  resizeToAvoidBottomInset: false,
+                  body: CustomScrollView(
+                    controller: _scrollController,
+                    slivers: const [
+                      _SearchAppBar(),
+                      _SearchPageBody(),
+                    ],
+                  ),
                 ),
               );
             }),
@@ -261,7 +267,7 @@ class _SearchPageBodyState extends State<_SearchPageBody> {
               return;
             }
 
-            Navigator.of(context).pop();
+            Navigator.of(context).maybePop();
           }
         }
 
@@ -315,12 +321,13 @@ class _SearchPageBodyState extends State<_SearchPageBody> {
         return SearchBodySuggestions(
           onExitSearch: () {
             _lastKeyboardVisibleEvent = false;
+            final SearchBarController searchBarController =
+                SearchBarController.find(context);
 
             // When we click on the empty space below the suggestions…
             if (SearchStateManager.of(context).hasASearch) {
               // Restore the previous search
-              final SearchBarController searchBarController =
-                  SearchBarController.find(context);
+
               searchBarController.controller.text =
                   SearchStateManager.of(context).value.search ?? '';
 
@@ -330,7 +337,7 @@ class _SearchPageBodyState extends State<_SearchPageBody> {
               SearchUIManager.read(context).showSearchResults();
             } else {
               // Close the screen
-              Navigator.of(context).pop();
+              Navigator.of(context).maybePop();
             }
           },
         );

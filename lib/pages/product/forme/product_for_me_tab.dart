@@ -33,13 +33,23 @@ class _ProductForMeTabState extends State<ProductForMeTab> {
 
   @override
   Widget build(BuildContext context) {
-    // Force the tab the reload
+    // Force the tab to reload
     context.watch<ProductCompatibility>();
 
     return LayoutBuilder(builder: (context, constraints) {
       return GestureDetector(
+        onTap: () async {
+          if (!foodPreferencesDefined &&
+              await Navigator.of(context, rootNavigator: true)
+                      .push(MaterialPageRoute(
+                    builder: (context) => const FoodPreferencesPage(),
+                  )) ==
+                  true) {
+            ProductPage.of(context).forceReload();
+          }
+        },
         onTapDown: (TapDownDetails details) async {
-          if (!foodPreferencesDefined || details.localPosition.dy < 50) {
+          if (foodPreferencesDefined && details.localPosition.dy < 50) {
             if (await Navigator.of(context, rootNavigator: true)
                     .push(MaterialPageRoute(
                   builder: (context) => const FoodPreferencesPage(),

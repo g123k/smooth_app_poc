@@ -3,9 +3,9 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
-import 'package:smoothapp_poc/pages/product/footer/product_footer.dart';
 import 'package:smoothapp_poc/pages/product/product_page.dart';
 import 'package:smoothapp_poc/utils/num_utils.dart';
+import 'package:smoothapp_poc/utils/physics.dart';
 import 'package:smoothapp_poc/utils/ui_utils.dart';
 import 'package:smoothapp_poc/utils/widgets/offline_size_widget.dart';
 
@@ -37,6 +37,7 @@ class _PageViewSizeAwareState extends State<PageViewSizeAware> {
 
   ScrollStartNotification? _scrollStartNotification;
   UserScrollNotification? _userScrollNotification;
+  VerticalClampScrollLimiter? _scrollLimiter;
   double _horizontalTranslation = 0.0;
 
   @override
@@ -51,18 +52,15 @@ class _PageViewSizeAwareState extends State<PageViewSizeAware> {
     super.didChangeDependencies();
     _scrollController = context.read<ScrollController>();
     _headerConfig = context.read<ProductHeaderConfiguration>();
+    _scrollLimiter = context.read<VerticalClampScrollLimiter>();
   }
 
   @override
   Widget build(BuildContext context) {
     return NotificationListener<ScrollNotification>(
-      onNotification: onScrollEvent,
+      onNotification: onHorizontalScrollEvent,
       child: SizedBox(
-        height: math.max(
-              widget.minHeight,
-              _currentPageHeight,
-            ) +
-            ProductFooter.HEIGHT,
+        height: _computeHeight(),
         child: Transform.translate(
           offset: Offset(0.0, _horizontalTranslation),
           child: PageView.builder(
@@ -83,6 +81,13 @@ class _PageViewSizeAwareState extends State<PageViewSizeAware> {
     );
   }
 
+  double _computeHeight() {
+    return math.max(
+      widget.minHeight,
+      _currentPageHeight,
+    );
+  }
+
   int? _computePage(double? page) {
     try {
       if (_userScrollNotification!.direction == ScrollDirection.forward) {
@@ -97,7 +102,7 @@ class _PageViewSizeAwareState extends State<PageViewSizeAware> {
 
   double diff = 0;
 
-  bool onScrollEvent(ScrollNotification notif) {
+  bool onHorizontalScrollEvent(ScrollNotification notif) {
     if (notif is UserScrollNotification) {
       _userScrollNotification = notif;
     } else if (notif is ScrollStartNotification) {
@@ -113,7 +118,13 @@ class _PageViewSizeAwareState extends State<PageViewSizeAware> {
 
         if (_currentPageHeight != pageHeight) {
           diff = pageHeight - _currentPageHeight;
-          setState(() => _currentPageHeight = pageHeight);
+          _currentPageHeight = pageHeight;
+
+          if (_scrollLimiter?.value != _currentPageHeight) {
+            _scrollLimiter?.limitScroll(_computeHeight());
+          }
+
+          setState(() {});
         }
       }
     } else if (notif is ScrollUpdateNotification) {

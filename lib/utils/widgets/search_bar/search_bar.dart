@@ -161,10 +161,10 @@ class SearchAppBarData extends InheritedWidget {
   }
 
   @override
-  bool updateShouldNotify(SearchAppBarData old) {
-    return old.searchBarType != searchBarType ||
-        old.actionIcon != actionIcon ||
-        old.backButton != backButton;
+  bool updateShouldNotify(SearchAppBarData oldWidget) {
+    return oldWidget.searchBarType != searchBarType ||
+        oldWidget.actionIcon != actionIcon ||
+        oldWidget.backButton != backButton;
   }
 }
 
