@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smoothapp_poc/navigation.dart';
 import 'package:smoothapp_poc/utils/ui_utils.dart';
-import 'package:video_player/video_player.dart';
 
 bool onBoardingVisited = false;
 
@@ -33,16 +32,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   @override
   Widget build(BuildContext context) {
-    final Widget child;
-
-    if (_currentPage == 2) {
-      child = const _VideoOnboarding();
-    } else if (_currentPage < 2) {
-      child = _ImageOnboarding(position: _currentPage + 1);
-    } else {
-      child = _ImageOnboarding(position: _currentPage);
-    }
-
     return Scaffold(
       body: GestureDetector(
         onTap: () {
@@ -60,7 +49,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
             );
           }
         },
-        child: SizedBox.expand(child: child),
+        child: SizedBox.expand(
+          child: _ImageOnboarding(position: _currentPage),
+        ),
       ),
     );
   }
@@ -74,43 +65,8 @@ class _ImageOnboarding extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Image.asset(
-      'assets/onboarding/$position.PNG',
+      'assets/onboarding/onboarding${position + 1}.webp',
       fit: BoxFit.cover,
     );
-  }
-}
-
-class _VideoOnboarding extends StatefulWidget {
-  const _VideoOnboarding();
-
-  @override
-  State<_VideoOnboarding> createState() => _VideoOnboardingState();
-}
-
-class _VideoOnboardingState extends State<_VideoOnboarding> {
-  late final VideoPlayerController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _controller = VideoPlayerController.asset('assets/onboarding/video.mp4')
-      ..initialize().then((_) {
-        _controller.setVolume(0.8);
-        _controller.play();
-        // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
-        setState(() {});
-      });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return VideoPlayer(_controller);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
   }
 }

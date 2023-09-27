@@ -48,7 +48,7 @@ class ProductCompatibilityHeaderAndStatusBar extends StatelessWidget {
               child: Opacity(
                 opacity: computation.contentOpacity,
                 child: Text(
-                  'Ce produit est ${compatibility.level?.toInt()}% compatible',
+                  '${compatibility.level?.toInt()}% compatible avec vos attentes',
                   style: const TextStyle(
                     fontSize: 15.5,
                     fontWeight: FontWeight.bold,

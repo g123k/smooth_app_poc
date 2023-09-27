@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class ProductEnvironmentTab extends StatelessWidget {
   const ProductEnvironmentTab({super.key});
@@ -10,8 +9,8 @@ class ProductEnvironmentTab extends StatelessWidget {
       return SizedBox(
         width: constraints.maxWidth,
         height: (constraints.maxWidth / 428) * 1449,
-        child: SvgPicture.asset(
-          'assets/images/product_env.svg',
+        child: Image.asset(
+          'assets/images/product_env.webp',
           // 428 x 1449
           width: constraints.maxWidth,
           height: (constraints.maxWidth / 428) * 1449,

@@ -19,11 +19,10 @@ class NewsList extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Nos actualités :',
+              'Nos actualités',
               style: TextStyle(
                 fontSize: 19.0,
-                fontWeight: FontWeight.w500,
-                decoration: TextDecoration.underline,
+                fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 15.0),

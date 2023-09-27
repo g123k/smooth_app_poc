@@ -16,8 +16,6 @@ class CameraViewStateManager extends ValueNotifier<CameraViewState> {
     _barcode = barcode;
     value = CameraViewLoadingBarcodeState(barcode);
 
-    // TODO TEst
-    barcode = '8714100635674';
     if (BarcodeUtils.isABarcode(barcode)) {
       try {
         final ProductResultV3 product = await OpenFoodAPIClient.getProductV3(

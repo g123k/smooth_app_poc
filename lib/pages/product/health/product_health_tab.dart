@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class ProductHealthTab extends StatelessWidget {
   const ProductHealthTab({super.key});
@@ -10,8 +9,8 @@ class ProductHealthTab extends StatelessWidget {
       return SizedBox(
         width: constraints.maxWidth,
         height: (constraints.maxWidth / 428) * 1300,
-        child: SvgPicture.asset(
-          'assets/images/product_nutrition.svg',
+        child: Image.asset(
+          'assets/images/product_nutrition.webp',
           // 428 x 1300
           width: constraints.maxWidth,
           height: (constraints.maxWidth / 428) * 1300,

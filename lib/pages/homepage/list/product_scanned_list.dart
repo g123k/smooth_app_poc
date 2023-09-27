@@ -26,11 +26,10 @@ class MostScannedProducts extends StatelessWidget {
               right: 24.0,
             ),
             child: Text(
-              'Les produits les plus scannés en France :',
+              'Les produits les plus scannés en France',
               style: TextStyle(
                 fontSize: 19.0,
-                fontWeight: FontWeight.w500,
-                decoration: TextDecoration.underline,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),

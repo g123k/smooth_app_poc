@@ -83,7 +83,7 @@ class _SearchBodyWithResultsState extends State<_SearchBodyWithResults> {
               MaterialPageRoute(
                 builder: (context) => ProductPage(
                   product: product,
-                  compatibility: score,
+                  compatibility: foodPreferencesDefined ? score : null,
                 ),
               ),
             );
@@ -105,13 +105,17 @@ class _SearchBodyWithResultsState extends State<_SearchBodyWithResults> {
                         child: IntrinsicWidth(
                           child: Column(
                             children: [
-                              SizedBox(
-                                height: 36.0,
-                                child: CompatibilityScore(level: score),
-                              ),
+                              if (foodPreferencesDefined)
+                                SizedBox(
+                                  height: 36.0,
+                                  child: CompatibilityScore(level: score),
+                                ),
                               ClipRRect(
-                                borderRadius: const BorderRadius.vertical(
-                                  bottom: Radius.circular(10.0),
+                                borderRadius: BorderRadius.vertical(
+                                  top: foodPreferencesDefined
+                                      ? Radius.zero
+                                      : const Radius.circular(10.0),
+                                  bottom: const Radius.circular(10.0),
                                 ),
                                 child: Container(
                                   width: double.infinity,
@@ -207,16 +211,18 @@ class _SearchBodyWithResultsState extends State<_SearchBodyWithResults> {
                     ],
                   ),
                 ),
-                ListItem.text(
-                  'Pas de moutarde',
-                  padding: const EdgeInsets.only(top: 10.0),
-                  leading: const ListItemLeadingScore.high(),
-                ),
-                ListItem.text(
-                  'Aliment ultra-transformé (NOVA 4)',
-                  padding: const EdgeInsets.only(top: 10.0),
-                  leading: const ListItemLeadingScore.low(),
-                ),
+                if (foodPreferencesDefined) ...[
+                  ListItem.text(
+                    'Pas de moutarde',
+                    padding: const EdgeInsets.only(top: 10.0),
+                    leading: const ListItemLeadingScore.high(),
+                  ),
+                  ListItem.text(
+                    'Aliment ultra-transformé (NOVA 4)',
+                    padding: const EdgeInsets.only(top: 10.0),
+                    leading: const ListItemLeadingScore.low(),
+                  ),
+                ]
               ],
             ),
           ),

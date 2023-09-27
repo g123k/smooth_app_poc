@@ -85,7 +85,7 @@ class _SearchPageState extends State<SearchPage> {
               return WillPopScope(
                 onWillPop: () async {
                   SearchBarController.of(context).hideKeyboard();
-                  return false;
+                  return true;
                 },
                 child: Scaffold(
                   extendBodyBehindAppBar: true,
