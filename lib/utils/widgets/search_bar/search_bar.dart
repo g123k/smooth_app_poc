@@ -533,6 +533,8 @@ class _SearchBarState extends State<_SearchBar> {
   @override
   void dispose() {
     _keyboardEvents?.cancel();
+    print('here');
+    _searchFocusNode.unfocus();
     _searchFocusNode.dispose();
     _buttonFocusNode.dispose();
     super.dispose();
@@ -553,7 +555,9 @@ class SearchBarController extends InheritedWidget {
             child: child,
           ),
         ) {
-    _keyboardController.add(true);
+    if (!_keyboardController.hasValue) {
+      _keyboardController.add(true);
+    }
   }
 
   final TextEditingController controller;

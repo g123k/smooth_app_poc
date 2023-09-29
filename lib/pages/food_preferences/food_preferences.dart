@@ -38,7 +38,7 @@ class _FoodPreferencesPageState extends State<FoodPreferencesPage> {
                   }
                 }
                 if (details.localPosition.dx > size.width * 0.6) {
-                  if (currentPage < 10) {
+                  if (currentPage < 11) {
                     setState(() => currentPage++);
                   } else {
                     foodPreferencesDefined = true;
@@ -50,7 +50,7 @@ class _FoodPreferencesPageState extends State<FoodPreferencesPage> {
             child: SizedBox.expand(
               child: Image.asset(
                 'assets/images/foodprefs_${currentPage + 1}.webp',
-                fit: BoxFit.cover,
+                fit: BoxFit.contain,
               ),
             ),
           ),

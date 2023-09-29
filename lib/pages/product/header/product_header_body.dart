@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:openfoodfacts/openfoodfacts.dart';
 import 'package:provider/provider.dart';
+import 'package:smoothapp_poc/pages/food_preferences/food_preferences.dart';
 import 'package:smoothapp_poc/pages/product/header/product_header.dart';
 import 'package:smoothapp_poc/pages/product/header/product_tabs.dart';
 import 'package:smoothapp_poc/pages/product/product_page.dart';
@@ -239,7 +240,7 @@ class ProductHeaderScores extends StatelessWidget {
           InkWell(
             onTap: onNutriScoreClicked,
             child: SvgPicture.asset(
-              'assets/images/nutriscore-a.svg',
+              'assets/images/nutriscore-d.svg',
               alignment: AlignmentDirectional.topCenter,
               height: 36.0,
             ),
@@ -248,7 +249,7 @@ class ProductHeaderScores extends StatelessWidget {
           InkWell(
             onTap: onEcoScoreClicked,
             child: SvgPicture.asset(
-              'assets/images/ecoscore-a.svg',
+              'assets/images/ecoscore-b.svg',
               alignment: AlignmentDirectional.topCenter,
               height: 36.0,
             ),
@@ -275,11 +276,12 @@ class _ProductHeaderPersonalScores extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          ListItem.text(
-            'Pas de moutarde',
-            padding: const EdgeInsets.only(top: 10.0),
-            leading: const ListItemLeadingScore.high(),
-          ),
+          if (foodPreferencesDefined)
+            ListItem.text(
+              'Pas de moutarde',
+              padding: const EdgeInsets.only(top: 10.0),
+              leading: const ListItemLeadingScore.high(),
+            ),
           ListItem.text(
             'Aliment ultra-transformé (NOVA 4)',
             padding: const EdgeInsets.only(top: 10.0),

@@ -64,9 +64,12 @@ class _ImageOnboarding extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Image.asset(
-      'assets/onboarding/onboarding${position + 1}.webp',
-      fit: BoxFit.cover,
+    return ColoredBox(
+      color: const Color(0xFFE3F3FE),
+      child: Image.asset(
+        'assets/onboarding/onboarding${position + 1}.webp',
+        fit: BoxFit.contain,
+      ),
     );
   }
 }

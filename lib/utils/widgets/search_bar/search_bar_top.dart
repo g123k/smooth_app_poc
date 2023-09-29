@@ -8,6 +8,7 @@ import 'package:smoothapp_poc/utils/num_utils.dart';
 import 'package:smoothapp_poc/utils/ui_utils.dart';
 import 'package:smoothapp_poc/utils/widgets/circled_icon.dart';
 import 'package:smoothapp_poc/utils/widgets/search_bar/search_bar.dart';
+import 'package:smoothapp_poc/utils/widgets/will_pop_scope.dart';
 
 //ignore_for_file: constant_identifier_names
 class SearchBarTop extends StatefulWidget {
@@ -61,7 +62,7 @@ class _SearchBarTopState extends State<SearchBarTop>
   @override
   Widget build(BuildContext context) {
     final bool backButton = SearchAppBarData.of(context).backButton;
-    return WillPopScope(
+    return PlatformAwareWillPopScope(
       onWillPop: () async {
         if (_animation == null) {
           return true;
@@ -197,8 +198,10 @@ class _BackButton extends StatelessWidget {
       child: SizedBox.square(
         dimension: SIZE,
         child: CircledIcon(
-          padding: EdgeInsets.zero,
-          icon: const icons.Arrow.left(),
+          padding: const EdgeInsets.all(8.0),
+          icon: const icons.Arrow.left(
+            size: SIZE - 20.0,
+          ),
           onPressed: onTap,
           tooltip: MaterialLocalizations.of(context).backButtonTooltip,
         ),

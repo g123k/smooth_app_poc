@@ -42,7 +42,7 @@ class _CameraOverlayState extends State<CameraOverlay> {
 
   @override
   Widget build(BuildContext context) {
-    if (_currentBarcode == null) {
+    if (_currentBarcode == null || _currentBarcode!.hasSize != true) {
       return EMPTY_WIDGET;
     }
 
@@ -70,8 +70,8 @@ class _CameraBarcodePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    double widthFactor = size.width / barcode.width;
-    double heightFactor = size.height / barcode.height;
+    double widthFactor = size.width / barcode.width!;
+    double heightFactor = size.height / barcode.height!;
 
     _path.reset();
 

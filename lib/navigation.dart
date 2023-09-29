@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:smoothapp_poc/pages/homepage/homepage.dart';
+import 'package:smoothapp_poc/pages/shopping_list/shopping_list.dart';
 import 'package:smoothapp_poc/utils/ui_utils.dart';
 import 'package:smoothapp_poc/utils/widgets/modal_sheet.dart';
 
@@ -92,12 +93,14 @@ class NavAppState extends State<NavApp> with TickerProviderStateMixin {
                 offstage: _sheetVisibility.isFullyVisible,
                 child: Navigator(
                   key: _navigatorKey,
-                  pages: const [
+                  pages: [
                     MaterialPage<void>(
-                      child: HomePage(),
+                      child: _getSubPage(),
                     ),
                   ],
-                  onPopPage: (route, result) => route.didPop(result),
+                  onPopPage: (route, result) {
+                    return route.didPop(result);
+                  },
                 ),
               ),
             ),
@@ -169,6 +172,13 @@ class NavAppState extends State<NavApp> with TickerProviderStateMixin {
         );
       }),
     );
+  }
+
+  Widget _getSubPage() {
+    return switch (_selectedTab) {
+      0 => const ShoppingListPage(),
+      _ => const HomePage(),
+    };
   }
 
   Future<void> showSheet(DraggableScrollableLockAtTopSheet sheet) async {

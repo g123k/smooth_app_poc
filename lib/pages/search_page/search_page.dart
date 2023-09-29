@@ -82,21 +82,15 @@ class _SearchPageState extends State<SearchPage> {
           child: PrimaryScrollController(
             controller: _scrollController,
             child: Builder(builder: (context) {
-              return WillPopScope(
-                onWillPop: () async {
-                  SearchBarController.of(context).hideKeyboard();
-                  return true;
-                },
-                child: Scaffold(
-                  extendBodyBehindAppBar: true,
-                  resizeToAvoidBottomInset: false,
-                  body: CustomScrollView(
-                    controller: _scrollController,
-                    slivers: const [
-                      _SearchAppBar(),
-                      _SearchPageBody(),
-                    ],
-                  ),
+              return Scaffold(
+                extendBodyBehindAppBar: true,
+                resizeToAvoidBottomInset: false,
+                body: CustomScrollView(
+                  controller: _scrollController,
+                  slivers: const [
+                    _SearchAppBar(),
+                    _SearchPageBody(),
+                  ],
                 ),
               );
             }),
@@ -267,7 +261,7 @@ class _SearchPageBodyState extends State<_SearchPageBody> {
               return;
             }
 
-            Navigator.of(context).maybePop();
+            Navigator.of(context).pop();
           }
         }
 

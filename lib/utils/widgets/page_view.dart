@@ -71,6 +71,10 @@ class _PageViewSizeAwareState extends State<PageViewSizeAware> {
                 onSizeChanged: (Size size) {
                   _horizontalTranslation = 0.0;
                   _sizes[position] = size.height;
+
+                  if (_scrollStartNotification == null) {
+                    setState(() {});
+                  }
                 },
                 child: widget.itemBuilder(context, position),
               );

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -91,10 +90,11 @@ class _CameraViewState extends State<CameraView> {
                         final String barcode = capture.barcodes.first.rawValue!;
                         _barcodeStream.add(
                           DetectedBarcode(
-                              barcode: barcode,
-                              corners: capture.barcodes.first.corners!,
-                              width: capture.width!,
-                              height: capture.height!),
+                            barcode: barcode,
+                            corners: capture.barcodes.first.corners!,
+                            width: capture.width,
+                            height: capture.height,
+                          ),
                         );
 
                         final CameraViewStateManager stateManager =
@@ -143,7 +143,7 @@ class _CameraViewState extends State<CameraView> {
                   child: CloseButton(
                     onPressed: () =>
                         CameraViewStateManager.of(context).onBarcodeDetected(
-                      '${math.Random().nextInt(100)}01234567${math.Random().nextInt(100)}',
+                      '8714100635674',
                     ),
                   ),
                 ),
@@ -240,8 +240,8 @@ class _CameraViewState extends State<CameraView> {
 class DetectedBarcode {
   final String barcode;
   final List<Offset> corners;
-  final double width;
-  final double height;
+  final double? width;
+  final double? height;
 
   DetectedBarcode({
     required this.barcode,
@@ -249,6 +249,8 @@ class DetectedBarcode {
     required this.width,
     required this.height,
   });
+
+  bool get hasSize => width != null && height != null;
 }
 
 class _MagicBackgroundBottomSheet extends StatefulWidget {

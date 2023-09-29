@@ -78,7 +78,7 @@ class ProductPageState extends State<ProductPage>
     );
 
     _horizontalScrollController = PageController(
-      initialPage: 1,
+      initialPage: foodPreferencesDefined ? 0 : 1,
       keepPage: true,
     )..addListener(_onPageHorizontallyScrolled);
 
