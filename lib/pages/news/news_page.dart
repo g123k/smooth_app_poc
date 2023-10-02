@@ -150,10 +150,27 @@ class NewsPage extends StatelessWidget {
   String generateContent() {
     StringBuffer buffer = StringBuffer();
 
-    for (int i = 0; i != 100; i++) {
       buffer.writeln(
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec euismod, nisl eget aliquam ultricies, nunc nisl aliquet nunc, quis aliquam nisl nisl vitae nisl. Donec euismod, nisl eget aliquam ultricies, nunc nisl aliquet nunc, quis aliquam nisl nisl vitae nisl.');
-    }
+          '
+Le Nutri-Score est un logo nutritionnel facultatif adopté par certains pays européens, dont la France. Il a pour but d\'informer les consommateurs sur la qualité nutritionnelle des aliments, en utilisant un code couleur allant du vert foncé (A) pour les produits les plus sains au rouge foncé (E) pour les moins sains. Le Nutri-Score est calculé sur la base d\'une formule qui prend en compte à la fois les éléments nutritionnels à favoriser (fibres, protéines, fruits, légumes, légumineuses, huiles de colza, noix, olive) et ceux à limiter (énergie, acides gras saturés, sucres, sel).
+
+Pour le Nesquik, plusieurs facteurs peuvent contribuer à un Nutri-Score A :
+
+Faible teneur en matières grasses : Le Nesquik, étant principalement composé de cacao en poudre, a généralement une faible teneur en matières grasses, ce qui améliore son Nutri-Score.
+
+Présence de fibres : Le cacao est également une source de fibres, ce qui peut améliorer le Nutri-Score.
+
+Faible teneur en sel : Le Nesquik contient généralement peu ou pas de sel, ce qui est également un facteur positif.
+
+Portion recommandée : Le Nutri-Score est souvent calculé sur la base de la portion recommandée. Si cette portion est petite, cela peut également contribuer à un meilleur score.
+
+Formulation spécifique : Certains produits Nesquik peuvent être formulés pour être plus sains, avec par exemple moins de sucre ajouté, ce qui peut contribuer à un meilleur Nutri-Score.
+
+Produits similaires : Le Nutri-Score est également relatif à la catégorie de produits. Si la plupart des produits similaires ont un profil nutritionnel moins favorable, le Nesquik peut se distinguer avec un meilleur score.
+
+Il est important de noter que le Nutri-Score ne prend pas en compte tous les aspects de la santé nutritionnelle d\'un produit. Par exemple, il ne tient pas compte de la présence d\'additifs, de pesticides ou de la qualité globale des ingrédients.
+
+Pour une évaluation complète et spécifique, il serait utile de consulter la liste des ingrédients et les valeurs nutritionnelles sur l\'emballage du produit ou dans la base de données de Open Food Facts.');
 
     return buffer.toString();
   }
