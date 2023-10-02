@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smoothapp_poc/resources/app_colors.dart';
 import 'package:smoothapp_poc/resources/app_icons.dart' as icons;
+import 'package:smoothapp_poc/utils/text_utils.dart';
 import 'package:smoothapp_poc/utils/widgets/search_bar/search_bar.dart';
 
 class HomePageProductCounter extends StatelessWidget
@@ -61,27 +62,18 @@ class HomePageProductCounter extends StatelessWidget
                       text:
                           'Open Food Facts est une base de données ouverte de plus de ',
                     ),
-                    WidgetSpan(
-                      alignment: PlaceholderAlignment.middle,
-                      child: Container(
-                        decoration: const BoxDecoration(
-                          color: AppColors.primaryAlt,
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(11.0),
-                          ),
-                        ),
-                        padding: const EdgeInsetsDirectional.symmetric(
-                          horizontal: 5.0,
-                          vertical: 1.0,
-                        ),
-                        child: const Text(
-                          '2 834 456 produits',
-                          style: TextStyle(
-                            color: AppColors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                    HighlightedTextSpan(
+                      text: '2 834 456 produits',
+                      textStyle: const TextStyle(
+                        color: AppColors.white,
+                        fontWeight: FontWeight.bold,
                       ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 5.0,
+                        vertical: 1.0,
+                      ),
+                      backgroundColor: AppColors.primaryAlt,
+                      radius: 11.0,
                     ),
                     const TextSpan(text: ' plus ceux que vous contribuerez !'),
                   ],

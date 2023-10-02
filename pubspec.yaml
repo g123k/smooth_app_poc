@@ -2,7 +2,7 @@ name: smoothapp_poc
 description: A new Flutter project.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 1.0.0+18
+version: 1.0.0+20
 
 environment:
   sdk: '>=3.1.0 <4.0.0'
@@ -54,6 +54,8 @@ flutter:
         - asset: assets/fonts/OpenSans-Regular.ttf
         - asset: assets/fonts/OpenSans-Medium.ttf
           weight: 500
+        - asset: assets/fonts/OpenSans-SemiBold.ttf
+          weight: 600
         - asset: assets/fonts/OpenSans-Bold.ttf
           weight: 700
 

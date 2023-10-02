@@ -1,5 +1,5 @@
 import 'package:diacritic/diacritic.dart';
-import 'package:flutter/painting.dart';
+import 'package:flutter/cupertino.dart';
 
 class TextHighlighter {
   /// Returns a List containing parts of the text with the right style
@@ -42,4 +42,32 @@ class TextHighlighter {
     }
     return parts;
   }
+}
+
+class HighlightedTextSpan extends WidgetSpan {
+  HighlightedTextSpan({
+    required String text,
+    required TextStyle textStyle,
+    required EdgeInsetsGeometry padding,
+    required Color backgroundColor,
+    required double radius,
+    EdgeInsetsGeometry? margin,
+  })  : assert(radius > 0.0),
+        super(
+          alignment: PlaceholderAlignment.middle,
+          child: Container(
+            decoration: BoxDecoration(
+              color: backgroundColor,
+              borderRadius: BorderRadius.all(
+                Radius.circular(radius),
+              ),
+            ),
+            margin: margin,
+            padding: padding,
+            child: Text(
+              text,
+              style: textStyle,
+            ),
+          ),
+        );
 }

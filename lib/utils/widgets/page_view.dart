@@ -189,3 +189,13 @@ class _PageViewSizeAwareState extends State<PageViewSizeAware> {
     return true;
   }
 }
+
+extension PageControllerExtensions on PageController {
+  bool isReady() {
+    try {
+      return hasClients && page != null;
+    } catch (_) {
+      return false;
+    }
+  }
+}

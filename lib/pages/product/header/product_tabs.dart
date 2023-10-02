@@ -113,12 +113,36 @@ class _ProductHeaderTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Widget? leading = _leading(context);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 18.0),
       child: Center(
-        child: Text(_label(context)),
+        child: Row(
+          children: [
+            if (leading != null) ...[
+              leading,
+              const SizedBox(width: 8.0),
+            ],
+            Text(
+              _label(context),
+            )
+          ],
+        ),
       ),
     );
+  }
+
+  Widget? _leading(BuildContext context) {
+    return switch (tab) {
+      ProductHeaderTabs.health => const _CircleIndicator(
+          color: AppColors.nutriscoreD,
+        ),
+      ProductHeaderTabs.environment => const _CircleIndicator(
+          color: AppColors.ecoscoreB,
+        ),
+      _ => null,
+    };
   }
 
   String _label(BuildContext context) {
@@ -209,4 +233,24 @@ class _ProductHeaderTabBarPainter extends CustomPainter {
 
   @override
   bool shouldRebuildSemantics(_ProductHeaderTabBarPainter oldDelegate) => true;
+}
+
+class _CircleIndicator extends StatelessWidget {
+  const _CircleIndicator({
+    required this.color,
+  });
+
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox.square(
+        dimension: 18.0,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: color,
+            shape: BoxShape.circle,
+          ),
+        ));
+  }
 }

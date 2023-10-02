@@ -1,13 +1,13 @@
 extension DoubleExtension on double {
-  double progress(double min, double max) {
+  double progress(num min, num max) {
     return (this - min) / (max - min);
   }
 
-  double progressAndClamp(double min, double max, double clamp) {
+  double progressAndClamp(num min, double max, double clamp) {
     return progress(min, max).clamp(0.0, clamp);
   }
 
-  double progress2(double min, double max) {
+  double progress2(num min, num max) {
     return this * (max - min) + min;
   }
 

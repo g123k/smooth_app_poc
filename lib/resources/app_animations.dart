@@ -1,5 +1,52 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:rive/rive.dart';
+
+class AnimationLoader extends StatefulWidget {
+  const AnimationLoader({
+    required this.child,
+    super.key,
+  });
+
+  final Widget child;
+
+  @override
+  State<AnimationLoader> createState() => _AnimationLoaderState();
+
+  static RiveFile of(BuildContext context) {
+    return context.read<_AnimationLoaderState>()._file;
+  }
+}
+
+class _AnimationLoaderState extends State<AnimationLoader> {
+  late final RiveFile _file;
+
+  @override
+  void initState() {
+    super.initState();
+    preload();
+  }
+
+  Future<void> preload() async {
+    rootBundle.load('assets/animations/off.riv').then(
+      (data) async {
+        // Load the RiveFile from the binary data.
+        setState(() {
+          _file = RiveFile.import(data);
+        });
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Provider.value(
+      value: this,
+      child: widget.child,
+    );
+  }
+}
 
 class TorchAnimation extends StatefulWidget {
   const TorchAnimation.on({
@@ -98,8 +145,8 @@ class _DoubleChevronAnimationState extends State<DoubleChevronAnimation> {
 
     return SizedBox.square(
       dimension: size,
-      child: RiveAnimation.asset(
-        'assets/animations/off.riv',
+      child: RiveAnimation.direct(
+        AnimationLoader.of(context),
         artboard: 'Double chevron',
         onInit: (Artboard artboard) {
           _controller = StateMachineController.fromArtboard(
@@ -143,11 +190,26 @@ class SearchEyeAnimation extends StatelessWidget {
     return SizedBox(
       width: size,
       height: (80 / 87) * size,
-      child: const RiveAnimation.asset(
-        'assets/animations/off.riv',
+      child: RiveAnimation.direct(
+        AnimationLoader.of(context),
         artboard: 'Search eye',
-        stateMachines: <String>['LoopMachine'],
+        stateMachines: const <String>['LoopMachine'],
       ),
+    );
+  }
+}
+
+class SunAnimation extends StatelessWidget {
+  const SunAnimation({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return RiveAnimation.direct(
+      AnimationLoader.of(context),
+      artboard: 'Success',
+      animations: const ['Timeline 1'],
     );
   }
 }
@@ -181,8 +243,8 @@ class _SearchAnimationState extends State<SearchAnimation> {
 
     return SizedBox.square(
       dimension: size,
-      child: RiveAnimation.asset(
-        'assets/animations/off.riv',
+      child: RiveAnimation.direct(
+        AnimationLoader.of(context),
         artboard: 'Search icon',
         onInit: (Artboard artboard) {
           _controller = StateMachineController.fromArtboard(

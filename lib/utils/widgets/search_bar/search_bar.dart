@@ -533,8 +533,6 @@ class _SearchBarState extends State<_SearchBar> {
   @override
   void dispose() {
     _keyboardEvents?.cancel();
-    print('here');
-    _searchFocusNode.unfocus();
     _searchFocusNode.dispose();
     _buttonFocusNode.dispose();
     super.dispose();

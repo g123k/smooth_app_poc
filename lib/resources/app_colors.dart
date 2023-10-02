@@ -17,8 +17,19 @@ class AppColors {
   static const Color red = Color(0xFFD44C29);
   static const Color redDark = Color(0xFFB3261E);
   static const Color green = Color(0xFF91BA48);
+  static const Color orange = Color(0xFFF0923A);
   static const Color compatibilityUnknown = Color(0xFF6C6C6C);
   static const Color compatibilityHigh = Color(0xFF219653);
   static const Color compatibilityMedium = Color(0xFFE5843D);
   static const Color compatibilityLow = Color(0xFFEB5757);
+  static const Color nutriscoreA = Color(0xFF038141);
+  static const Color nutriscoreB = Color(0xFF85BB2F);
+  static const Color nutriscoreC = Color(0xFFFECB02);
+  static const Color nutriscoreD = Color(0xFFF2994A);
+  static const Color nutriscoreE = Color(0xFFE63E11);
+  static const Color ecoscoreA = Color(0xFF1E8F4E);
+  static const Color ecoscoreB = Color(0xFF2ECC71);
+  static const Color ecoscoreC = Color(0xFFF5C100);
+  static const Color ecoscoreD = Color(0xFFEF7E1A);
+  static const Color ecoscoreE = Color(0xFFD93726);
 }
