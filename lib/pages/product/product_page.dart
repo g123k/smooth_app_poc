@@ -244,7 +244,7 @@ class ProductPageState extends State<ProductPage>
                       kToolbarHeight -
                       ProductHeaderTabBar.TAB_BAR_HEIGHT -
                       ProductFooter.HEIGHT -
-                      16.0 -
+                      (16.0 * 2) -
                       screenPadding.top -
                       (screenPadding.bottom == 0.0
                           ? 16.0

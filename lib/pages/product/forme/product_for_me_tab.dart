@@ -38,16 +38,6 @@ class _ProductForMeTabState extends State<ProductForMeTab> {
 
     return LayoutBuilder(builder: (context, constraints) {
       return GestureDetector(
-        onTap: () async {
-          if (!foodPreferencesDefined &&
-              await Navigator.of(context, rootNavigator: true)
-                      .push(MaterialPageRoute(
-                    builder: (context) => const FoodPreferencesPage(),
-                  )) ==
-                  true) {
-            ProductPage.of(context).forceReload();
-          }
-        },
         onTapDown: (TapDownDetails details) async {
           if (foodPreferencesDefined && details.localPosition.dy < 50) {
             if (await Navigator.of(context, rootNavigator: true)
@@ -59,16 +49,37 @@ class _ProductForMeTabState extends State<ProductForMeTab> {
             }
           }
         },
-        child: SizedBox(
-          width: constraints.maxWidth,
-          height: (constraints.maxWidth / 428) * 808,
-          child: Image.asset(
-            'assets/images/${foodPreferencesDefined ? 'product_forme' : 'product_forme_empty'}.webp',
-            // 428 x 808
-            width: constraints.maxWidth,
-            height: (constraints.maxWidth / 428) * 808,
-            alignment: AlignmentDirectional.topCenter,
-          ),
+        child: Column(
+          children: [
+            SizedBox(
+              width: constraints.maxWidth,
+              height: (constraints.maxWidth / 428) * 363,
+              child: Image.asset(
+                'assets/images/${foodPreferencesDefined ? 'product_forme' : 'product_forme_empty'}.webp',
+                // 428 x 808
+                width: constraints.maxWidth,
+                height: (constraints.maxWidth / 428) * 363,
+                alignment: AlignmentDirectional.topCenter,
+                fit: BoxFit.fitWidth,
+              ),
+            ),
+            GestureDetector(
+              onTap: () async {
+                if (await Navigator.of(context, rootNavigator: true)
+                            .push(MaterialPageRoute(
+                          builder: (context) => const FoodPreferencesPage(),
+                        )) ==
+                        true &&
+                    mounted) {
+                  ProductPage.of(context).forceReload();
+                }
+              },
+              child: Image.asset(
+                'assets/images/product_forme_empty_button.webp',
+                // 428 x 808
+              ),
+            ),
+          ],
         ),
       );
     });

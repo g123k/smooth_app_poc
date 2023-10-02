@@ -150,8 +150,7 @@ class NewsPage extends StatelessWidget {
   String generateContent() {
     StringBuffer buffer = StringBuffer();
 
-      buffer.writeln(
-          '
+    buffer.writeln('''
 Le Nutri-Score est un logo nutritionnel facultatif adopté par certains pays européens, dont la France. Il a pour but d\'informer les consommateurs sur la qualité nutritionnelle des aliments, en utilisant un code couleur allant du vert foncé (A) pour les produits les plus sains au rouge foncé (E) pour les moins sains. Le Nutri-Score est calculé sur la base d\'une formule qui prend en compte à la fois les éléments nutritionnels à favoriser (fibres, protéines, fruits, légumes, légumineuses, huiles de colza, noix, olive) et ceux à limiter (énergie, acides gras saturés, sucres, sel).
 
 Pour le Nesquik, plusieurs facteurs peuvent contribuer à un Nutri-Score A :
@@ -170,7 +169,7 @@ Produits similaires : Le Nutri-Score est également relatif à la catégorie de 
 
 Il est important de noter que le Nutri-Score ne prend pas en compte tous les aspects de la santé nutritionnelle d\'un produit. Par exemple, il ne tient pas compte de la présence d\'additifs, de pesticides ou de la qualité globale des ingrédients.
 
-Pour une évaluation complète et spécifique, il serait utile de consulter la liste des ingrédients et les valeurs nutritionnelles sur l\'emballage du produit ou dans la base de données de Open Food Facts.');
+Pour une évaluation complète et spécifique, il serait utile de consulter la liste des ingrédients et les valeurs nutritionnelles sur l\'emballage du produit ou dans la base de données de Open Food Facts.''');
 
     return buffer.toString();
   }

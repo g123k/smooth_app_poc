@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:smoothapp_poc/navigation.dart';
 import 'package:smoothapp_poc/pages/onboarding/onboarding_bottom_hills.dart';
-import 'package:smoothapp_poc/pages/onboarding/pages/onboarding_analytics_page.dart';
 import 'package:smoothapp_poc/pages/onboarding/pages/onboarding_camera_permission_page.dart';
 import 'package:smoothapp_poc/pages/onboarding/pages/onboarding_explanation_page.dart';
 import 'package:smoothapp_poc/pages/onboarding/pages/onboarding_project_page.dart';
@@ -33,22 +31,28 @@ class _OnboardingPageState extends State<OnboardingPage> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _checkSize();
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
     _controller.addListener(_onPageScrolled);
+  }
 
-    // TODO REMOVE THIS IN THE PROD APP
-    if (onBoardingVisited) {
-      onNextFrame(() {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const NavApp(),
-          ),
-        );
-      });
-    }
+  /// When the app is launched the height == 0
+  /// We have to wait for a few frames before the content is ready
+  void _checkSize() {
+    onNextFrame(() {
+      if (MediaQuery.sizeOf(context).height == 0.0) {
+        _checkSize();
+      } else {
+        setState(() {});
+      }
+    });
   }
 
   void _onPageScrolled() {
@@ -68,10 +72,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
           ChangeNotifierProvider.value(
             value: _controller,
           ),
-          Provider(
-            create: (_) => OnboardingConfig._(
-              MediaQuery.of(context),
-            ),
+          Provider.value(
+            value: OnboardingConfig._(MediaQuery.of(context)),
           ),
         ],
         child: Stack(
@@ -86,12 +88,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       0 => const OnboardingWelcomePage(),
                       1 => const OnboardingProjectPage(),
                       2 => const OnboardingExplanationPage(),
-                      3 => const OnboardingCameraPermissionPage(),
-                      4 || _ => const OnboardingAnalyticsPage(),
+                      3 || _ => const OnboardingCameraPermissionPage(),
                     },
                   );
                 },
-                itemCount: 5,
+                itemCount: 4,
               ),
             ),
             const OnboardingBottomHills(
@@ -218,4 +219,14 @@ class OnboardingConfig {
 
   static OnboardingConfig of(BuildContext context) =>
       context.watch<OnboardingConfig>();
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is OnboardingConfig &&
+          runtimeType == other.runtimeType &&
+          fontMultiplier == other.fontMultiplier;
+
+  @override
+  int get hashCode => fontMultiplier.hashCode;
 }

@@ -63,22 +63,30 @@ class _PageViewSizeAwareState extends State<PageViewSizeAware> {
         height: _computeHeight(),
         child: Transform.translate(
           offset: Offset(0.0, _horizontalTranslation),
-          child: PageView.builder(
-            controller: widget.controller,
-            itemCount: widget.itemCount,
-            itemBuilder: (BuildContext context, int position) {
-              return OfflineMeasureWidget(
-                onSizeChanged: (Size size) {
-                  _horizontalTranslation = 0.0;
-                  _sizes[position] = size.height;
+          child: Provider.value(
+            value: PageViewData._(
+              minHeight: widget.minHeight,
+              controller: widget.controller,
+            ),
+            child: PageView.builder(
+              controller: widget.controller,
+              itemCount: widget.itemCount,
+              itemBuilder: (BuildContext context, int position) {
+                return OfflineMeasureWidget(
+                  onSizeChanged: (Size size) {
+                    _horizontalTranslation = 0.0;
+                    _sizes[position] = size.height;
 
-                  if (_scrollStartNotification == null) {
-                    setState(() {});
-                  }
-                },
-                child: widget.itemBuilder(context, position),
-              );
-            },
+                    if (_scrollStartNotification == null) {
+                      _currentPageHeight =
+                          _sizes[widget.controller.page!.round()]!;
+                      setState(() {});
+                    }
+                  },
+                  child: widget.itemBuilder(context, position),
+                );
+              },
+            ),
           ),
         ),
       ),
@@ -197,5 +205,19 @@ extension PageControllerExtensions on PageController {
     } catch (_) {
       return false;
     }
+  }
+}
+
+class PageViewData {
+  final double minHeight;
+  final PageController controller;
+
+  PageViewData._({
+    required this.minHeight,
+    required this.controller,
+  });
+
+  static PageViewData of(BuildContext context) {
+    return context.read<PageViewData>();
   }
 }
