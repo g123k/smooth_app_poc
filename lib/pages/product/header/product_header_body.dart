@@ -9,7 +9,7 @@ import 'package:smoothapp_poc/pages/product/header/product_header.dart';
 import 'package:smoothapp_poc/pages/product/header/product_tabs.dart';
 import 'package:smoothapp_poc/pages/product/product_page.dart';
 import 'package:smoothapp_poc/utils/num_utils.dart';
-import 'package:smoothapp_poc/utils/widgets/list.dart';
+import 'package:smoothapp_poc/utils/widgets/list_item.dart';
 import 'package:smoothapp_poc/utils/widgets/material.dart';
 import 'package:smoothapp_poc/utils/widgets/network_image.dart';
 

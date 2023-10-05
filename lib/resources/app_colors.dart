@@ -16,8 +16,9 @@ class AppColors {
   static const Color greyLight2 = Color(0xFFECECEC);
   static const Color red = Color(0xFFD44C29);
   static const Color redDark = Color(0xFFB3261E);
-  static const Color green = Color(0xFF91BA48);
+  static const Color green = Color(0xFF219653);
   static const Color orange = Color(0xFFF0923A);
+  static const Color lightBlue = Color(0xFFCEE0FF);
   static const Color compatibilityUnknown = Color(0xFF6C6C6C);
   static const Color compatibilityHigh = Color(0xFF219653);
   static const Color compatibilityMedium = Color(0xFFE5843D);

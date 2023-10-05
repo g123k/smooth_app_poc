@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smoothapp_poc/pages/homepage/list/homepage_list_widgets.dart';
 
 //ignore_for_file: constant_identifier_names
 class NewsList extends StatelessWidget {
@@ -18,12 +19,8 @@ class NewsList extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Nos actualités',
-              style: TextStyle(
-                fontSize: 19.0,
-                fontWeight: FontWeight.bold,
-              ),
+            const HomePageTitle(
+              label: 'Nos actualités',
             ),
             const SizedBox(height: 15.0),
             Image.asset('assets/images/news1.webp'),

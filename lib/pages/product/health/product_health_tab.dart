@@ -25,7 +25,7 @@ class _ProductHealthTabState extends State<ProductHealthTab>
           children: [
             SizedBox(
               width: width,
-              height: 474,
+              height: 435,
               child: Image.asset(
                 'assets/images/product_nutrition_min.webp',
                 width: width,

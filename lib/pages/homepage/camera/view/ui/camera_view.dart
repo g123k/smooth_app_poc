@@ -17,6 +17,7 @@ import 'package:smoothapp_poc/pages/product/product_page.dart';
 import 'package:smoothapp_poc/resources/app_animations.dart';
 import 'package:smoothapp_poc/utils/num_utils.dart';
 import 'package:smoothapp_poc/utils/provider_utils.dart';
+import 'package:smoothapp_poc/utils/system_ui.dart';
 import 'package:smoothapp_poc/utils/widgets/modal_sheet.dart';
 import 'package:smoothapp_poc/utils/widgets/offline_size_widget.dart';
 import 'package:smoothapp_poc/utils/widgets/useful_widgets.dart';
@@ -215,7 +216,7 @@ class _CameraViewState extends State<CameraView> {
                     }
                   },
                   child: AnnotatedRegion<SystemUiOverlayStyle>(
-                    value: SystemUiOverlayStyle.light,
+                    value: SystemUIStyle.light,
                     child: _MagicBackgroundBottomSheet(
                       scrollController: draggableScrollableController,
                       style: DefaultTextStyle.of(topContext).style,

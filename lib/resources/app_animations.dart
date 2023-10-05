@@ -48,67 +48,18 @@ class _AnimationLoaderState extends State<AnimationLoader> {
   }
 }
 
-class TorchAnimation extends StatefulWidget {
-  const TorchAnimation.on({
-    this.size,
+class ConsentAnimation extends StatelessWidget {
+  const ConsentAnimation({
     super.key,
-  }) : isOn = true;
-
-  const TorchAnimation.off({
-    this.size,
-    super.key,
-  }) : isOn = false;
-
-  final bool isOn;
-  final double? size;
-
-  @override
-  State<TorchAnimation> createState() => _TorchAnimationState();
-}
-
-class _TorchAnimationState extends State<TorchAnimation> {
-  StateMachineController? _controller;
-
-  @override
-  void didUpdateWidget(covariant TorchAnimation oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    _changeTorchValue(widget.isOn);
-  }
-
-  void _changeTorchValue(bool isOn) {
-    SMIBool toggle = _controller?.findInput<bool>('enable') as SMIBool;
-    if (toggle.value != isOn) {
-      toggle.value = isOn;
-    }
-  }
+  });
 
   @override
   Widget build(BuildContext context) {
-    final double size = widget.size ?? IconTheme.of(context).size ?? 24.0;
-
-    return SizedBox.square(
-      dimension: size,
-      child: RiveAnimation.asset(
-        'assets/animations/off.riv',
-        artboard: 'Torch',
-        fit: BoxFit.cover,
-        onInit: (Artboard artboard) {
-          _controller = StateMachineController.fromArtboard(
-            artboard,
-            'Switch',
-          );
-
-          artboard.addController(_controller!);
-          _changeTorchValue(widget.isOn);
-        },
-      ),
+    return RiveAnimation.direct(
+      AnimationLoader.of(context),
+      artboard: 'Consent',
+      animations: const ['Loop'],
     );
-  }
-
-  @override
-  void dispose() {
-    _controller?.dispose();
-    super.dispose();
   }
 }
 
@@ -199,21 +150,6 @@ class SearchEyeAnimation extends StatelessWidget {
   }
 }
 
-class SunAnimation extends StatelessWidget {
-  const SunAnimation({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return RiveAnimation.direct(
-      AnimationLoader.of(context),
-      artboard: 'Success',
-      animations: const ['Timeline 1'],
-    );
-  }
-}
-
 class SearchAnimation extends StatefulWidget {
   const SearchAnimation({
     super.key,
@@ -281,4 +217,83 @@ enum SearchAnimationType {
   const SearchAnimationType(this.step);
 
   final int step;
+}
+
+class SunAnimation extends StatelessWidget {
+  const SunAnimation({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return RiveAnimation.direct(
+      AnimationLoader.of(context),
+      artboard: 'Success',
+      animations: const ['Timeline 1'],
+    );
+  }
+}
+
+class TorchAnimation extends StatefulWidget {
+  const TorchAnimation.on({
+    this.size,
+    super.key,
+  }) : isOn = true;
+
+  const TorchAnimation.off({
+    this.size,
+    super.key,
+  }) : isOn = false;
+
+  final bool isOn;
+  final double? size;
+
+  @override
+  State<TorchAnimation> createState() => _TorchAnimationState();
+}
+
+class _TorchAnimationState extends State<TorchAnimation> {
+  StateMachineController? _controller;
+
+  @override
+  void didUpdateWidget(covariant TorchAnimation oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _changeTorchValue(widget.isOn);
+  }
+
+  void _changeTorchValue(bool isOn) {
+    SMIBool toggle = _controller?.findInput<bool>('enable') as SMIBool;
+    if (toggle.value != isOn) {
+      toggle.value = isOn;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final double size = widget.size ?? IconTheme.of(context).size ?? 24.0;
+
+    return SizedBox.square(
+      dimension: size,
+      child: RiveAnimation.asset(
+        'assets/animations/off.riv',
+        artboard: 'Torch',
+        fit: BoxFit.cover,
+        onInit: (Artboard artboard) {
+          _controller = StateMachineController.fromArtboard(
+            artboard,
+            'Switch',
+          );
+
+          artboard.addController(_controller!);
+          _changeTorchValue(widget.isOn);
+        },
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller?.dispose();
+    super.dispose();
+  }
 }

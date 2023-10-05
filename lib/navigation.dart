@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:smoothapp_poc/pages/homepage/homepage.dart';
 import 'package:smoothapp_poc/pages/shopping_list/shopping_list.dart';
+import 'package:smoothapp_poc/utils/system_ui.dart';
 import 'package:smoothapp_poc/utils/ui_utils.dart';
 import 'package:smoothapp_poc/utils/widgets/modal_sheet.dart';
 
@@ -145,6 +146,7 @@ class NavAppState extends State<NavApp> with TickerProviderStateMixin {
                               return;
                             }
                           } else {
+                            hideSheet();
                             setState(() => _selectedTab = page);
                           }
 
@@ -222,7 +224,7 @@ class NavAppState extends State<NavApp> with TickerProviderStateMixin {
       }
     } else if (_sheet!.controller!.size < 1.0) {
       if (_navBarTranslation == 0.0) {
-        SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+        SystemChrome.setSystemUIOverlayStyle(SystemUIStyle.light);
         _animateBottomBar(_navBarHeight);
       }
 
@@ -289,7 +291,10 @@ class OnTabChangedNotifier extends ValueNotifier<HomeTabs> {
 
   void updateWith(HomeTabs value) {
     this.value = value;
-    notifyListeners();
+
+    if (hasListeners) {
+      notifyListeners();
+    }
   }
 }
 

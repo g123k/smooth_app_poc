@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:smoothapp_poc/utils/system_ui.dart';
 
 bool foodPreferencesDefined = false;
 
@@ -16,7 +17,7 @@ class _FoodPreferencesPageState extends State<FoodPreferencesPage> {
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.dark,
+      value: SystemUIStyle.dark,
       child: Scaffold(
         body: WillPopScope(
           onWillPop: () async {

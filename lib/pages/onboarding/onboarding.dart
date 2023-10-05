@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:smoothapp_poc/pages/onboarding/onboarding_bottom_hills.dart';
 import 'package:smoothapp_poc/pages/onboarding/pages/onboarding_camera_permission_page.dart';
 import 'package:smoothapp_poc/pages/onboarding/pages/onboarding_explanation_page.dart';
 import 'package:smoothapp_poc/pages/onboarding/pages/onboarding_project_page.dart';
 import 'package:smoothapp_poc/pages/onboarding/pages/onboarding_welcome_page.dart';
-import 'package:smoothapp_poc/resources/app_colors.dart';
-import 'package:smoothapp_poc/utils/text_utils.dart';
+import 'package:smoothapp_poc/pages/onboarding/widgets/onboarding_bottom_hills.dart';
+import 'package:smoothapp_poc/utils/system_ui.dart';
 import 'package:smoothapp_poc/utils/ui_utils.dart';
 
 // TODO REMOVE THIS IN THE PROD APP
@@ -65,40 +65,43 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFE3F3FE),
-      body: MultiProvider(
-        providers: [
-          ChangeNotifierProvider.value(
-            value: _controller,
-          ),
-          Provider.value(
-            value: OnboardingConfig._(MediaQuery.of(context)),
-          ),
-        ],
-        child: Stack(
-          children: <Widget>[
-            Positioned.fill(
-              child: PageView.builder(
-                controller: _controller,
-                itemBuilder: (BuildContext context, int position) {
-                  return ChangeNotifierProvider.value(
-                    value: _notifiers[position],
-                    child: switch (position) {
-                      0 => const OnboardingWelcomePage(),
-                      1 => const OnboardingProjectPage(),
-                      2 => const OnboardingExplanationPage(),
-                      3 || _ => const OnboardingCameraPermissionPage(),
-                    },
-                  );
-                },
-                itemCount: 4,
-              ),
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUIStyle.dark,
+      child: Scaffold(
+        backgroundColor: const Color(0xFFE3F3FE),
+        body: MultiProvider(
+          providers: [
+            ChangeNotifierProvider.value(
+              value: _controller,
             ),
-            const OnboardingBottomHills(
-              maxPage: 2,
+            Provider.value(
+              value: OnboardingConfig._(MediaQuery.of(context)),
             ),
           ],
+          child: Stack(
+            children: <Widget>[
+              Positioned.fill(
+                child: PageView.builder(
+                  controller: _controller,
+                  itemBuilder: (BuildContext context, int position) {
+                    return ChangeNotifierProvider.value(
+                      value: _notifiers[position],
+                      child: switch (position) {
+                        0 => const OnboardingWelcomePage(),
+                        1 => const OnboardingProjectPage(),
+                        2 => const OnboardingExplanationPage(),
+                        3 || _ => const OnboardingCameraPermissionPage(),
+                      },
+                    );
+                  },
+                  itemCount: 4,
+                ),
+              ),
+              const OnboardingBottomHills(
+                maxPage: 2,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -131,91 +134,14 @@ class OnboardingPageScrollNotifier extends ValueNotifier<double> {
       context.watch<OnboardingPageScrollNotifier>();
 }
 
-class OnboardingText extends StatelessWidget {
-  const OnboardingText({
-    required this.text,
-    this.margin,
-    super.key,
-  });
-
-  final String text;
-  final EdgeInsetsGeometry? margin;
-
-  @override
-  Widget build(BuildContext context) {
-    final double fontMultiplier = OnboardingConfig.of(context).fontMultiplier;
-
-    return RichText(
-      text: TextSpan(
-        children: _extractChunks().map(((String text, bool highlighted) el) {
-          if (el.$2) {
-            return _createSpan(el.$1, 30 * fontMultiplier);
-          } else {
-            return TextSpan(text: el.$1);
-          }
-        }).toList(growable: false),
-        style: DefaultTextStyle.of(context).style.copyWith(
-              fontSize: 30 * fontMultiplier,
-              height: 1.53,
-              fontWeight: FontWeight.w600,
-            ),
-      ),
-      textAlign: TextAlign.center,
-    );
-  }
-
-  Iterable<(String, bool)> _extractChunks() {
-    final Iterable<RegExpMatch> matches =
-        RegExp('\\*(.*?)\\*').allMatches(text);
-
-    if (matches.isEmpty) {
-      return [(text, false)];
-    }
-
-    List<(String, bool)> chunks = [];
-
-    int lastMatch = 0;
-
-    for (RegExpMatch match in matches) {
-      if (matches.first.start > 0) {
-        chunks.add((text.substring(lastMatch, match.start), false));
-      }
-
-      chunks.add((text.substring(match.start + 1, match.end - 1), true));
-      lastMatch = match.end;
-    }
-
-    if (lastMatch < text.length) {
-      chunks.add((text.substring(lastMatch), false));
-    }
-
-    return chunks;
-  }
-
-  WidgetSpan _createSpan(String text, double fontSize) => HighlightedTextSpan(
-        text: text,
-        textStyle: TextStyle(
-          color: Colors.white,
-          fontSize: fontSize,
-          fontWeight: FontWeight.w700,
-        ),
-        padding: const EdgeInsetsDirectional.only(
-          top: 1.0,
-          bottom: 5.0,
-          start: 15.0,
-          end: 15.0,
-        ),
-        margin: margin ?? const EdgeInsetsDirectional.symmetric(vertical: 2.5),
-        backgroundColor: AppColors.orange,
-        radius: 30.0,
-      );
-}
-
 class OnboardingConfig {
   final double fontMultiplier;
 
   OnboardingConfig._(MediaQueryData mediaQuery)
-      : fontMultiplier = ((mediaQuery.size.width * 45) / 428) / 45;
+      : fontMultiplier = computeFontMultiplier(mediaQuery);
+
+  static double computeFontMultiplier(MediaQueryData mediaQuery) =>
+      ((mediaQuery.size.width * 45) / 428) / 45;
 
   static OnboardingConfig of(BuildContext context) =>
       context.watch<OnboardingConfig>();

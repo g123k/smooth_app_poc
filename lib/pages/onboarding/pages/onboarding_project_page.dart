@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:rive/rive.dart';
-import 'package:smoothapp_poc/pages/onboarding/onboarding.dart';
-import 'package:smoothapp_poc/pages/onboarding/onboarding_bottom_hills.dart';
+import 'package:smoothapp_poc/pages/onboarding/widgets/onboarding_bottom_hills.dart';
+import 'package:smoothapp_poc/pages/onboarding/widgets/onboarding_text.dart';
 
 class OnboardingProjectPage extends StatelessWidget {
   const OnboardingProjectPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final double fontMultiplier = OnboardingConfig.of(context).fontMultiplier;
-
     return Padding(
       padding: EdgeInsetsDirectional.only(
         top: MediaQuery.viewPaddingOf(context).top,

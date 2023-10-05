@@ -10,7 +10,7 @@ import 'package:smoothapp_poc/pages/search_page/ui/search_page_loading.dart';
 import 'package:smoothapp_poc/resources/app_colors.dart';
 import 'package:smoothapp_poc/resources/app_icons.dart' as icons;
 import 'package:smoothapp_poc/utils/num_utils.dart';
-import 'package:smoothapp_poc/utils/widgets/list.dart';
+import 'package:smoothapp_poc/utils/widgets/list_item.dart';
 import 'package:smoothapp_poc/utils/widgets/network_image.dart';
 import 'package:smoothapp_poc/utils/widgets/search_bar/search_bar.dart';
 import 'package:smoothapp_poc/utils/widgets/useful_widgets.dart';
@@ -74,8 +74,10 @@ class _SearchBodyWithResultsState extends State<_SearchBodyWithResults> {
     return SliverList.separated(
       itemBuilder: (BuildContext context, int position) {
         final Product product = widget.products[position];
+        // TODO
         final ProductCompatibility score = ProductCompatibility(
-            100 * (1 - position.progress(0, widget.products.length)));
+          100 * (1 - position.progress(0, widget.products.length)),
+        );
 
         return InkWell(
           onTap: () {
@@ -108,7 +110,7 @@ class _SearchBodyWithResultsState extends State<_SearchBodyWithResults> {
                               if (foodPreferencesDefined)
                                 SizedBox(
                                   height: 36.0,
-                                  child: CompatibilityScore(level: score),
+                                  child: CompatibilityScore.min(level: score),
                                 ),
                               ClipRRect(
                                 borderRadius: BorderRadius.vertical(
@@ -239,22 +241,30 @@ class CompatibilityScore extends StatelessWidget {
     required this.level,
     this.size = 18.0,
     super.key,
-  });
+  }) : minimized = false;
+
+  const CompatibilityScore.min({
+    required this.level,
+    this.size = 18.0,
+    super.key,
+  }) : minimized = true;
 
   final ProductCompatibility level;
   final double size;
+  final bool minimized;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
+      height: double.infinity,
       decoration: BoxDecoration(
         color: level.color,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(10.0)),
       ),
-      padding: const EdgeInsets.all(8.0),
+      alignment: AlignmentDirectional.center,
       child: Text(
-        foodPreferencesDefined ? '${level.level?.toInt() ?? '-'} %' : '-',
+        '${level.level?.toInt() ?? '-'} %${minimized ? '' : ' compatible'}',
         textAlign: TextAlign.center,
         style: const TextStyle(
           color: AppColors.white,

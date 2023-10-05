@@ -35,9 +35,12 @@ class CameraPeakView extends StatelessWidget {
                       shape: BoxShape.circle,
                       color: Colors.white.withOpacity(0.5),
                     ),
-                    padding: const EdgeInsets.all(25),
-                    child: icons.Camera.outlined(
-                      size: 25.0,
+                    margin: EdgeInsetsDirectional.only(
+                      top: MediaQuery.viewPaddingOf(context).top * 0.25,
+                    ),
+                    padding: const EdgeInsetsDirectional.all(25.0),
+                    child: icons.Barcode.withCorners(
+                      size: 37.0,
                       color: Colors.white,
                       shadow: Shadow(
                         color: Colors.black.withOpacity(0.2),
@@ -46,27 +49,40 @@ class CameraPeakView extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(
-                    height: 12.0,
+                    height: 24.0,
                   ),
-                  const FractionallySizedBox(
+                  FractionallySizedBox(
                     widthFactor: 0.75,
-                    child: Text(
-                      'Cliquez pour rechercher un produit en scannant son code-barres',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 16.5,
-                        height: 1.7,
-                        shadows: [
-                          Shadow(
-                            color: Colors.black,
-                            blurRadius: 10.0,
+                    child: RichText(
+                      text: TextSpan(
+                        text: 'Cliquez pour scanner un ',
+                        children: const [
+                          TextSpan(
+                            text: 'code-barres',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          TextSpan(
+                            text: ' et découvrir ses informations',
                           ),
                         ],
+                        style: DefaultTextStyle.of(context).style.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16.5,
+                          height: 1.7,
+                          shadows: [
+                            const Shadow(
+                              color: Colors.black,
+                              blurRadius: 10.0,
+                            ),
+                          ],
+                        ),
                       ),
                       textAlign: TextAlign.center,
                     ),
-                  )
+                  ),
                 ],
               ),
             ),

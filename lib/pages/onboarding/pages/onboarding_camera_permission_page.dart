@@ -11,10 +11,7 @@ class OnboardingCameraPermissionPage extends StatelessWidget {
         if (details.localPosition.dy >
             MediaQuery.sizeOf(context).height * 0.65) {
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (BuildContext context) =>
-                  const OnboardingAnalyticsPage(),
-            ),
+            _createRoute(),
           );
         }
       },
@@ -22,6 +19,36 @@ class OnboardingCameraPermissionPage extends StatelessWidget {
         'assets/onboarding/onboarding4.webp',
         fit: BoxFit.contain,
       ),
+    );
+  }
+
+  Route _createRoute() {
+    /// Right -> left animation
+    return PageRouteBuilder(
+      pageBuilder: (BuildContext context, Animation<double> animation,
+              Animation<double> secondaryAnimation) =>
+          const OnboardingAnalyticsPage(),
+      transitionsBuilder: (
+        BuildContext context,
+        Animation<double> animation,
+        Animation<double> secondaryAnimation,
+        Widget child,
+      ) {
+        const Offset begin = Offset(1.0, 0.0);
+        const Offset end = Offset.zero;
+        const Cubic curve = Curves.ease;
+
+        final Animatable<Offset> tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+        return FadeTransition(
+          opacity: animation,
+          child: SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          ),
+        );
+      },
     );
   }
 }

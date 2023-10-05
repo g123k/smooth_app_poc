@@ -69,7 +69,7 @@ class HomePageProductCounter extends StatelessWidget
                         fontWeight: FontWeight.bold,
                       ),
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 5.0,
+                        horizontal: 8.0,
                         vertical: 1.0,
                       ),
                       backgroundColor: AppColors.primaryAlt,

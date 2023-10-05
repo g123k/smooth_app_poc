@@ -17,6 +17,7 @@ import 'package:smoothapp_poc/pages/product/info/product_info_tab.dart';
 import 'package:smoothapp_poc/pages/product/photos/product_photos_tab.dart';
 import 'package:smoothapp_poc/pages/product/product_page_fab.dart';
 import 'package:smoothapp_poc/utils/physics.dart';
+import 'package:smoothapp_poc/utils/system_ui.dart';
 import 'package:smoothapp_poc/utils/ui_utils.dart';
 import 'package:smoothapp_poc/utils/widgets/modal_sheet.dart';
 import 'package:smoothapp_poc/utils/widgets/offline_size_widget.dart';
@@ -149,7 +150,7 @@ class ProductPageState extends State<ProductPage>
     } else {
       child = Scaffold(
         body: AnnotatedRegion<SystemUiOverlayStyle>(
-          value: SystemUiOverlayStyle.light,
+          value: SystemUIStyle.light,
           child: SafeArea(
             top: false,
             bottom: false,

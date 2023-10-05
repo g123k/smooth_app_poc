@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smoothapp_poc/pages/homepage/list/homepage_list_widgets.dart';
 import 'package:smoothapp_poc/pages/news/news_page.dart';
 import 'package:smoothapp_poc/resources/app_colors.dart';
 
@@ -12,7 +13,7 @@ class GuidesList extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.only(
           top: 20.0,
-          bottom: 10.0,
+          bottom: 15.0,
           left: 24.0,
           right: 24.0,
         ),
@@ -20,12 +21,8 @@ class GuidesList extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Nos guides',
-              style: TextStyle(
-                fontSize: 19.0,
-                fontWeight: FontWeight.bold,
-              ),
+            const HomePageTitle(
+              label: 'Cela pourrait vous intéresser…',
             ),
             const SizedBox(height: 15.0),
             const _GuideItem(

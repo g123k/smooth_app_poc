@@ -63,22 +63,23 @@ class _ProductForMeTabState extends State<ProductForMeTab> {
                 fit: BoxFit.fitWidth,
               ),
             ),
-            GestureDetector(
-              onTap: () async {
-                if (await Navigator.of(context, rootNavigator: true)
-                            .push(MaterialPageRoute(
-                          builder: (context) => const FoodPreferencesPage(),
-                        )) ==
-                        true &&
-                    mounted) {
-                  ProductPage.of(context).forceReload();
-                }
-              },
-              child: Image.asset(
-                'assets/images/product_forme_empty_button.webp',
-                // 428 x 808
+            if (!foodPreferencesDefined)
+              GestureDetector(
+                onTap: () async {
+                  if (await Navigator.of(context, rootNavigator: true)
+                              .push(MaterialPageRoute(
+                            builder: (context) => const FoodPreferencesPage(),
+                          )) ==
+                          true &&
+                      mounted) {
+                    ProductPage.of(context).forceReload();
+                  }
+                },
+                child: Image.asset(
+                  'assets/images/product_forme_empty_button.webp',
+                  // 428 x 808
+                ),
               ),
-            ),
           ],
         ),
       );

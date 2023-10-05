@@ -8,13 +8,15 @@ import 'package:smoothapp_poc/pages/homepage/camera/expandable_view/expandable_c
 import 'package:smoothapp_poc/pages/homepage/camera/view/camera_state_manager.dart';
 import 'package:smoothapp_poc/pages/homepage/camera/view/ui/camera_view.dart';
 import 'package:smoothapp_poc/pages/homepage/homepage_products_counter.dart';
-import 'package:smoothapp_poc/pages/homepage/list/guides_list.dart';
-import 'package:smoothapp_poc/pages/homepage/list/news_list.dart';
-import 'package:smoothapp_poc/pages/homepage/list/product_scanned_list.dart';
+import 'package:smoothapp_poc/pages/homepage/list/homepage_categories.dart';
+import 'package:smoothapp_poc/pages/homepage/list/homepage_guides_list.dart';
+import 'package:smoothapp_poc/pages/homepage/list/homepage_news_list.dart';
+import 'package:smoothapp_poc/pages/homepage/list/homepage_scanned_list.dart';
 import 'package:smoothapp_poc/pages/search_page/search_page.dart';
 import 'package:smoothapp_poc/resources/app_icons.dart' as icons;
 import 'package:smoothapp_poc/utils/physics.dart';
 import 'package:smoothapp_poc/utils/provider_utils.dart';
+import 'package:smoothapp_poc/utils/system_ui.dart';
 import 'package:smoothapp_poc/utils/ui_utils.dart';
 import 'package:smoothapp_poc/utils/widgets/search_bar/search_bar.dart';
 import 'package:visibility_detector/visibility_detector.dart';
@@ -219,8 +221,10 @@ class HomePageState extends State<HomePage> {
                         textScaleFactor: MediaQuery.textScaleFactorOf(context),
                       ),
                     ),
-                    const GuidesList(),
+                    const HomePageCategories(),
+                    const HistoryList(),
                     const MostScannedProducts(),
+                    const GuidesList(),
                     const NewsList(),
                     SliverPadding(
                       padding: EdgeInsets.only(
@@ -315,12 +319,12 @@ class HomePageState extends State<HomePage> {
   /// - Update the type of the settings icon
   void _onScrollUpdate(ScrollUpdateNotification notification) {
     if (_controller.offset.ceilToDouble() < cameraHeight) {
-      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+      SystemChrome.setSystemUIOverlayStyle(SystemUIStyle.light);
       if (!_cameraController.isStarting) {
         _cameraController.start();
       }
     } else {
-      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
+      SystemChrome.setSystemUIOverlayStyle(SystemUIStyle.dark);
       _cameraController.stop();
     }
   }

@@ -68,6 +68,12 @@ class _IconsFont {
       IconData(0xe829, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData add =
       IconData(0xe82d, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData barcode_corners =
+      IconData(0xe82e, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData barcode_rounded =
+      IconData(0xe82f, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData personalization =
+      IconData(0xe830, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData outdated =
       IconData(0xe836, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData question_circled =

@@ -13,6 +13,7 @@ import 'package:smoothapp_poc/pages/search_page/ui/search_page_empty.dart';
 import 'package:smoothapp_poc/pages/search_page/ui/search_page_results.dart';
 import 'package:smoothapp_poc/resources/app_icons.dart' as icons;
 import 'package:smoothapp_poc/utils/provider_utils.dart';
+import 'package:smoothapp_poc/utils/system_ui.dart';
 import 'package:smoothapp_poc/utils/widgets/search_bar/search_bar.dart';
 
 class SearchPage extends StatefulWidget {
@@ -64,7 +65,7 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.dark,
+      value: SystemUIStyle.dark,
       child: SearchBarController(
         editingController: _searchBarController,
         keyboardStreamController: _searchBarKeyboardController,

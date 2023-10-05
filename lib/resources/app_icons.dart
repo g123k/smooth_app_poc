@@ -74,6 +74,20 @@ class Barcode extends AppIcon {
     super.shadow,
     super.key,
   }) : super._(_IconsFont.barcode);
+
+  const Barcode.rounded({
+    super.color,
+    super.size,
+    super.shadow,
+    super.key,
+  }) : super._(_IconsFont.barcode_rounded);
+
+  const Barcode.withCorners({
+    super.color,
+    super.size,
+    super.shadow,
+    super.key,
+  }) : super._(_IconsFont.barcode_corners);
 }
 
 class Camera extends AppIcon {
@@ -385,6 +399,15 @@ class Packaging extends AppIcon {
     super.shadow,
     super.key,
   }) : super._(_IconsFont.packaging);
+}
+
+class Personalization extends AppIcon {
+  const Personalization({
+    super.color,
+    super.size,
+    super.shadow,
+    super.key,
+  }) : super._(_IconsFont.personalization);
 }
 
 class Question extends AppIcon {

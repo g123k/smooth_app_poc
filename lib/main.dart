@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:smoothapp_poc/pages/onboarding/onboarding.dart';
 import 'package:smoothapp_poc/resources/app_animations.dart';
 import 'package:smoothapp_poc/resources/app_colors.dart';
 
 void main() {
   runApp(const MyApp());
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 }
 
 class MyApp extends StatelessWidget {
