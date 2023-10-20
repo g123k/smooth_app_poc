@@ -472,7 +472,7 @@ class _SearchBarState extends State<_SearchBar> {
                       );
                     },
                     decoration: const InputDecoration(
-                      hintText: 'Rechercher un produit ou un code-barres',
+                      hintText: 'Search for a product or barcode',
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.zero,
                     ),

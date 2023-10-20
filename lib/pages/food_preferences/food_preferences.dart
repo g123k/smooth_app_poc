@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:smoothapp_poc/utils/system_ui.dart';
@@ -48,10 +50,14 @@ class _FoodPreferencesPageState extends State<FoodPreferencesPage> {
                 }
               }
             },
-            child: SizedBox.expand(
-              child: Image.asset(
-                'assets/images/foodprefs_${currentPage + 1}.webp',
-                fit: BoxFit.contain,
+            child: SafeArea(
+              top: false,
+              bottom: Platform.isAndroid,
+              child: SizedBox.expand(
+                child: Image.asset(
+                  'assets/images/foodprefs_${currentPage + 1}.webp',
+                  fit: BoxFit.contain,
+                ),
               ),
             ),
           ),

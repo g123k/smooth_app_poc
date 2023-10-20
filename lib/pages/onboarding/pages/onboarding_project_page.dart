@@ -24,8 +24,8 @@ class OnboardingProjectPage extends StatelessWidget {
                   alignment: Alignment.bottomCenter,
                   child: RiveAnimation.asset(
                     'assets/animations/off.riv',
-                    artboard: 'Planet',
-                    animations: ['Loop'],
+                    artboard: 'Muffins',
+                    stateMachines: ['State Machine 1'],
                   ),
                 ),
               ),

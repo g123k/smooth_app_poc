@@ -77,6 +77,7 @@ class _OnboardingButton extends StatelessWidget {
                 color: foregroundColor,
                 fontSize: 30.0,
                 fontWeight: FontWeight.bold,
+                height: 0.93,
               ),
             ),
           ),

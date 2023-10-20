@@ -215,7 +215,7 @@ class _SearchBodyWithResultsState extends State<_SearchBodyWithResults> {
                 ),
                 if (foodPreferencesDefined) ...[
                   ListItem.text(
-                    'Pas de moutarde',
+                    'Ne contient pas de moutarde',
                     padding: const EdgeInsets.only(top: 10.0),
                     leading: const ListItemLeadingScore.high(),
                   ),
