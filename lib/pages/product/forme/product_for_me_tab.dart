@@ -41,10 +41,11 @@ class _ProductForMeTabState extends State<ProductForMeTab> {
         onTapDown: (TapDownDetails details) async {
           if (foodPreferencesDefined && details.localPosition.dy < 50) {
             if (await Navigator.of(context, rootNavigator: true)
-                    .push(MaterialPageRoute(
-                  builder: (context) => const FoodPreferencesPage(),
-                )) ==
-                true) {
+                        .push(MaterialPageRoute(
+                      builder: (context) => const FoodPreferencesPage(),
+                    )) ==
+                    true &&
+                context.mounted) {
               ProductPage.of(context).forceReload();
             }
           }
@@ -71,7 +72,7 @@ class _ProductForMeTabState extends State<ProductForMeTab> {
                             builder: (context) => const FoodPreferencesPage(),
                           )) ==
                           true &&
-                      mounted) {
+                      context.mounted) {
                     ProductPage.of(context).forceReload();
                   }
                 },

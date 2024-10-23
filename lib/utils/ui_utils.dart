@@ -42,3 +42,7 @@ extension ScrollControllerExtension on ScrollController {
         curve: curve,
       );
 }
+
+extension TextScalerExtension on TextScaler {
+  double get scaler => 15.0 / scale(15.0);
+}

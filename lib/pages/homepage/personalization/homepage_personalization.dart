@@ -76,8 +76,8 @@ class CustomPageRouteBuilder<T> extends PageRoute<T> {
   CustomPageRouteBuilder({
     required this.pageBuilder,
   }) : matchingBuilder = Platform.isIOS
-            ? CupertinoPageTransitionsBuilder()
-            : OpenUpwardsPageTransitionsBuilder();
+            ? const CupertinoPageTransitionsBuilder()
+            : const OpenUpwardsPageTransitionsBuilder();
 
   @override
   Widget buildPage(

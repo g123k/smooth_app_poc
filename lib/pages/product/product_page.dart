@@ -244,7 +244,7 @@ class ProductPageState extends State<ProductPage>
                   final double min = mediaQuery.size.height -
                       kToolbarHeight -
                       ProductHeaderTabBar.TAB_BAR_HEIGHT -
-                      ProductFooter.HEIGHT -
+                      ProductFooter.kHeight -
                       (16.0 * 2) -
                       screenPadding.top -
                       (screenPadding.bottom == 0.0

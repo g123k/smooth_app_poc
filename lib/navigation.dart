@@ -99,8 +99,8 @@ class NavAppState extends State<NavApp> with TickerProviderStateMixin {
                       child: _getSubPage(),
                     ),
                   ],
-                  onPopPage: (route, result) {
-                    return route.didPop(result);
+                  onDidRemovePage: (Page<Object?> page) {
+                    // We don't care here
                   },
                 ),
               ),

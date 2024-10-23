@@ -203,7 +203,8 @@ class HomePageState extends State<HomePage> {
                           SearchPageResult? res =
                               await SearchPage.open(context);
 
-                          if (res == SearchPageResult.openCamera && mounted) {
+                          if (res == SearchPageResult.openCamera &&
+                              context.mounted) {
                             HomePage.of(context).expandCamera(
                               duration: const Duration(milliseconds: 1500),
                             );
@@ -218,7 +219,7 @@ class HomePageState extends State<HomePage> {
                         );
                       },
                       footer: HomePageProductCounter(
-                        textScaleFactor: MediaQuery.textScaleFactorOf(context),
+                        textScaler: MediaQuery.textScalerOf(context),
                       ),
                     ),
                     const HomePageCategories(),

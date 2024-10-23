@@ -60,7 +60,7 @@ class _ProductHeaderTabBarState extends State<ProductHeaderTabBar> {
             isScrollable: true,
             padding: EdgeInsets.zero,
             labelPadding: EdgeInsets.zero,
-            overlayColor: MaterialStateProperty.all(AppColors.primaryVeryLight),
+            overlayColor: WidgetStateProperty.all(AppColors.primaryVeryLight),
             splashBorderRadius: const BorderRadius.vertical(
               top: Radius.circular(5.0),
             ),
@@ -78,20 +78,8 @@ class _ProductHeaderTabBarState extends State<ProductHeaderTabBar> {
                   color: AppColors.primary,
                   width: 3.0,
                 ),
-                top: BorderSide(
-                  color: AppColors.primary,
-                  width: 0.0,
-                ),
-                left: BorderSide(
-                  color: AppColors.primary,
-                  width: 0.0,
-                ),
-                right: BorderSide(
-                  color: AppColors.primary,
-                  width: 0.0,
-                ),
               ),
-              borderRadius: BorderRadius.vertical(top: Radius.circular(5.0)),
+              // borderRadius: BorderRadius.vertical(top: Radius.circular(5.0)),
               color: AppColors.primaryVeryLight,
             ),
             onTap: (int position) => widget.onTabChanged?.call(position),

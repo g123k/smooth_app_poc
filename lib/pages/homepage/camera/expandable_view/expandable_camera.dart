@@ -5,6 +5,7 @@ import 'package:smoothapp_poc/pages/homepage/camera/view/ui/camera_view.dart';
 import 'package:smoothapp_poc/pages/homepage/homepage.dart';
 import 'package:smoothapp_poc/resources/app_colors.dart';
 import 'package:smoothapp_poc/utils/num_utils.dart';
+import 'package:smoothapp_poc/utils/widgets/will_pop_scope.dart';
 
 //ignore_for_file: constant_identifier_names
 class ExpandableCamera extends StatelessWidget {
@@ -19,22 +20,22 @@ class ExpandableCamera extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
+    return WillPopScope2(
       onWillPop: () async {
         final HomePageState screenController = HomePage.of(context);
         final NavAppState app = NavApp.of(context);
         if (app.hasSheet) {
           screenController.ignoreAllEvents(false);
           app.hideSheet();
-          return false;
+          return (false, null);
         }
 
         if (screenController.isExpanded) {
           screenController.collapseCamera();
-          return false;
+          return (false, null);
         }
 
-        return true;
+        return (true, null);
       },
       child: SliverPersistentHeader(
         delegate: _Delegate(controller, height),

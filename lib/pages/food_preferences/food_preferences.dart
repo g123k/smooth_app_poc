@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:smoothapp_poc/utils/system_ui.dart';
+import 'package:smoothapp_poc/utils/widgets/will_pop_scope.dart';
 
 bool foodPreferencesDefined = false;
 
@@ -21,13 +22,13 @@ class _FoodPreferencesPageState extends State<FoodPreferencesPage> {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUIStyle.dark,
       child: Scaffold(
-        body: WillPopScope(
+        body: WillPopScope2(
           onWillPop: () async {
             if (currentPage > 0) {
               setState(() => currentPage--);
-              return false;
+              return (false, null);
             }
-            return true;
+            return (true, null);
           },
           child: GestureDetector(
             onTapDown: (TapDownDetails details) {

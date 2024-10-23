@@ -2,16 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:smoothapp_poc/resources/app_colors.dart';
 import 'package:smoothapp_poc/resources/app_icons.dart' as icons;
 import 'package:smoothapp_poc/utils/text_utils.dart';
+import 'package:smoothapp_poc/utils/ui_utils.dart';
 import 'package:smoothapp_poc/utils/widgets/search_bar/search_bar.dart';
 
 class HomePageProductCounter extends StatelessWidget
     implements SearchBarFooterWidget {
   const HomePageProductCounter({
-    required this.textScaleFactor,
+    required this.textScaler,
     super.key,
   });
 
-  final double textScaleFactor;
+  final TextScaler textScaler;
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +95,7 @@ class HomePageProductCounter extends StatelessWidget
   }
 
   @override
-  double get height => (110.0 * textScaleFactor);
+  double get height => (110.0 * textScaler.scaler);
 
   @override
   Color get color => AppColors.primaryVeryLight;

@@ -111,10 +111,10 @@ class _OnboardingBottomHillsState extends State<OnboardingBottomHills> {
                     ),
                     child: TextButton(
                       style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(
+                        backgroundColor: WidgetStateProperty.all<Color>(
                           AppColors.white,
                         ),
-                        padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                        padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
                           const EdgeInsetsDirectional.only(
                             start: 17.0,
                             end: 16.0,
@@ -122,20 +122,20 @@ class _OnboardingBottomHillsState extends State<OnboardingBottomHills> {
                             bottom: 10.0,
                           ),
                         ),
-                        elevation: MaterialStateProperty.all<double>(4.0),
-                        iconColor: MaterialStateProperty.all<Color>(
+                        elevation: WidgetStateProperty.all<double>(4.0),
+                        iconColor: WidgetStateProperty.all<Color>(
                           AppColors.orange,
                         ),
-                        foregroundColor: MaterialStateProperty.all<Color>(
+                        foregroundColor: WidgetStateProperty.all<Color>(
                           AppColors.orange,
                         ),
-                        iconSize: MaterialStateProperty.all<double>(21.0),
-                        shape: MaterialStateProperty.all<OutlinedBorder>(
+                        iconSize: WidgetStateProperty.all<double>(21.0),
+                        shape: WidgetStateProperty.all<OutlinedBorder>(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20.0),
                           ),
                         ),
-                        shadowColor: MaterialStateProperty.all<Color>(
+                        shadowColor: WidgetStateProperty.all<Color>(
                           AppColors.blackPrimary.withOpacity(0.50),
                         ),
                       ),

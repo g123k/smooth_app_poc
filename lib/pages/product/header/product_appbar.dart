@@ -285,10 +285,11 @@ class _ProductCompatibilityScore extends StatelessWidget {
         child: InkWell(
           onTap: () async {
             if (await Navigator.of(context, rootNavigator: true)
-                    .push(MaterialPageRoute(
-                  builder: (context) => const FoodPreferencesPage(),
-                )) ==
-                true) {
+                        .push(MaterialPageRoute(
+                      builder: (context) => const FoodPreferencesPage(),
+                    )) ==
+                    true &&
+                context.mounted) {
               ProductPage.of(context).forceReload();
             }
           },

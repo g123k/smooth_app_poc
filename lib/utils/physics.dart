@@ -84,11 +84,13 @@ class _VerticalClampScrollState extends State<VerticalClampScroll> {
 
       if (scrollTo != null) {
         Future.delayed(Duration.zero, () {
-          context.read<ScrollController>().animateTo(
-                scrollTo!,
-                curve: Curves.easeOutCubic,
-                duration: const Duration(milliseconds: 500),
-              );
+          if (mounted) {
+            context.read<ScrollController>().animateTo(
+                  scrollTo!,
+                  curve: Curves.easeOutCubic,
+                  duration: const Duration(milliseconds: 500),
+                );
+          }
         });
       }
     }

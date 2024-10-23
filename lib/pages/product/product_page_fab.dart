@@ -32,9 +32,7 @@ mixin ProductPageFABContainer<T extends StatefulWidget> on State<T> {
   void _showFABForTab(ProductHeaderTabs tab) {
     try {
       if (_entries[tab]?.mounted == false &&
-          NavApp
-              .of(context)
-              .isSheetFullyVisible) {
+          NavApp.of(context).isSheetFullyVisible) {
         //onNextFrame(() => Overlay.of(context).insert(_entries[tab]!));
       }
     } catch (_) {}
@@ -112,7 +110,7 @@ class _ProductPageFABState extends State<ProductPageFAB>
       bottom: 18.0,
       child: OutlinedButton(
         style: const ButtonStyle(
-          backgroundColor: MaterialStatePropertyAll<Color>(
+          backgroundColor: WidgetStatePropertyAll<Color>(
             AppColors.primary,
           ),
         ),

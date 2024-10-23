@@ -249,7 +249,7 @@ class _SearchPageBodyState extends State<_SearchPageBody> {
           KeyboardVisibilityController();
       _keyboardSubscription =
           keyboardController.onChange.listen((bool visible) {
-        if (!visible && _lastKeyboardVisibleEvent == true) {
+        if (!visible && _lastKeyboardVisibleEvent == true && mounted) {
           // Prevent a double pop when during the fade transition
           final _TransitionState state = context.read<_TransitionState>();
           final SearchUIType type = SearchUIManager.read(context).value;

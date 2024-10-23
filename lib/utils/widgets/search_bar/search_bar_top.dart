@@ -65,18 +65,18 @@ class _SearchBarTopState extends State<SearchBarTop>
     return PlatformAwareWillPopScope(
       onWillPop: () async {
         if (_animation == null) {
-          return true;
+          return (true, null);
         }
 
         _controller.duration = Duration(
           milliseconds: _controller.duration!.inMilliseconds ~/ 2,
         );
         await _controller.reverse();
-        if (mounted) {
+        if (context.mounted) {
           Navigator.of(context).pop();
         }
 
-        return false;
+        return (false, null);
       },
       child: SizedBox.expand(
         child: Padding(
@@ -255,12 +255,12 @@ class _SuffixButton extends StatelessWidget {
             ),
             onPressed: data.onActionButtonClicked,
             style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(Colors.white),
-              side: MaterialStateProperty.all(
+              backgroundColor: WidgetStateProperty.all(Colors.white),
+              side: WidgetStateProperty.all(
                 const BorderSide(color: AppColors.primary),
               ),
-              foregroundColor: MaterialStateProperty.all(Colors.black),
-              shape: MaterialStateProperty.all(
+              foregroundColor: WidgetStateProperty.all(Colors.black),
+              shape: WidgetStateProperty.all(
                 const CircleBorder(),
               ),
             ),

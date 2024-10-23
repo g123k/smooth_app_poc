@@ -9,7 +9,7 @@ import 'package:smoothapp_poc/resources/app_icons.dart' as icons;
 class ProductFooter extends StatefulWidget {
   const ProductFooter({super.key});
 
-  static const double HEIGHT = 46.0;
+  static const double kHeight = 46.0;
 
   @override
   State<ProductFooter> createState() => _ProductFooterState();
@@ -76,7 +76,7 @@ class _ProductFooterState extends State<ProductFooter>
     return Transform.translate(
       offset: Offset(
         0.0,
-        _animation.value * (16.0 + ProductFooter.HEIGHT + bottomPadding),
+        _animation.value * (16.0 + ProductFooter.kHeight + bottomPadding),
       ),
       child: DecoratedBox(
         decoration: BoxDecoration(
@@ -120,7 +120,7 @@ class _ProductFooterButtonsBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: ProductFooter.HEIGHT,
+      height: ProductFooter.kHeight,
       child: OutlinedButtonTheme(
         data: OutlinedButtonThemeData(
           style: OutlinedButton.styleFrom(
