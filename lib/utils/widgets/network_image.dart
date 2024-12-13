@@ -86,7 +86,7 @@ class _NetworkAppImageState extends State<NetworkAppImage> {
     if (widget.onTap != null) {
       return InkWell(
         onTap: widget.onTap,
-        highlightColor: _imagePrimaryColor?.withOpacity(0.2),
+        highlightColor: _imagePrimaryColor?.withValues(alpha: 0.2),
         borderRadius: const BorderRadius.all(
           Radius.circular(10.0),
         ),

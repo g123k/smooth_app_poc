@@ -83,7 +83,7 @@ class _ProductFooterState extends State<ProductFooter>
           color: Theme.of(context).scaffoldBackgroundColor,
           boxShadow: [
             BoxShadow(
-              color: AppColors.blackPrimary.withOpacity(0.1),
+              color: AppColors.blackPrimary.withValues(alpha: 0.1),
               blurRadius: 10.0,
             ),
           ],

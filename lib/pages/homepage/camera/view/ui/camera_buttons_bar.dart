@@ -49,7 +49,7 @@ class _CameraButtonBarsState extends State<CameraButtonBars> {
           color: Colors.black,
           shadows: [
             Shadow(
-              color: Colors.black.withOpacity(0.2),
+              color: Colors.black.withValues(alpha: 0.2),
               blurRadius: 10.0,
             ),
           ],
@@ -119,7 +119,7 @@ class _TorchIconState extends State<_TorchIcon> {
     return ValueListenableBuilder(
         valueListenable: context.watch<CustomScannerController>().hasTorchState,
         builder: (BuildContext context, bool? hasTorch, _) {
-          if (hasTorch != true) {
+          if (hasTorch == null) {
             return EMPTY_WIDGET;
           }
 

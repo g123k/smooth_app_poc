@@ -383,6 +383,15 @@ class Outdated extends AppIcon {
   }) : super._(_IconsFont.outdated);
 }
 
+class NoPicture extends AppIcon {
+  const NoPicture({
+    super.color,
+    super.size,
+    super.shadow,
+    super.key,
+  }) : super._(_IconsFont.no_picture);
+}
+
 class NutritionFacts extends AppIcon {
   const NutritionFacts({
     super.color,

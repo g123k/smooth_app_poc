@@ -164,8 +164,8 @@ class _ProductHeaderTabBarPainter extends CustomPainter {
         Offset.zero,
         Offset(gradientSize, 0.0),
         [
-          AppColors.primaryLight.withOpacity(
-            progress.progressAndClamp(0.0, 0.3, 1.0),
+          AppColors.primaryLight.withValues(
+            alpha: progress.progressAndClamp(0.0, 0.3, 1.0),
           ),
           backgroundColor,
         ],
@@ -188,8 +188,8 @@ class _ProductHeaderTabBarPainter extends CustomPainter {
         Offset(size.width, 0.0),
         [
           backgroundColor,
-          AppColors.primaryLight.withOpacity(
-            1 - progress.progressAndClamp(0.7, 1.0, 1.0),
+          AppColors.primaryLight.withValues(
+            alpha: 1 - progress.progressAndClamp(0.7, 1.0, 1.0),
           ),
         ],
       );

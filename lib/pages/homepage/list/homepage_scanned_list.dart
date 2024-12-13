@@ -314,9 +314,9 @@ class _HistoryItemState extends State<_HistoryItem> {
                           begin: FractionalOffset.topCenter,
                           end: FractionalOffset.bottomCenter,
                           colors: [
-                            Colors.white.withOpacity(0.0),
-                            Colors.black.withOpacity(0.2),
-                            Colors.black.withOpacity(0.95),
+                            Colors.white.withValues(alpha: 0.0),
+                            Colors.black.withValues(alpha: 0.2),
+                            Colors.black.withValues(alpha: 0.95),
                           ],
                           stops: const [
                             0.5,
@@ -396,7 +396,7 @@ class _LastHistoryItem extends StatelessWidget {
                   Text(
                     'Voir la suite du classement…',
                     style: TextStyle(
-                      color: Colors.black.withOpacity(0.5),
+                      color: Colors.black.withValues(alpha: 0.5),
                       fontWeight: FontWeight.w500,
                     ),
                     textAlign: TextAlign.center,

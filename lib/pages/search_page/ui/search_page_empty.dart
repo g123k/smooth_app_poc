@@ -72,8 +72,9 @@ class SearchBodySuggestions extends StatelessWidget {
                     return SearchQueryItem.advancedSearch(
                       value: search!,
                       onTap: () {
-                        launch(
-                          'https://world.openfoodfacts.org/cgi/search.pl?action=display&search_terms=$search',
+                        launchUrl(
+                          Uri.parse(
+                              'https://world.openfoodfacts.org/cgi/search.pl?action=display&search_terms=$search'),
                         );
                       },
                     );

@@ -88,7 +88,7 @@ class _CameraBarcodePainter extends CustomPainter {
     _path.close();
 
     canvas.drawPath(_path, _paint);
-    canvas.drawShadow(_path, Colors.white.withOpacity(0.5), 2.0, false);
+    canvas.drawShadow(_path, Colors.white.withValues(alpha: 0.5), 2.0, false);
   }
 
   @override

@@ -13,11 +13,12 @@ class CameraViewStateManager extends ValueNotifier<CameraViewState> {
       return;
     }
 
-    _barcode = barcode;
-    value = CameraViewLoadingBarcodeState(barcode);
-
     if (BarcodeUtils.isABarcode(barcode)) {
+      _barcode = barcode;
+      value = CameraViewLoadingBarcodeState(barcode);
+
       try {
+        OpenFoodAPIConfiguration.userAgent = UserAgent(name: 'OFF Poc');
         final ProductResultV3 product = await OpenFoodAPIClient.getProductV3(
           ProductQueryConfiguration(barcode, version: ProductQueryVersion.v3),
         );

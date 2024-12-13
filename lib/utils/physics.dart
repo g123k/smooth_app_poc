@@ -145,11 +145,17 @@ class VerticalClampScrollLimiter extends ValueNotifier<double?> {
 class VerticalSnapScrollPhysics extends ClampingScrollPhysics {
   VerticalSnapScrollPhysics({
     required List<double> steps,
-    super.parent,
+    this.lastStepBlocking = true,
+    final ScrollPhysics? parent,
   })  : steps = steps.toList()..sort(),
-        ignoreNextScroll = false;
+        ignoreNextScroll = false,
+        super(parent: parent ?? const BouncingScrollPhysics());
 
   final List<double> steps;
+
+  // If true, scrolling from the bottom with be blocked at the last step
+  // If false, scrolling from the bottom will continue
+  final bool lastStepBlocking;
   bool ignoreNextScroll;
 
   @override
@@ -157,6 +163,7 @@ class VerticalSnapScrollPhysics extends ClampingScrollPhysics {
     return VerticalSnapScrollPhysics(
       parent: buildParent(ancestor),
       steps: steps,
+      lastStepBlocking: lastStepBlocking,
     );
   }
 
@@ -167,6 +174,10 @@ class VerticalSnapScrollPhysics extends ClampingScrollPhysics {
     ScrollMetrics position,
     double velocity,
   ) {
+    final Tolerance tolerance = toleranceFor(position);
+    if (velocity.abs() < tolerance.velocity) {
+      return null;
+    }
     if (velocity > 0.0 && position.pixels >= position.maxScrollExtent) {
       ignoreNextScroll = false;
       return null;
@@ -176,12 +187,13 @@ class VerticalSnapScrollPhysics extends ClampingScrollPhysics {
       return null;
     }
 
-    Simulation? simulation =
+    final Simulation? simulation =
         super.createBallisticSimulation(position, velocity);
-    double? proposedPixels = simulation?.x(double.infinity);
+    final double? simulationX = simulation?.x(double.infinity);
+    double? proposedPixels = simulationX;
 
     if (simulation == null || proposedPixels == null) {
-      var (double? min, _) = _getRange(steps, position.pixels);
+      final (double? min, _) = _getRange(steps, position.pixels);
 
       if (min != null && min != steps.last && ignoreNextScroll) {
         return ScrollSpringSimulation(
@@ -189,6 +201,7 @@ class VerticalSnapScrollPhysics extends ClampingScrollPhysics {
           position.pixels,
           min,
           velocity,
+          tolerance: toleranceFor(position),
         );
       } else {
         ignoreNextScroll = false;
@@ -196,10 +209,13 @@ class VerticalSnapScrollPhysics extends ClampingScrollPhysics {
       }
     }
 
-    var (double? min, double? max) = _getRange(steps, position.pixels);
+    ignoreNextScroll = false;
+    final (double? min, double? max) = _getRange(steps, position.pixels);
+    bool hasChanged = false;
     if (min != null && max == null) {
       if (proposedPixels < min) {
         proposedPixels = min;
+        hasChanged = true;
       }
     } else if (min != null && max != null) {
       if (position.pixels - proposedPixels > 0) {
@@ -207,6 +223,7 @@ class VerticalSnapScrollPhysics extends ClampingScrollPhysics {
       } else {
         proposedPixels = max;
       }
+      hasChanged = true;
     }
 
     if (_lastPixels == null) {
@@ -215,17 +232,19 @@ class VerticalSnapScrollPhysics extends ClampingScrollPhysics {
       _lastPixels = _fixInconsistency(proposedPixels);
     }
 
-    ignoreNextScroll = false;
-    return ScrollSpringSimulation(
-      spring,
-      position.pixels,
-      _lastPixels!,
-      velocity,
-      tolerance: const Tolerance(
-        distance: 20,
-        velocity: 20,
-      ),
-    );
+    /// Smooth scroll to a step
+    if (hasChanged && (lastStepBlocking || position.pixels < steps.last)) {
+      return ScrollSpringSimulation(
+        spring,
+        position.pixels,
+        _lastPixels!,
+        velocity,
+        tolerance: tolerance,
+      );
+    }
+
+    /// Normal scrolling
+    return super.createBallisticSimulation(position, velocity);
   }
 
   // In some cases, the proposed pixels have a giant space and finding the range
@@ -239,8 +258,8 @@ class VerticalSnapScrollPhysics extends ClampingScrollPhysics {
     double proposedPixels,
     double initialPixelPosition,
   ) {
-    int newPosition = _getStepPosition(steps, proposedPixels);
-    int oldPosition = _getStepPosition(steps, initialPixelPosition);
+    final int newPosition = _getStepPosition(steps, proposedPixels);
+    final int oldPosition = _getStepPosition(steps, initialPixelPosition);
 
     if (newPosition - oldPosition >= 2) {
       return steps[math.min(newPosition - 1, 0)];

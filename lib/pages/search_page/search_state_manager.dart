@@ -31,7 +31,6 @@ class SearchStateManager extends ValueNotifier<SearchState> {
       final SearchResult results = await OpenFoodAPIClient.searchProducts(
         null,
         queryConfig,
-        queryType: QueryType.PROD,
       );
 
       if (results.products?.isEmpty ?? true) {

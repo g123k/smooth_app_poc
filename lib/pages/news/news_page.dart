@@ -90,9 +90,9 @@ class NewsPage extends StatelessWidget {
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [
-                              backgroundColor.withOpacity(0.0),
-                              backgroundColor.withOpacity(0.5),
-                              backgroundColor.withOpacity(0.9),
+                              backgroundColor.withValues(alpha: 0.0),
+                              backgroundColor.withValues(alpha: 0.5),
+                              backgroundColor.withValues(alpha: 0.9),
                             ],
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,

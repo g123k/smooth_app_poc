@@ -74,6 +74,8 @@ class _IconsFont {
       IconData(0xe82f, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData personalization =
       IconData(0xe830, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData no_picture =
+      IconData(0xe831, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData outdated =
       IconData(0xe836, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData question_circled =

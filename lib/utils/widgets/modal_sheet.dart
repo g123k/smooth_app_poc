@@ -541,7 +541,7 @@ class _ShadowPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     if (opacity >= 0.0) {
-      _paint.color = Colors.black12.withOpacity(opacity * 0.12);
+      _paint.color = Colors.black12.withValues(alpha: opacity * 0.12);
       canvas.drawRect(
         Rect.fromLTWH(
           0,

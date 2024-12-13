@@ -128,7 +128,7 @@ class NavAppState extends State<NavApp> with TickerProviderStateMixin {
                     decoration: BoxDecoration(
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
+                          color: Colors.black.withValues(alpha: 0.1),
                           blurRadius: 2.0,
                           offset: const Offset(-2.0, -2.0),
                         ),

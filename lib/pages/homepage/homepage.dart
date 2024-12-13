@@ -101,11 +101,14 @@ class HomePageState extends State<HomePage> {
         // The MediaQuery is not yet ready (reproducible in production)
         _setInitialScroll();
       } else {
-        _physics = VerticalSnapScrollPhysics(steps: [
-          0.0,
-          cameraPeak,
-          cameraHeight,
-        ]);
+        _physics = VerticalSnapScrollPhysics(
+          steps: [
+            0.0,
+            cameraPeak,
+            cameraHeight,
+          ],
+          lastStepBlocking: true,
+        );
         _controller.jumpTo(_initialOffset);
         setState(() {});
       }
@@ -308,7 +311,8 @@ class HomePageState extends State<HomePage> {
     }
   }
 
-  onDispose() {
+  @override
+  void dispose() {
     _controller.dispose();
     _lifecycleListener.dispose();
     super.dispose();
@@ -321,7 +325,7 @@ class HomePageState extends State<HomePage> {
   void _onScrollUpdate(ScrollUpdateNotification notification) {
     if (_controller.offset.ceilToDouble() < cameraHeight) {
       SystemChrome.setSystemUIOverlayStyle(SystemUIStyle.light);
-      if (!_cameraController.isStarting) {
+      if (!_cameraController.isStarted) {
         _cameraController.start();
       }
     } else {

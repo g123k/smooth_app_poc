@@ -21,6 +21,7 @@ import 'package:smoothapp_poc/utils/system_ui.dart';
 import 'package:smoothapp_poc/utils/widgets/modal_sheet.dart';
 import 'package:smoothapp_poc/utils/widgets/offline_size_widget.dart';
 import 'package:smoothapp_poc/utils/widgets/useful_widgets.dart';
+import 'package:torch_light/torch_light.dart';
 
 class CameraView extends StatefulWidget {
   const CameraView({
@@ -74,7 +75,7 @@ class _CameraViewState extends State<CameraView> {
               children: [
                 Positioned.fill(
                   child: MobileScanner(
-                    overlay: CameraOverlay(
+                    overlayBuilder: (_, __) => CameraOverlay(
                       barcodes: _barcodeStream.stream,
                     ),
                     controller: widget.controller._controller,
@@ -92,9 +93,9 @@ class _CameraViewState extends State<CameraView> {
                         _barcodeStream.add(
                           DetectedBarcode(
                             barcode: barcode,
-                            corners: capture.barcodes.first.corners!,
-                            width: capture.width,
-                            height: capture.height,
+                            corners: capture.barcodes.first.corners,
+                            width: capture.size.width,
+                            height: capture.size.height,
                           ),
                         );
 
@@ -545,44 +546,47 @@ class _OpaqueOverlay extends StatelessWidget {
 
 class CustomScannerController {
   final MobileScannerController _controller;
+  final _TorchState _torchState;
+
   bool _isStarted = false;
+  bool _isStarting = false;
   bool _isClosing = false;
   bool _isClosed = false;
 
-  /// Internal value to store the previous torch state, when we start/stop
-  /// the camera
-  bool _isTorchOn = false;
-
   CustomScannerController({
     required MobileScannerController controller,
-  }) : _controller = controller;
+  })  : _controller = controller,
+        _torchState = _TorchState() {
+    _detectTorch();
+  }
 
   Future<void> start() async {
-    if (isStarting || isStarted || isClosing) {
+    if (isStarted || _isStarting || isClosing) {
       return;
     }
 
+    _isStarting = true;
     _isClosed = false;
     try {
       await _controller.start();
       _isStarted = true;
 
-      if (_isTorchOn) {
+      if (isTorchOn) {
         // Slight delay, because it doesn't always work if called immediately
         Future.delayed(const Duration(milliseconds: 250), () {
           turnTorchOn();
         });
       }
+      _isStarting = false;
     } catch (_) {}
   }
 
   void onPause() {
     _isStarted = false;
+    _isStarting = false;
     _isClosing = false;
     _isClosed = false;
   }
-
-  bool get isStarting => _controller.isStarting;
 
   bool get isStarted => _isStarted;
 
@@ -591,11 +595,12 @@ class CustomScannerController {
   bool get isClosed => _isClosed;
 
   Future<void> stop() async {
-    if (isStarting || isClosed || isClosing) {
+    if (isClosed || isClosing || _isStarting) {
       return;
     }
 
     _isClosing = true;
+    _isStarting = false;
     _isStarted = false;
     try {
       await _controller.stop();
@@ -604,27 +609,47 @@ class CustomScannerController {
     } catch (_) {}
   }
 
-  bool get hasTorch => _controller.hasTorch;
+  bool get hasTorch => _torchState.value != null;
 
-  ValueNotifier<bool?> get hasTorchState => _controller.hasTorchState;
+  ValueNotifier<bool?> get hasTorchState => _torchState;
 
-  bool get isTorchOn => _controller.torchState.value == TorchState.on;
+  bool get isTorchOn => _torchState.value == true;
 
   void turnTorchOff() {
     if (isTorchOn) {
       _controller.toggleTorch();
-      _isTorchOn = false;
+      _torchState.value = false;
     }
   }
 
   void turnTorchOn() {
     if (!isTorchOn) {
       _controller.toggleTorch();
-      _isTorchOn = true;
+      _torchState.value = true;
     }
   }
 
   void toggleCamera() {
     _controller.switchCamera();
+    if (_controller.facing == CameraFacing.front) {
+      _torchState.value = null;
+    } else if (_controller.facing == CameraFacing.front) {
+      _torchState.value = false;
+    }
   }
+
+  Future<void> _detectTorch() async {
+    try {
+      final bool isTorchAvailable = await TorchLight.isTorchAvailable();
+      if (isTorchAvailable) {
+        _torchState.value = false;
+      } else {
+        _torchState.value = null;
+      }
+    } on Exception catch (_) {}
+  }
+}
+
+class _TorchState extends ValueNotifier<bool?> {
+  _TorchState({bool? value}) : super(value);
 }

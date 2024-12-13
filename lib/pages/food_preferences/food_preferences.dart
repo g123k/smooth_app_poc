@@ -42,7 +42,7 @@ class _FoodPreferencesPageState extends State<FoodPreferencesPage> {
                   }
                 }
                 if (details.localPosition.dx > size.width * 0.6) {
-                  if (currentPage < 8) {
+                  if (currentPage < 9) {
                     setState(() => currentPage++);
                   } else {
                     foodPreferencesDefined = true;
