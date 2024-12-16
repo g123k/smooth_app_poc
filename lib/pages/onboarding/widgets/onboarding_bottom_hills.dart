@@ -136,7 +136,7 @@ class _OnboardingBottomHillsState extends State<OnboardingBottomHills> {
                           ),
                         ),
                         shadowColor: WidgetStateProperty.all<Color>(
-                          AppColors.blackPrimary.withOpacity(0.50),
+                          AppColors.blackPrimary.withValues(alpha: 0.50),
                         ),
                       ),
                       onPressed: () {

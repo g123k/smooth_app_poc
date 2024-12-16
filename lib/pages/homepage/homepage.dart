@@ -402,8 +402,8 @@ class HomePageState extends State<HomePage> {
 
 class SliverListBldr extends StatelessWidget {
   const SliverListBldr({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

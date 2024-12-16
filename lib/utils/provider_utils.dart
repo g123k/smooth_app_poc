@@ -75,7 +75,7 @@ extension ChangeNotifierExtension on ChangeNotifier {
 }
 
 abstract class DistinctValueNotifier<T> extends ValueNotifier<T> {
-  DistinctValueNotifier(T value) : super(value);
+  DistinctValueNotifier(super.value);
 
   @override
   set value(T newValue) {

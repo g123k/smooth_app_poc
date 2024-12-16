@@ -30,13 +30,13 @@ class ExpandableSearchAppBar extends StatelessWidget {
   );
 
   const ExpandableSearchAppBar({
-    Key? key,
+    super.key,
     required this.onFieldTapped,
     this.footer,
     this.actionIcon,
     this.actionSemantics,
     this.onActionButtonClicked,
-  }) : super(key: key);
+  });
 
   final VoidCallback onFieldTapped;
   final SearchBarFooterWidget? footer;
@@ -83,8 +83,8 @@ class FixedSearchAppBar extends StatelessWidget {
     this.onActionButtonClicked,
     this.footer,
     this.searchBarType,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   final Function(String)? onSearchEntered;
   final Function(String)? onSearchChanged;
@@ -136,8 +136,8 @@ class SearchAppBarData extends InheritedWidget {
     this.actionSemantics,
     this.onActionButtonClicked,
     this.searchBarType,
-    required Widget child,
-  }) : super(child: child);
+    required super.child,
+  });
 
   final VoidCallback? onFieldTapped;
   final Function(String)? onSearchEntered;

@@ -99,13 +99,13 @@ class SearchInitialState extends SearchState {
 }
 
 class SearchLoadingSearchState extends SearchState {
-  const SearchLoadingSearchState(String search) : super._(search);
+  const SearchLoadingSearchState(String super.search) : super._();
 }
 
 class SearchErrorState extends SearchState {
   final Exception? exception;
 
-  const SearchErrorState(String search, [this.exception]) : super._(search);
+  const SearchErrorState(String super.search, [this.exception]) : super._();
 }
 
 class SearchResultsState extends SearchState {
@@ -114,13 +114,13 @@ class SearchResultsState extends SearchState {
   final int total;
 
   const SearchResultsState(
-    String search,
+    String super.search,
     this.products,
     this.total,
     this.configuration,
-  ) : super._(search);
+  ) : super._();
 }
 
 class SearchNoResultState extends SearchState {
-  const SearchNoResultState(String search) : super._(search);
+  const SearchNoResultState(String super.search) : super._();
 }

@@ -12,8 +12,8 @@ class ExpandableCamera extends StatelessWidget {
   const ExpandableCamera({
     required this.controller,
     required this.height,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   final CustomScannerController controller;
   final double height;
