@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:smoothapp_poc/navigation.dart';
+import 'package:smoothapp_poc/pages/onboarding/widgets/onboarding_animations.dart';
 import 'package:smoothapp_poc/pages/onboarding/widgets/onboarding_buttons.dart';
 import 'package:smoothapp_poc/pages/onboarding/widgets/onboarding_info.dart';
 import 'package:smoothapp_poc/pages/onboarding/widgets/onboarding_text.dart';
-import 'package:smoothapp_poc/resources/app_animations.dart';
 import 'package:smoothapp_poc/utils/system_ui.dart';
 
 class OnboardingAnalyticsPage extends StatelessWidget {
@@ -27,7 +27,7 @@ class OnboardingAnalyticsPage extends StatelessWidget {
                     widthFactor: 0.55,
                     child: Align(
                       alignment: AlignmentDirectional.bottomCenter,
-                      child: ConsentAnimation(),
+                      child: OnboardingConsentAnimation(),
                     ),
                   ),
                 ),

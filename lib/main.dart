@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:smoothapp_poc/pages/onboarding/onboarding.dart';
-import 'package:smoothapp_poc/resources/app_animations.dart';
 import 'package:smoothapp_poc/resources/app_colors.dart';
+import 'package:smoothapp_poc/utils/rive_utils.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return AnimationLoader(
+    return RiveAnimationsLoader<OffAppAnimation>(
       child: MaterialApp(
         title: 'Flutter Demo',
         debugShowCheckedModeBanner: false,

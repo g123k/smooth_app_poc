@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rive/rive.dart';
+import 'package:smoothapp_poc/pages/onboarding/widgets/onboarding_animations.dart';
 import 'package:smoothapp_poc/pages/onboarding/widgets/onboarding_bottom_hills.dart';
 import 'package:smoothapp_poc/pages/onboarding/widgets/onboarding_text.dart';
 
@@ -22,11 +22,7 @@ class OnboardingProjectPage extends StatelessWidget {
                 widthFactor: 0.75,
                 child: Align(
                   alignment: Alignment.bottomCenter,
-                  child: RiveAnimation.asset(
-                    'assets/animations/off.riv',
-                    artboard: 'Muffins',
-                    stateMachines: ['State Machine 1'],
-                  ),
+                  child: OnboardingPlanetAnimations(),
                 ),
               ),
             ),

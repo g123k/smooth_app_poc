@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:smoothapp_poc/pages/onboarding/pages/onboarding_analytics_page.dart';
 import 'package:smoothapp_poc/pages/onboarding/pages/onboarding_camera_permission_page.dart';
 import 'package:smoothapp_poc/pages/onboarding/pages/onboarding_explanation_page.dart';
 import 'package:smoothapp_poc/pages/onboarding/pages/onboarding_project_page.dart';
@@ -30,6 +31,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
     OnboardingPageScrollNotifier(),
     OnboardingPageScrollNotifier(),
   ];
+
+  int _numberOfPages = 4;
 
   @override
   void initState() {
@@ -85,6 +88,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 Positioned.fill(
                   child: PageView.builder(
                     controller: _controller,
+                    physics: _numberOfPages == 5
+                        ? const NeverScrollableScrollPhysics()
+                        : null,
                     itemBuilder: (BuildContext context, int position) {
                       return ChangeNotifierProvider.value(
                         value: _notifiers[position],
@@ -92,11 +98,26 @@ class _OnboardingPageState extends State<OnboardingPage> {
                           0 => const OnboardingWelcomePage(),
                           1 => const OnboardingProjectPage(),
                           2 => const OnboardingExplanationPage(),
-                          3 || _ => const OnboardingCameraPermissionPage(),
+                          3 => OnboardingCameraPermissionPage(
+                              onPermissionValidated: () {
+                                setState(() {
+                                  _numberOfPages = 5;
+                                  onNextFrame(() {
+                                    _controller.animateToPage(
+                                      4,
+                                      duration:
+                                          const Duration(milliseconds: 350),
+                                      curve: Curves.easeInOut,
+                                    );
+                                  });
+                                });
+                              },
+                            ),
+                          4 || _ => const OnboardingAnalyticsPage(),
                         },
                       );
                     },
-                    itemCount: 4,
+                    itemCount: _numberOfPages,
                   ),
                 ),
                 const OnboardingBottomHills(

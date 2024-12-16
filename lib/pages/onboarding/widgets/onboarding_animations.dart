@@ -125,3 +125,39 @@ class _OnboardingCloudAnimation extends StatelessWidget {
     );
   }
 }
+
+class OnboardingPlanetAnimations extends StatelessWidget {
+  const OnboardingPlanetAnimations({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return RiveAnimationBuilder<OffOnboardingAnimation>(
+      builder: (BuildContext context, RiveFile riveFile) {
+        return RiveAnimation.direct(
+          riveFile,
+          artboard: 'Planet',
+          animations: const ['Loop'],
+        );
+      },
+    );
+  }
+}
+
+class OnboardingConsentAnimation extends StatelessWidget {
+  const OnboardingConsentAnimation({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return RiveAnimationBuilder<OffOnboardingAnimation>(
+      builder: (BuildContext context, RiveFile riveFile) {
+        return RiveAnimation.direct(
+          riveFile,
+          artboard: 'Consent',
+          animations: const ['Loop1'],
+        );
+      },
+    );
+  }
+}

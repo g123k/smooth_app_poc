@@ -43,8 +43,11 @@ class _OnboardingBottomHillsState extends State<OnboardingBottomHills> {
       return;
     }
 
-    double progress =
-        _controller!.page!.progress(widget.maxPage, widget.maxPage + 1);
+    double progress = _controller!.page!.progressAndClamp(
+      widget.maxPage,
+      widget.maxPage + 1,
+      1.0,
+    );
 
     if (progress != _progress) {
       setState(() => _progress = progress);
@@ -54,7 +57,7 @@ class _OnboardingBottomHillsState extends State<OnboardingBottomHills> {
   @override
   Widget build(BuildContext context) {
     final TextDirection textDirection = Directionality.of(context);
-    final bottomPadding = MediaQuery.viewPaddingOf(context).bottom;
+    final double bottomPadding = MediaQuery.viewPaddingOf(context).bottom;
     final double maxHeight = OnboardingBottomHills.height(context);
 
     return Positioned(

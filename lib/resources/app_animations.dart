@@ -1,67 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
 import 'package:rive/rive.dart';
-
-class AnimationLoader extends StatefulWidget {
-  const AnimationLoader({
-    required this.child,
-    super.key,
-  });
-
-  final Widget child;
-
-  @override
-  State<AnimationLoader> createState() => _AnimationLoaderState();
-
-  static RiveFile of(BuildContext context) {
-    return context.read<_AnimationLoaderState>()._file;
-  }
-}
-
-class _AnimationLoaderState extends State<AnimationLoader> {
-  late final RiveFile _file;
-
-  @override
-  void initState() {
-    super.initState();
-    preload();
-  }
-
-  Future<void> preload() async {
-    rootBundle.load('assets/animations/off.riv').then(
-      (data) async {
-        // Load the RiveFile from the binary data.
-        setState(() {
-          _file = RiveFile.import(data);
-        });
-      },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Provider.value(
-      value: this,
-      child: widget.child,
-    );
-  }
-}
-
-class ConsentAnimation extends StatelessWidget {
-  const ConsentAnimation({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return RiveAnimation.direct(
-      AnimationLoader.of(context),
-      artboard: 'Consent',
-      animations: const ['Loop'],
-    );
-  }
-}
+import 'package:smoothapp_poc/utils/rive_utils.dart';
 
 class DoubleChevronAnimation extends StatefulWidget {
   const DoubleChevronAnimation.animate({
@@ -96,17 +35,21 @@ class _DoubleChevronAnimationState extends State<DoubleChevronAnimation> {
 
     return SizedBox.square(
       dimension: size,
-      child: RiveAnimation.direct(
-        AnimationLoader.of(context),
-        artboard: 'Double chevron',
-        onInit: (Artboard artboard) {
-          _controller = StateMachineController.fromArtboard(
-            artboard,
-            'Loop',
-          );
+      child: RiveAnimationBuilder<OffAppAnimation>(
+        builder: (BuildContext context, RiveFile riveFile) {
+          return RiveAnimation.direct(
+            riveFile,
+            artboard: 'Double chevron',
+            onInit: (Artboard artboard) {
+              _controller = StateMachineController.fromArtboard(
+                artboard,
+                'Loop',
+              );
 
-          artboard.addController(_controller!);
-          _changeAnimation(widget.animated);
+              artboard.addController(_controller!);
+              _changeAnimation(widget.animated);
+            },
+          );
         },
       ),
     );
@@ -141,10 +84,14 @@ class SearchEyeAnimation extends StatelessWidget {
     return SizedBox(
       width: size,
       height: (80 / 87) * size,
-      child: RiveAnimation.direct(
-        AnimationLoader.of(context),
-        artboard: 'Search eye',
-        stateMachines: const <String>['LoopMachine'],
+      child: RiveAnimationBuilder<OffAppAnimation>(
+        builder: (BuildContext context, RiveFile riveFile) {
+          return RiveAnimation.direct(
+            riveFile,
+            artboard: 'Search eye',
+            stateMachines: const <String>['LoopMachine'],
+          );
+        },
       ),
     );
   }
@@ -166,11 +113,17 @@ class SearchAnimation extends StatefulWidget {
 
 class _SearchAnimationState extends State<SearchAnimation> {
   StateMachineController? _controller;
+  bool _pendingChangeAnimation = false;
 
   @override
   void didUpdateWidget(SearchAnimation oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _changeAnimation(widget.type);
+
+    if (_controller != null) {
+      _changeAnimation(widget.type);
+    } else {
+      _pendingChangeAnimation = true;
+    }
   }
 
   @override
@@ -179,19 +132,24 @@ class _SearchAnimationState extends State<SearchAnimation> {
 
     return SizedBox.square(
       dimension: size,
-      child: RiveAnimation.direct(
-        AnimationLoader.of(context),
-        artboard: 'Search icon',
-        onInit: (Artboard artboard) {
-          _controller = StateMachineController.fromArtboard(
-            artboard,
-            'StateMachine',
-          );
+      child: RiveAnimationBuilder<OffAppAnimation>(
+        builder: (BuildContext context, RiveFile riveFile) {
+          return RiveAnimation.direct(
+            riveFile,
+            artboard: 'Search icon',
+            onInit: (Artboard artboard) {
+              _controller = StateMachineController.fromArtboard(
+                artboard,
+                'StateMachine',
+              );
 
-          artboard.addController(_controller!);
-          if (widget.type != SearchAnimationType.search) {
-            _changeAnimation(widget.type);
-          }
+              artboard.addController(_controller!);
+              if (widget.type != SearchAnimationType.search ||
+                  _pendingChangeAnimation) {
+                _changeAnimation(widget.type);
+              }
+            },
+          );
         },
       ),
     );
@@ -200,6 +158,7 @@ class _SearchAnimationState extends State<SearchAnimation> {
   void _changeAnimation(SearchAnimationType type) {
     SMINumber step = _controller?.findInput<double>('step') as SMINumber;
     step.change(type.step.toDouble());
+    _pendingChangeAnimation = false;
   }
 
   @override
@@ -217,21 +176,6 @@ enum SearchAnimationType {
   const SearchAnimationType(this.step);
 
   final int step;
-}
-
-class SunAnimation extends StatelessWidget {
-  const SunAnimation({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return RiveAnimation.direct(
-      AnimationLoader.of(context),
-      artboard: 'Success',
-      animations: const ['Timeline 1'],
-    );
-  }
 }
 
 class TorchAnimation extends StatefulWidget {
@@ -274,20 +218,23 @@ class _TorchAnimationState extends State<TorchAnimation> {
 
     return SizedBox.square(
       dimension: size,
-      child: RiveAnimation.asset(
-        'assets/animations/off.riv',
-        artboard: 'Torch',
-        fit: BoxFit.cover,
-        onInit: (Artboard artboard) {
-          _controller = StateMachineController.fromArtboard(
-            artboard,
-            'Switch',
-          );
+      child: RiveAnimationBuilder<OffAppAnimation>(
+          builder: (BuildContext context, RiveFile riveFile) {
+        return RiveAnimation.direct(
+          riveFile,
+          artboard: 'Torch',
+          fit: BoxFit.cover,
+          onInit: (Artboard artboard) {
+            _controller = StateMachineController.fromArtboard(
+              artboard,
+              'Switch',
+            );
 
-          artboard.addController(_controller!);
-          _changeTorchValue(widget.isOn);
-        },
-      ),
+            artboard.addController(_controller!);
+            _changeTorchValue(widget.isOn);
+          },
+        );
+      }),
     );
   }
 
