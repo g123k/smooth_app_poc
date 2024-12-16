@@ -6,6 +6,7 @@ import 'package:smoothapp_poc/pages/onboarding/pages/onboarding_explanation_page
 import 'package:smoothapp_poc/pages/onboarding/pages/onboarding_project_page.dart';
 import 'package:smoothapp_poc/pages/onboarding/pages/onboarding_welcome_page.dart';
 import 'package:smoothapp_poc/pages/onboarding/widgets/onboarding_bottom_hills.dart';
+import 'package:smoothapp_poc/utils/rive_utils.dart';
 import 'package:smoothapp_poc/utils/system_ui.dart';
 import 'package:smoothapp_poc/utils/ui_utils.dart';
 
@@ -78,29 +79,31 @@ class _OnboardingPageState extends State<OnboardingPage> {
               value: OnboardingConfig._(MediaQuery.of(context)),
             ),
           ],
-          child: Stack(
-            children: <Widget>[
-              Positioned.fill(
-                child: PageView.builder(
-                  controller: _controller,
-                  itemBuilder: (BuildContext context, int position) {
-                    return ChangeNotifierProvider.value(
-                      value: _notifiers[position],
-                      child: switch (position) {
-                        0 => const OnboardingWelcomePage(),
-                        1 => const OnboardingProjectPage(),
-                        2 => const OnboardingExplanationPage(),
-                        3 || _ => const OnboardingCameraPermissionPage(),
-                      },
-                    );
-                  },
-                  itemCount: 4,
+          child: RiveAnimationsLoader<OffOnboardingAnimation>(
+            child: Stack(
+              children: <Widget>[
+                Positioned.fill(
+                  child: PageView.builder(
+                    controller: _controller,
+                    itemBuilder: (BuildContext context, int position) {
+                      return ChangeNotifierProvider.value(
+                        value: _notifiers[position],
+                        child: switch (position) {
+                          0 => const OnboardingWelcomePage(),
+                          1 => const OnboardingProjectPage(),
+                          2 => const OnboardingExplanationPage(),
+                          3 || _ => const OnboardingCameraPermissionPage(),
+                        },
+                      );
+                    },
+                    itemCount: 4,
+                  ),
                 ),
-              ),
-              const OnboardingBottomHills(
-                maxPage: 2,
-              ),
-            ],
+                const OnboardingBottomHills(
+                  maxPage: 2,
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -119,16 +122,18 @@ class OnboardingPageScrollNotifier extends ValueNotifier<double> {
   OnboardingPageScrollNotifier() : super(0.0);
 
   @protected
-  set visibility(double value) {
-    this.value = value;
-    notifyListeners();
-  }
+  set visibility(double value) => this.value = value;
 
   double get visibility => value;
 
+  /// Hide the value getter & setter
   @override
   @protected
   double get value => super.value;
+
+  @override
+  @protected
+  set value(double newValue) => super.value = newValue;
 
   static OnboardingPageScrollNotifier of(BuildContext context) =>
       context.watch<OnboardingPageScrollNotifier>();
