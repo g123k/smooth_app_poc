@@ -79,8 +79,9 @@ class _CameraViewState extends State<CameraView> {
                       barcodes: _barcodeStream.stream,
                     ),
                     controller: widget.controller._controller,
-                    placeholderBuilder: (_, __) => const SizedBox.expand(
-                        child: ColoredBox(color: Colors.black)),
+                    placeholderBuilder: (_) => const SizedBox.expand(
+                      child: ColoredBox(color: Colors.black),
+                    ),
                     onDetect: (BarcodeCapture capture) {
                       // Only pass if the camera is fully visible and the sheet is not visible and/or scrolled
                       if (HomePage.of(context).isCameraFullyVisible &&

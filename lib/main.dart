@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
             space: 1.0,
             color: AppColors.grey,
           ),
-          tabBarTheme: const TabBarTheme(
+          tabBarTheme: const TabBarThemeData(
             labelStyle: TextStyle(fontWeight: FontWeight.bold),
             unselectedLabelStyle: TextStyle(fontWeight: FontWeight.w500),
           ),

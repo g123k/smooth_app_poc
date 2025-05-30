@@ -36,7 +36,7 @@ class MostScannedProducts extends StatelessWidget {
           ),
           Theme(
             data: Theme.of(context).copyWith(
-                cardTheme: CardTheme(
+                cardTheme: CardThemeData(
               margin: EdgeInsets.zero,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20.0),
@@ -153,7 +153,7 @@ class HistoryList extends StatelessWidget {
           ),
           Theme(
             data: Theme.of(context).copyWith(
-                cardTheme: CardTheme(
+                cardTheme: CardThemeData(
               margin: EdgeInsets.zero,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20.0),
